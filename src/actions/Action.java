@@ -2,6 +2,7 @@ package actions;
 
 import carte.Case;
 import observable.Environnement;
+import personnages.Operateur;
 import personnages.Personnage;
 
 import java.util.List;
@@ -29,10 +30,27 @@ public abstract class Action {
     public abstract void effectuer(Environnement env, Personnage perso, Case arr);
 
     /**
+     * Effectue l'action associée à un opérateur
+     * @param env L'environnement
+     * @param perso L'opérateur effectuant l'action
+     * @param arr La case visée par l'action
+     */
+    public abstract void effectuer(Environnement env, Operateur perso, Case arr);
+
+    /**
      * Renvoie la liste des toutes les cases valides pour effectuer l'action
      * @param env L'environnement
      * @param perso Le personnage effectuant l'action
      * @return La liste des cases
      */
     public abstract List<Case> getCasesValides(Environnement env, Personnage perso);
+
+
+    /**
+     * Renvoie la liste des toutes les cases valides pour effectuer l'action spécifiques aux opérateurs
+     * @param env L'environnement
+     * @param perso L'opérateur effectuant l'action
+     * @return La liste des cases
+     */
+    public abstract List<Case> getCasesValides(Environnement env, Operateur perso);
 }

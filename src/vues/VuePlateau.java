@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import observable.Environnement;
-import personnages.Personnage;
+import personnages.Operateur;
 
 import java.util.List;
 
@@ -67,15 +67,22 @@ public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
 
     @Override
     public void update() {
-        Personnage perso = env.getOperateurActif();
+        Operateur perso = env.getOperateurActif();
         List<Case> casesValides = perso.getActionActive().getCasesValides(env, perso);
+
         for (int x = 0; x < env.getLargeur(); x++) {
             for (int y = 0; y < env.getHauteur(); y++) {
                 boutons[x][y].setStyle("-fx-background-color: white; -fx-border-color: gray");
-                if(casesValides.contains(env.getCase(x, y))){
+
+                if(casesValides.contains(env.getCase(x, y))){   // Cases valides
                     boutons[x][y].setStyle("-fx-background-color: #ffff0090; -fx-border-color: gray");
                 }
-                if(perso.getX() == x && perso.getY() == y){
+
+                if(env.getEnnemi().getX() == x && env.getEnnemi().getY() == y){ // Terroriste
+                    boutons[x][y].setStyle("-fx-background-color: red; -fx-border-color: gray");
+                }
+
+                if(perso.getX() == x && perso.getY() == y){     // Operateur
                     boutons[x][y].setStyle("-fx-background-color: cyan; -fx-border-color: gray");
                 }
             }

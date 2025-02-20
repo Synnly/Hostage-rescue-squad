@@ -1,25 +1,23 @@
 package personnages;
 
 import actions.Action;
+import actions.Deplacement;
 
-import java.util.ArrayList;
 
 public abstract class Personnage {
     protected int x, y;
     protected final int maxPointsAction;
     protected int pointsAction;
-    private ArrayList<Action> actions;
-    private Action actionActive = null;
+    protected Action actionActive;
+    protected final Deplacement deplacement;
 
-    public Personnage(int x, int y, int pointsAction){
+    public Personnage(int x, int y, int pointsAction, Deplacement deplacement){
         this.x = x;
         this.y = y;
         this.pointsAction = pointsAction;
         this.maxPointsAction = pointsAction;
-        actions = new ArrayList<>();
+        this.deplacement = deplacement;
     }
-
-    public void ajouterAction(Action a){actions.add(a);}
 
     /**
      * Définit quelle est l'action active pour ce personnage. Cette action sera celle exécutée quand le joueur
@@ -58,5 +56,9 @@ public abstract class Personnage {
 
     public void resetPointsAction(){
         pointsAction = maxPointsAction;
+    }
+
+    public Deplacement getDeplacement() {
+        return deplacement;
     }
 }

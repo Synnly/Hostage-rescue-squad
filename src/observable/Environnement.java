@@ -3,30 +3,72 @@ package observable;
 import actions.Deplacement;
 import carte.Case;
 import carte.CaseNormale;
+import carte.Routine;
 import personnages.Operateur;
+import personnages.Terroriste;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Environnement extends Observable{
 
-    private final int largeur = 6;
+    private final int largeur = 10;
     private final int hauteur = 10;
     private final List<Case> cases;
     private final Operateur operateur;
+    private final Terroriste ennemi;
 
     /**
      * Constructeur de l'environnement
      */
     public Environnement(){
         cases = new ArrayList<>();
+        initPlateau(largeur, hauteur);
 
         // Creation des opérateurs
-        operateur = new Operateur(largeur/2, hauteur/2, 2);
-        Deplacement depl = new Deplacement(1, 1);
-        operateur.ajouterAction(depl);
-        operateur.setActionActive(depl);
+        Deplacement deplacementOp = new Deplacement(1, 1);
+        operateur = new Operateur(largeur/2, hauteur-1, 2, deplacementOp);
+        operateur.setActionActive(deplacementOp);
 
+        // Création de la routine
+        Routine routine = creerRoutine();
+
+        // Création des ennemis
+        Deplacement deplacementTer = new Deplacement(0, 1);
+        ennemi = new Terroriste(largeur/2, 0, 0, deplacementTer);
+        ennemi.setRoutine(routine);
+    }
+
+    /**
+     * Fonction temporaire de creation de routine
+     */
+    public Routine creerRoutine(){
+        Case pred = getCase(largeur/2, 0);
+        Case next;
+        Routine routine = new Routine(pred);
+
+        next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next); pred = next;
+
+        next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
+
+        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
+
+        next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
+        next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
+
+        next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next);
+
+
+        return routine;
     }
 
     /**
@@ -68,6 +110,10 @@ public class Environnement extends Observable{
         return operateur;
     }
 
+    public Terroriste getEnnemi(){
+        return ennemi;
+    }
+
     /**
      * Recrée la liste des cases
      * @param largeur Le nombre de cases en largeur
@@ -82,6 +128,12 @@ public class Environnement extends Observable{
         }
     }
 
+    public void tourEnnemi(){
+        Case posEnnemi = getCase(ennemi.getX(), ennemi.getY());
+        ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+        notifyObservers();
+    }
+
     /**
      * Choisit la case ciblée par l'action active de l'opérateur actif
      * @param x La coordonnée en largeur de la case cible
@@ -89,9 +141,17 @@ public class Environnement extends Observable{
      */
     public void choisirCase(int x, int y){
         Case c = getCase(x, y);
+
         // Effectuer l'action
         Operateur op = getOperateurActif();
         op.getActionActive().effectuer(this, op, c);
+
+        // Tour ennemi
+        if(op.getPointsAction() == 0){
+            tourEnnemi();
+
+            op.resetPointsAction();
+        }
         notifyObservers();
     }
 }

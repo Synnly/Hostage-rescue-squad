@@ -42,7 +42,6 @@ public class Main extends Application {
         vuePlateau.gridPane.setMinWidth(largeurFenetre);
         vuePlateau.gridPane.setMinHeight(hauteurFenetre);
 
-        env.initPlateau(env.getLargeur(), env.getHauteur());
         vuePlateau.initPlateau(env.getLargeur(), env.getHauteur());
 
         env.notifyObservers();
