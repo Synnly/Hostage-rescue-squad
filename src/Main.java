@@ -7,14 +7,18 @@ import observable.Environnement;
 import vues.*;
 
 public class Main extends Application {
-    private final int hauteurFenetre = 790;
-    private final int largeurFenetre = 450;
+    private int hauteurFenetre;
+    private int largeurFenetre;
+    private final int tailleCase = 75;
 
 
     private final Environnement env = new Environnement();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        hauteurFenetre = env.getHauteur() * tailleCase;
+        largeurFenetre = env.getLargeur() * tailleCase;
+
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("vues/VuePlateau.fxml"));
 
@@ -38,9 +42,10 @@ public class Main extends Application {
         vuePlateau.gridPane.setMinWidth(largeurFenetre);
         vuePlateau.gridPane.setMinHeight(hauteurFenetre);
 
-
+        env.initPlateau(env.getLargeur(), env.getHauteur());
         vuePlateau.initPlateau(env.getLargeur(), env.getHauteur());
-        //env.notifyObservers();
+
+        env.notifyObservers();
 
     }
 

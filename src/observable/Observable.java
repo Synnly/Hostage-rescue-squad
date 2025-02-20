@@ -1,19 +1,25 @@
 package observable;
 
-import jdk.jshell.spi.ExecutionControl;
 import vues.Observer;
 
 import java.util.ArrayList;
 
 public abstract class Observable {
 
-    private ArrayList<Observer> observers = new ArrayList<>();
+    private final ArrayList<Observer> observers = new ArrayList<>();
 
-    public void addObserver(Observer obs){
+    /**
+     * Ajoute un observateur notifiable des changements au modèle
+     * @param obs L'observateur
+     */
+    public void ajouterObserver(Observer obs){
         observers.add(obs);
     }
 
-    public void notifyObservers() throws ExecutionControl.NotImplementedException {
+    /**
+     * Notifie les observateurs des changements au modèle
+     */
+    public void notifyObservers() {
         for (Observer obs: observers) {
             obs.update();
         }
