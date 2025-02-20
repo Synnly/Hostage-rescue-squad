@@ -1,6 +1,7 @@
 package actions;
 
 import carte.Case;
+import carte.Objectif;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Personnage;
@@ -56,6 +57,9 @@ public class Deplacement extends Action{
             System.out.println("Un ennemi est présent sur cette case");
         }
         else {
+            if(arr.estObjectif){
+                env.recupereObjectif((Objectif) arr, perso);
+            }
             perso.setX(arr.x);
             perso.setY(arr.y);
             perso.removePointsAction(distance * cout);

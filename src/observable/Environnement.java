@@ -3,6 +3,7 @@ package observable;
 import actions.Deplacement;
 import carte.Case;
 import carte.CaseNormale;
+import carte.Objectif;
 import carte.Routine;
 import personnages.Operateur;
 import personnages.Terroriste;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class Environnement extends Observable{
 
-    private final int largeur = 10;
+    private final int largeur = 7;
     private final int hauteur = 10;
     private final List<Case> cases;
     private final Operateur operateur;
@@ -126,6 +127,9 @@ public class Environnement extends Observable{
                 cases.add(new CaseNormale(x, y));
             }
         }
+        int x = (largeur/2);
+        int y = (hauteur/4);
+        cases.set(y * largeur + x, new Objectif(x, y));
     }
 
     public void tourEnnemi(){
@@ -153,5 +157,16 @@ public class Environnement extends Observable{
             op.resetPointsAction();
         }
         notifyObservers();
+    }
+
+    /**
+     * Fait récupérer l'objectif à l'opérateur. L'objectif devient une case normale après l'appel de cette fonction
+     * @param obj L'objectif récupéré
+     * @param op L'opérateur récupérant l'objectif
+     */
+    public void recupereObjectif(Objectif obj, Operateur op){
+        op.setPossedeObjectif(true);
+        int index = cases.indexOf(obj);
+        cases.set(index, new CaseNormale(obj.x, obj.y));
     }
 }

@@ -82,8 +82,17 @@ public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
                     boutons[x][y].setStyle("-fx-background-color: red; -fx-border-color: gray");
                 }
 
+                if(env.getCase(x, y).estObjectif){
+                    boutons[x][y].setStyle("-fx-background-color: green; -fx-border-color: gray");
+                }
+
                 if(perso.getX() == x && perso.getY() == y){     // Operateur
-                    boutons[x][y].setStyle("-fx-background-color: cyan; -fx-border-color: gray");
+                    if(perso.possedeObjectif()){
+                        boutons[x][y].setStyle("-fx-background-color: cyan; -fx-border-color: gray");
+                    }
+                    else{
+                        boutons[x][y].setStyle("-fx-background-color: blue; -fx-border-color: gray");
+                    }
                 }
             }
         }

@@ -61,4 +61,6 @@ public abstract class Personnage {
     public Deplacement getDeplacement() {
         return deplacement;
     }
+
+
 }
