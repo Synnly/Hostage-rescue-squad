@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 public abstract class Personnage {
     protected int x, y;
+    protected final int maxPointsAction;
     protected int pointsAction;
     private ArrayList<Action> actions;
     private Action actionActive = null;
@@ -14,6 +15,7 @@ public abstract class Personnage {
         this.x = x;
         this.y = y;
         this.pointsAction = pointsAction;
+        this.maxPointsAction = pointsAction;
         actions = new ArrayList<>();
     }
 
@@ -44,5 +46,17 @@ public abstract class Personnage {
 
     public int getY() {
         return y;
+    }
+
+    public int getPointsAction() {
+        return pointsAction;
+    }
+
+    public void removePointsAction(int nb) {
+        pointsAction -= nb;
+    }
+
+    public void resetPointsAction(){
+        pointsAction = maxPointsAction;
     }
 }

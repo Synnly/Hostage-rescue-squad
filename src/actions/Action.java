@@ -4,6 +4,8 @@ import carte.Case;
 import observable.Environnement;
 import personnages.Personnage;
 
+import java.util.List;
+
 public abstract class Action {
     public final int cout;
     public final double probaSucces;
@@ -25,4 +27,12 @@ public abstract class Action {
      * @param arr La case visée par l'action
      */
     public abstract void effectuer(Environnement env, Personnage perso, Case arr);
+
+    /**
+     * Renvoie la liste des toutes les cases valides pour effectuer l'action
+     * @param env L'environnement
+     * @param perso Le personnage effectuant l'action
+     * @return La liste des cases
+     */
+    public abstract List<Case> getCasesValides(Environnement env, Personnage perso);
 }

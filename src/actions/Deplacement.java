@@ -4,6 +4,9 @@ import carte.Case;
 import observable.Environnement;
 import personnages.Personnage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Deplacement extends Action{
 
     /**
@@ -23,7 +26,33 @@ public class Deplacement extends Action{
      */
     @Override
     public void effectuer(Environnement env, Personnage perso, Case arr) {
-        perso.setX(arr.x);
-        perso.setY(arr.y);
+        int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
+
+        if (distance> perso.getPointsAction()){
+            System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
+        }
+        else {
+            perso.setX(arr.x);
+            perso.setY(arr.y);
+            perso.removePointsAction(distance);
+        }
+
     }
+
+    @Override
+    public List<Case> getCasesValides(Environnement env, Personnage perso) {
+        ArrayList<Case> cases = new ArrayList<>();
+        int persoX = perso.getX();
+        int persoY = perso.getY();
+        int persoPA = perso.getPointsAction();
+
+        for (Case c: env.getPlateau()) {
+            if(Math.abs(persoX - c.x) + Math.abs(persoY - c.y) <= persoPA){
+                cases.add(c);
+            }
+        }
+        return cases;
+    }
+
+
 }

@@ -22,7 +22,7 @@ public class Environnement extends Observable{
         cases = new ArrayList<>();
 
         // Creation des opérateurs
-        operateur = new Operateur(0, 0, 2);
+        operateur = new Operateur(largeur/2, hauteur/2, 2);
         Deplacement depl = new Deplacement(1, 1);
         operateur.ajouterAction(depl);
         operateur.setActionActive(depl);

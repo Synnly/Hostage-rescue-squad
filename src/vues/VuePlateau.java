@@ -7,6 +7,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import observable.Environnement;
+import personnages.Personnage;
+
 import java.util.List;
 
 public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
@@ -65,10 +67,15 @@ public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
 
     @Override
     public void update() {
+        Personnage perso = env.getOperateurActif();
+        List<Case> casesValides = perso.getActionActive().getCasesValides(env, perso);
         for (int x = 0; x < env.getLargeur(); x++) {
             for (int y = 0; y < env.getHauteur(); y++) {
                 boutons[x][y].setStyle("-fx-background-color: white; -fx-border-color: gray");
-                if(env.getOperateurActif().getX() == x && env.getOperateurActif().getY() == y){
+                if(casesValides.contains(env.getCase(x, y))){
+                    boutons[x][y].setStyle("-fx-background-color: #ffff0090; -fx-border-color: gray");
+                }
+                if(perso.getX() == x && perso.getY() == y){
                     boutons[x][y].setStyle("-fx-background-color: cyan; -fx-border-color: gray");
                 }
             }
