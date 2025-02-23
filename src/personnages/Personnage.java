@@ -2,6 +2,8 @@ package personnages;
 
 import actions.Action;
 import actions.Deplacement;
+import actions.FinTour;
+import actions.Tir;
 
 
 public abstract class Personnage {
@@ -10,13 +12,25 @@ public abstract class Personnage {
     protected int pointsAction;
     protected Action actionActive;
     protected final Deplacement deplacement;
+    protected final Tir tir;
+    protected final FinTour finTour;
 
-    public Personnage(int x, int y, int pointsAction, Deplacement deplacement){
+    /**
+     * Constructeur d'un personnage
+     * @param x Sa coordonnée en largeur
+     * @param y Sa coordonnée en hauteur
+     * @param pointsAction Son nombre de points d'actions
+     * @param deplacement Son action de déplacement. Ne change jamais
+     * @param tir Son action de tir. Ne change jamais
+     */
+    public Personnage(int x, int y, int pointsAction, Deplacement deplacement, Tir tir){
         this.x = x;
         this.y = y;
         this.pointsAction = pointsAction;
         this.maxPointsAction = pointsAction;
         this.deplacement = deplacement;
+        this.tir = tir;
+        this.finTour = new FinTour(0, 0);
     }
 
     /**
@@ -26,6 +40,10 @@ public abstract class Personnage {
      */
     public void setActionActive(Action a){actionActive = a;}
 
+    /**
+     * Renvoie l'action active pour ce personnage
+     * @return L'action active
+     */
     public Action getActionActive() {
         return actionActive;
     }
@@ -50,16 +68,44 @@ public abstract class Personnage {
         return pointsAction;
     }
 
+    /**
+     * Retire le nombre de points d'actions au personnage. Si le personnage n'a pas assez de points d'actions,
+     * met le nombre de points d'action à 0.
+     * @param nb Le nombre de points d'actions à retirer
+     */
     public void removePointsAction(int nb) {
-        pointsAction -= nb;
+        pointsAction = Math.max(0, pointsAction - nb);
     }
 
+    /**
+     * Redonne tous les points d'actions au personnage
+     */
     public void resetPointsAction(){
         pointsAction = maxPointsAction;
     }
 
+    /**
+     * Renvoie l'action de déplacement de ce personnage
+     * @return L'action de déplacement
+     */
     public Deplacement getDeplacement() {
         return deplacement;
+    }
+
+    /**
+     * Renvoie l'action de tir de ce personnage
+     * @return L'action de tir
+     */
+    public Tir getTir() {
+        return tir;
+    }
+
+    /**
+     * Renvoie l'action de fin de tour de ce personnage
+     * @return L'action de fin de tour
+     */
+    public FinTour getFinTour() {
+        return finTour;
     }
 
 

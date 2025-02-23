@@ -1,6 +1,7 @@
 package personnages;
 
 import actions.Deplacement;
+import actions.Tir;
 import carte.Routine;
 
 public class Terroriste extends Personnage{
@@ -8,13 +9,14 @@ public class Terroriste extends Personnage{
     private Routine routine;
 
     /**
-     * Constructeur d'un terroriste. Le nombre de PA n'a aucun effet.
+     * Constructeur d'un terroriste
      * @param x Sa coordonnée en largeur
      * @param y Sa coordonnée en hauteur
-     * @param deplacement Son action de déplacement
+     * @param deplacement Son action de déplacement. Ne change jamais
+     * @param tir Son action de tir. Ne change jamais
      */
-    public Terroriste(int x, int y, int ignored, Deplacement deplacement) {
-        super(x, y, 0, deplacement);
+    public Terroriste(int x, int y, int ignored, Deplacement deplacement, Tir tir) {
+        super(x, y, 0, deplacement, tir);
     }
 
     /**

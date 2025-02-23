@@ -2,33 +2,39 @@ package vues;
 
 import carte.Case;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import observable.Environnement;
 import personnages.Operateur;
+import personnages.Terroriste;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
+public class VuePlateau extends Observer {
     @FXML
     public GridPane gridPane;
-
-    private final Environnement env;
     private Button[][] boutons;
+    private final Environnement env;
+
+    private final int tailleCase = 75;
 
     /**
      * Constructeur de la vue du plateau
      * @param env L'environnement
      */
     public VuePlateau(Environnement env){
+        super(env);
         env.ajouterObserver(this);
         this.env = env;
     }
 
     @FXML
-    public void initialize(){}
+    public void initialize(){
+        gridPane.setMinWidth(env.getLargeur() * tailleCase);
+        gridPane.setMinHeight(env.getHauteur() * tailleCase);
+    }
 
     /**
      * Initialise le plateau en créant autant de boutons que de cases dans l'environnement
@@ -72,28 +78,35 @@ public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
 
         for (int x = 0; x < env.getLargeur(); x++) {
             for (int y = 0; y < env.getHauteur(); y++) {
-                boutons[x][y].setStyle("-fx-background-color: white; -fx-border-color: gray");
+                String bgColor = "white";
+                String bdColor = "gray";
 
-                if(casesValides.contains(env.getCase(x, y))){   // Cases valides
-                    boutons[x][y].setStyle("-fx-background-color: #ffff0090; -fx-border-color: gray");
-                }
-
-                if(env.getEnnemi().getX() == x && env.getEnnemi().getY() == y){ // Terroriste
-                    boutons[x][y].setStyle("-fx-background-color: red; -fx-border-color: gray");
+                for(Terroriste ennemi : env.getEnnemis()){      // Terroristes
+                    if (ennemi.getX() == x && ennemi.getY() == y) {
+                        bgColor = "red";
+                        break;
+                    }
                 }
 
                 if(env.getCase(x, y).estObjectif){
-                    boutons[x][y].setStyle("-fx-background-color: green; -fx-border-color: gray");
+                    bgColor = "green";
                 }
 
                 if(perso.getX() == x && perso.getY() == y){     // Operateur
                     if(perso.possedeObjectif()){
-                        boutons[x][y].setStyle("-fx-background-color: cyan; -fx-border-color: gray");
+                        bgColor = "cyan";
                     }
                     else{
-                        boutons[x][y].setStyle("-fx-background-color: blue; -fx-border-color: gray");
+                        bgColor = "blue";
                     }
                 }
+
+                // TOUJOURS LAISSER CETTE LIGNE EN DERNIER
+                if(casesValides.contains(env.getCase(x, y))){   // Cases valides
+                    bdColor = "#ffff00ff";
+                }
+
+                boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor);
             }
         }
     }

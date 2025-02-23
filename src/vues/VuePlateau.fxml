@@ -2,5 +2,6 @@
 
 <?import javafx.scene.layout.*?>
 
-<GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VuePlateau">
+
+<GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="vues.VuePlateau">
 </GridPane>

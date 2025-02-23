@@ -9,5 +9,6 @@ public class Objectif extends Case{
     public Objectif(int x, int y) {
         super(x, y);
         super.estObjectif = true;
+        this.recompense = 10;
     }
 }

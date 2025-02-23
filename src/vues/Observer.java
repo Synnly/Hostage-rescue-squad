@@ -1,15 +1,13 @@
 package vues;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import observable.*;
 
-public abstract class Observer {
-    private Observable sujet;
+public abstract class Observer implements EventHandler<ActionEvent> {
+    protected final Observable sujet;
 
-    /**
-     * Définit le sujet observé par cet observateur
-     * @param sujet Le sujet
-     */
-    public void setSujet(Observable sujet){
+    public Observer(Observable sujet){
         this.sujet = sujet;
     }
 

@@ -1,12 +1,8 @@
 package observable;
 
-import actions.Deplacement;
-import carte.Case;
-import carte.CaseNormale;
-import carte.Objectif;
-import carte.Routine;
-import personnages.Operateur;
-import personnages.Terroriste;
+import actions.*;
+import carte.*;
+import personnages.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +13,7 @@ public class Environnement extends Observable{
     private final int hauteur = 10;
     private final List<Case> cases;
     private final Operateur operateur;
-    private final Terroriste ennemi;
+    private final List<Terroriste> ennemis;
 
     /**
      * Constructeur de l'environnement
@@ -28,7 +24,8 @@ public class Environnement extends Observable{
 
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, 1);
-        operateur = new Operateur(largeur/2, hauteur-1, 2, deplacementOp);
+        Tir tirOp = new Tir(1, 1);
+        operateur = new Operateur(largeur/2, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -36,8 +33,15 @@ public class Environnement extends Observable{
 
         // Création des ennemis
         Deplacement deplacementTer = new Deplacement(0, 1);
-        ennemi = new Terroriste(largeur/2, 0, 0, deplacementTer);
+        Tir tirTer = new Tir(0, 1);
+        ennemis = new ArrayList<>(1);
+
+        Terroriste ennemi = new Terroriste(largeur/2, 0, 0, deplacementTer, tirTer);
+        Terroriste ennemi2 = new Terroriste(largeur/2, 4, 0, deplacementTer, tirTer);
         ennemi.setRoutine(routine);
+        ennemi2.setRoutine(routine);
+        ennemis.add(ennemi);
+        ennemis.add(ennemi2);
     }
 
     /**
@@ -111,8 +115,8 @@ public class Environnement extends Observable{
         return operateur;
     }
 
-    public Terroriste getEnnemi(){
-        return ennemi;
+    public List<Terroriste> getEnnemis(){
+        return ennemis;
     }
 
     /**
@@ -132,9 +136,17 @@ public class Environnement extends Observable{
         cases.set(y * largeur + x, new Objectif(x, y));
     }
 
+    /**
+     * Effectue le tour des ennemis. Remet l'action choisie par les opérateurs au déplacement et leur redonne tous leurs
+     * points d'action
+     */
     public void tourEnnemi(){
-        Case posEnnemi = getCase(ennemi.getX(), ennemi.getY());
-        ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+        for (Terroriste ennemi : ennemis) {
+            Case posEnnemi = getCase(ennemi.getX(), ennemi.getY());
+            ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+        }
+        operateur.setActionActive(operateur.getDeplacement());
+        operateur.resetPointsAction();
         notifyObservers();
     }
 
@@ -153,8 +165,6 @@ public class Environnement extends Observable{
         // Tour ennemi
         if(op.getPointsAction() == 0){
             tourEnnemi();
-
-            op.resetPointsAction();
         }
         notifyObservers();
     }
@@ -168,5 +178,50 @@ public class Environnement extends Observable{
         op.setPossedeObjectif(true);
         int index = cases.indexOf(obj);
         cases.set(index, new CaseNormale(obj.x, obj.y));
+    }
+
+    /**
+     * Définit l'action de déplacement comme action active pour l'opérateur actif
+     */
+    public void setDeplacementActionActive(){
+        operateur.setActionActive(operateur.getDeplacement());
+        notifyObservers();
+    }
+
+    /**
+     * Définit l'action de tir comme action active pour l'opérateur actif
+     */
+    public void setTirActionActive(){
+        operateur.setActionActive(operateur.getTir());
+        notifyObservers();
+    }
+
+    /**
+     * Tue tous les ennemis présents dans la case. Si aucun ennemi n'est dans la case, ne fait
+     * rien.
+     * @param arr La case sur laquelle se situent les ennemis à tuer
+     */
+    public void tuerEnnemis(Case arr){
+        List<Terroriste> aTuer = new ArrayList<>();
+        for(Terroriste ennemi : ennemis) {
+            if (ennemi.getX() == arr.x && ennemi.getY() == arr.y) {
+                aTuer.add(ennemi);
+            }
+        }
+        ennemis.removeAll(aTuer);
+    }
+
+    /**
+     * Indique si au moins un ennemi est présent sur la case
+     * @param c La case
+     * @return vrai si au moins un ennemi est présent dessus, faux sinon
+     */
+    public boolean aEnnemisSurCase(Case c){
+        for(Terroriste ennemi : ennemis){
+            if(ennemi.getX() == c.x && ennemi.getY() == c.y){
+                return true;
+            }
+        }
+        return false;
     }
 }
