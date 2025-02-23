@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
 
-<GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VuePlateau">
-</GridPane>
+
+
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="vues.VuePlateau">
+
+<!-- Ajout du Menu en haut -->
+<top>
+    <MenuBar>
+        <menus>
+            <Menu text="Jeu">
+                <items>
+                    <MenuItem text="Nouvelle partie"
+                    fx:id="nouvellePartie"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Quitter"/>
+                </items>
+            </Menu>
+            <Menu text="Aide">
+                <items>
+                    <MenuItem text="Règle du jeu"/>
+                    <MenuItem text="Conseils"/>
+                </items>
+            </Menu>
+        </menus>
+    </MenuBar>
+</top>
+<center>
+    <GridPane fx:id="gridPane" xmlns:fx="http://javafx.com/fxml/1" >
+    </GridPane>
+</center>
+
+</BorderPane>
