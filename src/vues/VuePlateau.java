@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
 import observable.Environnement;
 import personnages.Operateur;
@@ -14,6 +15,8 @@ import java.util.List;
 public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
     @FXML
     public GridPane gridPane;
+    @FXML
+    private MenuItem nouvellePartie;
 
     private final Environnement env;
     private Button[][] boutons;
@@ -28,7 +31,9 @@ public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
     }
 
     @FXML
-    public void initialize(){}
+    public void initialize(){
+        nouvellePartie.setOnAction(event-> nouvellePartie());
+    }
 
     /**
      * Initialise le plateau en créant autant de boutons que de cases dans l'environnement
@@ -96,5 +101,9 @@ public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
                 }
             }
         }
+    }
+    private void nouvellePartie(){
+        this.env.nouvellePartie();
+        env.notifyObservers();
     }
 }

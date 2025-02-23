@@ -13,16 +13,19 @@ import java.util.List;
 
 public class Environnement extends Observable{
 
-    private final int largeur = 7;
-    private final int hauteur = 10;
-    private final List<Case> cases;
-    private final Operateur operateur;
-    private final Terroriste ennemi;
+    private  int largeur = 7;
+    private  int hauteur = 10;
+    private  List<Case> cases;
+    private  Operateur operateur;
+    private  Terroriste ennemi;
 
     /**
      * Constructeur de l'environnement
      */
     public Environnement(){
+        this.nouvellePartie();
+    }
+    public void nouvellePartie(){
         cases = new ArrayList<>();
         initPlateau(largeur, hauteur);
 
@@ -39,6 +42,7 @@ public class Environnement extends Observable{
         ennemi = new Terroriste(largeur/2, 0, 0, deplacementTer);
         ennemi.setRoutine(routine);
     }
+
 
     /**
      * Fonction temporaire de creation de routine
