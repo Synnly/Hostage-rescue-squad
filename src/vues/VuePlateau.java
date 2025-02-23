@@ -102,6 +102,10 @@ public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
             }
         }
     }
+
+    /**
+     * Permet de réinitialiser la partie
+     */
     private void nouvellePartie(){
         this.env.nouvellePartie();
         env.notifyObservers();

@@ -19,6 +19,7 @@ public class Environnement extends Observable{
     private  Operateur operateur;
     private  Terroriste ennemi;
 
+
     /**
      * Constructeur de l'environnement
      */
