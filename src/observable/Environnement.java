@@ -6,6 +6,7 @@ import personnages.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Environnement extends Observable{
 
@@ -14,6 +15,7 @@ public class Environnement extends Observable{
     private final List<Case> cases;
     private final Operateur operateur;
     private final List<Terroriste> ennemis;
+    private int menace = 2;
 
     /**
      * Constructeur de l'environnement
@@ -23,8 +25,8 @@ public class Environnement extends Observable{
         initPlateau(largeur, hauteur);
 
         // Creation des opérateurs
-        Deplacement deplacementOp = new Deplacement(1, 1);
-        Tir tirOp = new Tir(1, 1);
+        Deplacement deplacementOp = new Deplacement(1, 0.95);
+        Tir tirOp = new Tir(1, 0.85);
         operateur = new Operateur(largeur/2, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
@@ -141,10 +143,22 @@ public class Environnement extends Observable{
      * points d'action
      */
     public void tourEnnemi(){
-        for (Terroriste ennemi : ennemis) {
-            Case posEnnemi = getCase(ennemi.getX(), ennemi.getY());
-            ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+        List<Double> nombres = getNombresAleatoires(menace);
+        for(int i = 0; i < menace; i++) {
+            if(nombres.get(i) < 0.3){   // Tir
+                for (Terroriste ennemi : ennemis) {
+                    ennemi.getTir().effectuer(this, ennemi, getCase(operateur.getX(), operateur.getY()));
+                }
+            }
+            else {
+                for (Terroriste ennemi : ennemis) {     // Deplacement
+                    Case posEnnemi = getCase(ennemi.getX(), ennemi.getY());
+                    ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+                }
+            }
+            notifyObservers();
         }
+
         operateur.setActionActive(operateur.getDeplacement());
         operateur.resetPointsAction();
         notifyObservers();
@@ -223,5 +237,19 @@ public class Environnement extends Observable{
             }
         }
         return false;
+    }
+
+    /**
+     * Renvoie une liste de réels aléatoires entre 1 et 0
+     * @param nb Le nombre de réels à générer
+     * @return La liste des nombres
+     */
+    public List<Double> getNombresAleatoires(int nb){
+        Random random = new Random();
+        List<Double> nombres = new ArrayList<>();
+        for (int i = 0; i < nb; i++) {
+            nombres.add(random.nextDouble());
+        }
+        return nombres;
     }
 }

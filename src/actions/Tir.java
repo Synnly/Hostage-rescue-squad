@@ -30,6 +30,30 @@ public class Tir extends Action{
     public void effectuer(Environnement env, Personnage perso, Case arr) {
     }
 
+    public void effectuer(Environnement env, Terroriste perso, Case arr){
+        if (perso.getX() == arr.x){ // Ennemi et case sur la meme ligne
+            int min = Math.min(perso.getX(), arr.x);
+            int max = Math.min(perso.getX(), arr.x);
+            for(int x = min; x <= max; x++){    // Verification de la visibilité
+                if(!env.getCase(x, perso.getY()).peutVoir){
+                    return;
+                }
+            }
+            System.out.println("Vous etes mort");
+
+        }
+        else if (perso.getY() == arr.y) { // Ennemi et case sur la meme colonne
+            int min = Math.min(perso.getY(), arr.y);
+            int max = Math.min(perso.getY(), arr.y);
+            for(int y = min; y <= max; y++){    // Verification de la visibilité
+                if(!env.getCase(perso.getX(), y).peutVoir){
+                    return;
+                }
+            }
+            System.out.println("Vous etes mort");
+        }
+    }
+
     /**
      * Fait tirer l'opérateur vers la case renseignée. Si le cout pour tire dépasse le nombre de points d'actions du personnage, ne fait rien.
      * Si la cible n'est pas visible ou pas dans la ligne de mire (en croix), ne fait rien.
@@ -39,6 +63,13 @@ public class Tir extends Action{
      */
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
+        List<Double> nombres = env.getNombresAleatoires(1);
+        if(nombres.get(0) > probaSucces){
+            System.out.println("L'action a échoué");
+            perso.removePointsAction(cout);
+            return;
+        }
+
         if (perso.getX() == arr.x){ // Perso et case sur la meme ligne
             int min = Math.min(perso.getX(), arr.x);
             int max = Math.min(perso.getX(), arr.x);
