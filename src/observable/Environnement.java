@@ -25,7 +25,7 @@ public class Environnement extends Observable{
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, 1);
         Tir tirOp = new Tir(1, 1);
-        operateur = new Operateur(largeur/2, hauteur-1, 2, deplacementOp, tirOp);
+        operateur = new Operateur(this, largeur/2, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -36,8 +36,8 @@ public class Environnement extends Observable{
         Tir tirTer = new Tir(0, 1);
         ennemis = new ArrayList<>(1);
 
-        Terroriste ennemi = new Terroriste(largeur/2, 0, 0, deplacementTer, tirTer);
-        Terroriste ennemi2 = new Terroriste(largeur/2, 4, 0, deplacementTer, tirTer);
+        Terroriste ennemi = new Terroriste(this, largeur/2, 0, 0, deplacementTer, tirTer);
+        Terroriste ennemi2 = new Terroriste(this, largeur/2, 4, 0, deplacementTer, tirTer);
         ennemi.setRoutine(routine);
         ennemi2.setRoutine(routine);
         ennemis.add(ennemi);

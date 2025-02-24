@@ -3,6 +3,7 @@ package personnages;
 import actions.Deplacement;
 import actions.Tir;
 import carte.Routine;
+import observable.Environnement;
 
 public class Terroriste extends Personnage{
 
@@ -10,13 +11,14 @@ public class Terroriste extends Personnage{
 
     /**
      * Constructeur d'un terroriste
+     * @param env L'environnement
      * @param x Sa coordonnée en largeur
      * @param y Sa coordonnée en hauteur
      * @param deplacement Son action de déplacement. Ne change jamais
      * @param tir Son action de tir. Ne change jamais
      */
-    public Terroriste(int x, int y, int ignored, Deplacement deplacement, Tir tir) {
-        super(x, y, 0, deplacement, tir);
+    public Terroriste(Environnement env, int x, int y, int ignored, Deplacement deplacement, Tir tir) {
+        super(env, x, y, 0, deplacement, tir);
     }
 
     /**

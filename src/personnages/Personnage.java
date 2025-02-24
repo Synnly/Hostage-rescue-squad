@@ -4,6 +4,7 @@ import actions.Action;
 import actions.Deplacement;
 import actions.FinTour;
 import actions.Tir;
+import observable.Environnement;
 
 
 public abstract class Personnage {
@@ -17,13 +18,22 @@ public abstract class Personnage {
 
     /**
      * Constructeur d'un personnage
+     * @param env L'environnement
      * @param x Sa coordonnée en largeur
      * @param y Sa coordonnée en hauteur
      * @param pointsAction Son nombre de points d'actions
      * @param deplacement Son action de déplacement. Ne change jamais
      * @param tir Son action de tir. Ne change jamais
+     * @throws IllegalArgumentException Si x (resp y) négatif ou supérieur à env.largeur (resp env.hauteur) ou si pointsAction négatif
+     * @throws NullPointerException Si deplacement ou tir null
      */
-    public Personnage(int x, int y, int pointsAction, Deplacement deplacement, Tir tir){
+    public Personnage(Environnement env, int x, int y, int pointsAction, Deplacement deplacement, Tir tir){
+        if(x < 0 || x >= env.getLargeur()){throw new IllegalArgumentException("Coordonnée x invalide (0 <= x < " + env.getLargeur() + ", mais x = " + x + ")");}
+        if(y < 0 || y >= env.getHauteur()){throw new IllegalArgumentException("Coordonnée x invalide (0 <= y < " + env.getHauteur() + ", mais y = " + y + ")");}
+        if(pointsAction < 0){throw new IllegalArgumentException("Nombre de points d'action invalide (PA <= 0 mais PA = " + pointsAction + ")");}
+        if(deplacement == null){throw new NullPointerException("Action déplacement null");}
+        if(tir == null){throw new NullPointerException("Action tir null");}
+
         this.x = x;
         this.y = y;
         this.pointsAction = pointsAction;
