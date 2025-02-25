@@ -18,12 +18,11 @@ public class Terroriste extends Personnage{
     /**
      * Constructeur d'un terroriste
      *
-     * @param env         L'environnement
-     * @param x           Sa coordonnée en largeur
-     * @param y           Sa coordonnée en hauteur
-     * @param ignored     the ignored
-     * @param deplacement Son action de déplacement. Ne change jamais
-     * @param tir         Son action de tir. Ne change jamais
+     * @param env          L'environnement
+     * @param x            Sa coordonnée en largeur.&nbsp;Doit être 0 &le;&nbsp;<code>x</code> &lt;&nbsp;<code>env.largeur</code>
+     * @param y            Sa coordonnée en hauteur.&nbsp;Doit être 0 &le;&nbsp;<code>y</code> &lt;&nbsp;<code>env.hauteur</code>
+     * @param deplacement  Son action de déplacement.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
+     * @param tir          Son action de tir.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      */
     public Terroriste(Environnement env, int x, int y, int ignored, Deplacement deplacement, Tir tir) {
         super(env, x, y, 0, deplacement, tir);

@@ -159,12 +159,12 @@ public class Environnement extends Observable{
         cases.clear();
         for (int y = 0; y < hauteur; y++) {
             for (int x = 0; x < largeur; x++) {
-                cases.add(new CaseNormale(x, y));
+                cases.add(new CaseNormale(this, x, y));
             }
         }
         int x = (largeur/2);
         int y = (hauteur/4);
-        cases.set(y * largeur + x, new Objectif(x, y));
+        cases.set(y * largeur + x, new Objectif(this, x, y));
     }
 
     /**
@@ -206,8 +206,8 @@ public class Environnement extends Observable{
     /**
      * Fait récupérer l'objectif à l'opérateur.&nbsp;L'objectif devient une case normale après l'appel de cette fonction
      *
-     * @param obj L'objectif récupéré
-     * @param op  L'opérateur récupérant l'objectif.&nbsp;Doit être sur la même case que l'objectif
+     * @param obj L'objectif récupéré.&nbsp;Ne peut être <code>null</code>.
+     * @param op  L'opérateur récupérant l'objectif.&nbsp;Ne peut être <code>null</code>.&nbsp;Doit être sur la même case que l'objectif.
      */
     public void recupereObjectif(Objectif obj, Operateur op){
         assert obj != null : "L'objectif ne peut être null";
@@ -217,7 +217,7 @@ public class Environnement extends Observable{
 
         op.setPossedeObjectif(true);
         int index = cases.indexOf(obj);
-        cases.set(index, new CaseNormale(obj.x, obj.y));
+        cases.set(index, new CaseNormale(this, obj.x, obj.y));
     }
 
     /**
@@ -249,7 +249,7 @@ public class Environnement extends Observable{
      * Tue tous les ennemis présents sur la case <code>arr</code>.&nbsp;Si aucun ennemi n'est dans la case, ne fait
      * rien.
      *
-     * @param arr La case sur laquelle se situent les ennemis à tuer.&nbsp;Ne peut être null
+     * @param arr La case sur laquelle se situent les ennemis à tuer.&nbsp;Ne peut être <code>null</code>
      */
     public void tuerEnnemis(Case arr){
         assert arr != null : "La case ne peut être null";
@@ -265,8 +265,8 @@ public class Environnement extends Observable{
     /**
      * Indique si au moins un ennemi est présent sur la case <code>c</code>
      *
-     * @param c La case.&nbsp;Ne peut être null
-     * @return Vrai si au moins un ennemi est présent dessus, faux sinon
+     * @param c La case.&nbsp;Ne peut être <code>null</code>
+     * @return <code>true</code> si au moins un ennemi est présent dessus, <code>false</code> sinon
      */
     public boolean aEnnemisSurCase(Case c){
         assert c != null : "La case ne peut être null";

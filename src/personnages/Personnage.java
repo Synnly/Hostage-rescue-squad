@@ -59,11 +59,11 @@ public abstract class Personnage {
      * Constructeur d'un personnage
      *
      * @param env          L'environnement
-     * @param x            Sa coordonnée en largeur. Doit être 0 &le;&nbsp;<code>x</code> &lt;&nbsp;<code>env.largeur</code>
-     * @param y            Sa coordonnée en hauteur. Doit être 0 &le;&nbsp;<code>y</code> &lt;&nbsp;<code>env.hauteur</code>
-     * @param pointsAction Son nombre de points d'actions. Doit être &ge;&nbsp;0
-     * @param deplacement  Son action de déplacement. Ne change jamais. Doit être non null
-     * @param tir          Son action de tir. Ne change jamais.  Doit être non null
+     * @param x            Sa coordonnée en largeur.&nbsp;Doit être 0 &le;&nbsp;<code>x</code> &lt;&nbsp;<code>env.largeur</code>
+     * @param y            Sa coordonnée en hauteur.&nbsp;Doit être 0 &le;&nbsp;<code>y</code> &lt;&nbsp;<code>env.hauteur</code>
+     * @param pointsAction Son nombre de points d'actions.&nbsp;Doit être &ge;&nbsp;0.
+     * @param deplacement  Son action de déplacement.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
+     * @param tir          Son action de tir.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      */
     public Personnage(Environnement env, int x, int y, int pointsAction, Deplacement deplacement, Tir tir){
         assert x >= 0 && x < env.getLargeur() : "x doit être 0 <= x < " + env.getLargeur() + "(x = " + x + ")";

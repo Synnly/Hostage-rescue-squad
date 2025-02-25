@@ -17,9 +17,10 @@ public class Routine {
     /**
      * Constructeur d'une routine
      *
-     * @param c La case initiale
+     * @param c La case initiale.&nbsp;Ne peut être <code>null</code>.
      */
     public Routine(Case c){
+        assert c != null : "La case ne peut être null";
         cases = new ArrayList<>();
         cases.add(c);
     }
@@ -27,20 +28,27 @@ public class Routine {
     /**
      * Insère une case dans la liste de cases de cette routine
      *
-     * @param pred La case précédant la nouvelle case
-     * @param c    La nouvelle case
+     * @param pred La case précédant la nouvelle case.&nbsp;Ne peut être <code>null</code>.&nbsp;Doit être déjà présent dans la
+     *             routine.
+     * @param c    La nouvelle case.&nbsp;Ne peut être <code>null</code>.&nbsp;Ne peut déjà exister dans la routine.
      */
     public void ajouterCase(Case pred, Case c){
+        assert pred != null : "La case précédente ne peut être null";
+        assert c != null : "La case à ajouter ne peut être null";
+        assert !cases.contains(c) : "La case c existe déjà dans la routine";
+        assert cases.contains(pred) : "La case pred n'existe pas dans la routine";
         cases.add(cases.indexOf(pred) + 1, c);
     }
 
     /**
      * Renvoie la case suivante dans cette routine
      *
-     * @param c La case
+     * @param c La case. Ne peut être <code>null</code>.&nbsp;Doit déjà exister dans la routine
      * @return La prochaine case
      */
     public Case prochaineCase(Case c){
+        assert c != null : "La case précédente ne peut être null";
+        assert cases.contains(c) : "La case c n'existe pas dans la routine";
         return cases.get((cases.indexOf(c) + 1) % cases.size());
     }
 
