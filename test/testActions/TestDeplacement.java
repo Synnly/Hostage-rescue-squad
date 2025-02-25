@@ -14,6 +14,7 @@ import personnages.Terroriste;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.easymock.EasyMock.replay;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.easymock.EasyMock.*;
 public class TestDeplacement {
@@ -61,27 +62,40 @@ public class TestDeplacement {
         expect(op.getX()).andReturn(10);
         expect(op.getY()).andReturn(10);
         expect(op.getPointsAction()).andStubReturn(100);
+        op.setX(anyInt());
+        expectLastCall();
+        op.setY(anyInt());
+        expectLastCall();
+        op.removePointsAction(anyInt());
+        expectLastCall();
         replay(op);
-
 
         expect(arr.getX()).andReturn(11);
         expect(arr.getY()).andReturn(10);
         expect(arr.estObjectif()).andReturn(false);
+
+        expect(arr.getX()).andStubReturn(11);
+        expect(arr.getY()).andStubReturn(10);
+        expect(arr.estObjectif()).andStubReturn(false);
         replay(arr);
 
 
 
         expect(ennemi1.getX()).andReturn(3);
         expect(ennemi1.getY()).andReturn(3);
-
+        replay(ennemi1);
         expect(ennemi2.getX()).andReturn(5);
         expect(ennemi2.getY()).andReturn(5);
+        replay(ennemi2);
+
 
         List<Terroriste> ennemis = new ArrayList<>();
         ennemis.add(ennemi1);
         ennemis.add(ennemi2);
 
         expect(envMock.getEnnemis()).andReturn(ennemis);
+
+
 
         replay(envMock);
         deplacement.effectuer(envMock,op,arr);
