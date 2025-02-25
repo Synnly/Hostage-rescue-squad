@@ -71,11 +71,6 @@ public class Tir extends Action{
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
         List<Double> nombres = env.getNombresAleatoires(1);
-        if(nombres.get(0) > probaSucces){
-            System.out.println("L'action a échoué");
-            perso.removePointsAction(cout);
-            return;
-        }
 
         if (perso.getX() == arr.x){ // Perso et case sur la meme ligne
             int min = Math.min(perso.getX(), arr.x);
@@ -86,8 +81,12 @@ public class Tir extends Action{
                 }
             }
             if(env.aEnnemisSurCase(arr)){
-                env.tuerEnnemis(arr);
                 perso.removePointsAction(cout);
+                if(nombres.get(0) > probaSucces){
+                    System.out.println("L'action a échoué");
+                    return;
+                }
+                env.tuerEnnemis(arr);
                 return;
             }
         }
@@ -100,8 +99,12 @@ public class Tir extends Action{
                 }
             }
             if(env.aEnnemisSurCase(arr)){
-                env.tuerEnnemis(arr);
                 perso.removePointsAction(cout);
+                if(nombres.get(0) > probaSucces){
+                    System.out.println("L'action a échoué");
+                    return;
+                }
+                env.tuerEnnemis(arr);
                 return;
             }
         }
