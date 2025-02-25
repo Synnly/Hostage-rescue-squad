@@ -29,14 +29,14 @@ public class Deplacement extends Action{
      */
     @Override
     public void effectuer(Environnement env, Personnage perso, Case arr) {
-        int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
+        int distance = Math.abs(perso.getX() - arr.getX()) + Math.abs(perso.getY() - arr.getY());
 
         if (distance * cout > perso.getPointsAction()){
             System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
         }
         else {
-            perso.setX(arr.x);
-            perso.setY(arr.y);
+            perso.setX(arr.getX());
+            perso.setY(arr.getY());
             perso.removePointsAction(distance * cout);
         }
     }
@@ -49,7 +49,7 @@ public class Deplacement extends Action{
      */
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
-        int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
+        int distance = Math.abs(perso.getX() - arr.getX()) + Math.abs(perso.getY() - arr.getY());
 
         if (distance * cout > perso.getPointsAction()){
             System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
@@ -57,7 +57,7 @@ public class Deplacement extends Action{
         else {
             boolean ennemiPresent = false;
             for (Terroriste ennemi: env.getEnnemis()) {
-                if(ennemi.getX() == arr.x && ennemi.getY() == arr.y){
+                if(ennemi.getX() == arr.getX() && ennemi.getY() == arr.getY()){
                     ennemiPresent = true;
                     break;
                 }
@@ -67,8 +67,8 @@ public class Deplacement extends Action{
             }
             else {
 
-                perso.setX(arr.x);
-                perso.setY(arr.y);
+                perso.setX(arr.getX());
+                perso.setY(arr.getY());
                 perso.removePointsAction(distance * cout);
                 if(arr.estObjectif()){
                     env.recupereObjectif((Objectif) arr, perso);

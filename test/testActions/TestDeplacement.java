@@ -70,9 +70,6 @@ public class TestDeplacement {
         expectLastCall();
         replay(op);
 
-        //expect(arr.getX()).andReturn(11);
-        //expect(arr.getY()).andReturn(10);
-        //expect(arr.estObjectif()).andReturn(false);
 
         expect(arr.getX()).andStubReturn(11);
         expect(arr.getY()).andStubReturn(10);
@@ -99,16 +96,63 @@ public class TestDeplacement {
 
         replay(envMock);
         deplacement.effectuer(envMock,op,arr);
+        assertEquals(deplacement.cout , 1);
+        assertEquals(deplacement.probaSucces , 0.9);
 
         verify(envMock,op,arr);
 
 
 
+    }
+
+    @Test
+    @DisplayName("Test si un opérateur atteint sa case d'arrivé sachant qu'il a assez de points d'action et aucun obstacle")
+    public void testCaseOperateurApresDeplacement(){
+        Deplacement deplacement = new Deplacement(1,0.9);
+
+
+        expect(arr.getX()).andStubReturn(11);
+        expect(arr.getY()).andStubReturn(10);
+        expect(arr.estObjectif()).andStubReturn(false);
+        replay(arr);
 
 
 
+        expect(ennemi1.getX()).andReturn(3);
+        expect(ennemi1.getY()).andReturn(3);
+        replay(ennemi1);
+        expect(ennemi2.getX()).andReturn(5);
+        expect(ennemi2.getY()).andReturn(5);
+        replay(ennemi2);
 
 
-        //assertEquals();
+        List<Terroriste> ennemis = new ArrayList<>();
+        ennemis.add(ennemi1);
+        ennemis.add(ennemi2);
+
+        expect(envMock.getEnnemis()).andStubReturn(ennemis);
+
+        assertEquals(deplacement.cout , 1);
+        assertEquals(deplacement.probaSucces , 0.9);
+
+
+        expect(envMock.getLargeur()).andStubReturn(20);
+        expect(envMock.getHauteur()).andStubReturn(20);
+        replay(envMock);
+        Operateur operateur = new Operateur(envMock,10, 10, 4, deplMock, tirMock);
+
+
+
+        deplacement.effectuer(envMock,operateur,arr);
+
+
+        assertEquals(operateur.getX() , arr.getX());
+        assertEquals(operateur.getY() , arr.getY());
+
+
+
+        verify(envMock,arr);
+
+
     }
 }
