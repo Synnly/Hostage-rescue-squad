@@ -71,9 +71,6 @@ public class Deplacement extends Action{
                     System.out.println("L'action a échoué");
                 }
                 else {
-                    if(arr.estObjectif){
-                        env.recupereObjectif((Objectif) arr, perso);
-                    }
                     perso.setX(arr.x);
                     perso.setY(arr.y);
                     if(arr.estObjectif()){

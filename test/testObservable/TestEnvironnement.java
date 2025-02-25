@@ -589,4 +589,39 @@ public class TestEnvironnement {
     public void testAEnnemiSurCaseNullLanceUneErreur(){
         assertThrows(AssertionError.class, () -> env.aEnnemisSurCase(null));
     }
+
+
+    // ==================== getNombresAleatoires ====================
+    @Test
+    @DisplayName("Generer plusieurs nombres aleatoires fonctionne")
+    public void testGenererPlusieursNombresAleatoiresFonctionne(){
+        List<Double> nombres = env.getNombresAleatoires(5);
+
+        assertEquals(5, nombres.size());
+        for(int i = 0; i < 5; i++){
+            for(int j = i+1; j < 5; j++){
+                assertNotEquals(nombres.get(i), nombres.get(j));
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Generer un nombre aleatoire fonctionne")
+    public void testGenererUnNombreAleatoireFonctionne(){
+        List<Double> nombres = env.getNombresAleatoires(1);
+
+        assertEquals(1, nombres.size());
+    }
+
+    @Test
+    @DisplayName("Generer zero nombres aleatoires lance une erreur")
+    public void testGenererZeroNombresAleatoiresLanceUneErreur(){
+        assertThrows(AssertionError.class, () -> env.getNombresAleatoires(0));
+    }
+
+    @Test
+    @DisplayName("Generer -1 nombres aleatoires lance une erreur")
+    public void testGenererMoinsUnNombresAleatoiresLanceUneErreur(){
+        assertThrows(AssertionError.class, () -> env.getNombresAleatoires(-1));
+    }
 }

@@ -39,7 +39,7 @@ public class Environnement extends Observable{
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, 0.95);
         Tir tirOp = new Tir(1, 0.85);
-        operateur = new Operateur(largeur/2, hauteur-1, 2, deplacementOp, tirOp);
+        operateur = new Operateur(this, largeur/2, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -294,10 +294,11 @@ public class Environnement extends Observable{
 
     /**
      * Renvoie une liste de réels aléatoires entre 1 et 0
-     * @param nb Le nombre de réels à générer
+     * @param nb Le nombre de réels à générer. Doit être &gt;&nbsp;0
      * @return La liste des nombres
      */
     public List<Double> getNombresAleatoires(int nb){
+        assert nb > 0 : "Le nombre de réels à générer doit être strictement positif";
         Random random = new Random();
         List<Double> nombres = new ArrayList<>();
         for (int i = 0; i < nb; i++) {
