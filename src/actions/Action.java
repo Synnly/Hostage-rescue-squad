@@ -7,13 +7,25 @@ import personnages.Personnage;
 
 import java.util.List;
 
+/**
+ * Type abstrait représentant une action pouvant être effectuée par le joueur comme un déplacement ou un tir.
+ */
 public abstract class Action {
+    /**
+     * Le cout en points d'actions de cette action.&nbsp;Ce cout est déduit des points d'actions du personnage lorsqu'il
+     * effectue cette action.
+     */
     public final int cout;
+    /**
+     * La probabilité de succès de l'action.&nbsp;Une probabilité de 1 représente une action n'échouant jamais et 0 au
+     * contraire une action échouant toujours
+     */
     public final double probaSucces;
 
     /**
      * Constructeur d'une action type
-     * @param cout Le cout de cette action
+     *
+     * @param cout        Le cout de cette action
      * @param probaSucces La probabilité de succès allant de 1 à 0
      */
     public Action(int cout, double probaSucces){
@@ -22,35 +34,41 @@ public abstract class Action {
     }
 
     /**
-     * Effectue l'action associée
-     * @param env L'environnement
-     * @param perso Le personnage effectuant l'action
-     * @param arr La case visée par l'action
+     * Effectue cette action au personnage.
+     *
+     * @param env   L'environnement
+     * @param perso Le personnage effectuant cette action
+     * @param arr   La case visée par cette action
      */
     public abstract void effectuer(Environnement env, Personnage perso, Case arr);
 
     /**
-     * Effectue l'action associée à un opérateur
-     * @param env L'environnement
-     * @param perso L'opérateur effectuant l'action
-     * @param arr La case visée par l'action
+     * Effectue cette action à l'opérateur
+     *
+     * @param env   L'environnement
+     * @param perso L'opérateur effectuant cette action
+     * @param arr   La case visée par cette action
      */
     public abstract void effectuer(Environnement env, Operateur perso, Case arr);
 
     /**
-     * Renvoie la liste des toutes les cases valides pour effectuer l'action
-     * @param env L'environnement
-     * @param perso Le personnage effectuant l'action
-     * @return La liste des cases
+     * Renvoie la liste des toutes les cases valides pour effectuer l'action.&nbsp;Si aucune case n'est valide, renvoie une
+     * liste vide.
+     *
+     * @param env   L'environnement
+     * @param perso Le personnage effectuant cette action
+     * @return La liste des cases valides
      */
     public abstract List<Case> getCasesValides(Environnement env, Personnage perso);
 
 
     /**
-     * Renvoie la liste des toutes les cases valides pour effectuer l'action spécifiques aux opérateurs
-     * @param env L'environnement
-     * @param perso L'opérateur effectuant l'action
-     * @return La liste des cases
+     * Renvoie la liste des toutes les cases valides pour effectuer l'action, spécifiquement en rapport aux opérateurs
+     * &nbsp;Si aucune case n'est valide, renvoie une liste vide.
+     *
+     * @param env   L'environnement
+     * @param perso L'opérateur effectuant cette action
+     * @return La liste des cases valides
      */
     public abstract List<Case> getCasesValides(Environnement env, Operateur perso);
 }

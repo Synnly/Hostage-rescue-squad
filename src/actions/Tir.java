@@ -9,9 +9,13 @@ import personnages.Terroriste;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Action de tir représentant un personnage tirant sur un autre.
+ */
 public class Tir extends Action{
     /**
      * Constructeur d'une action de tir
+     *
      * @param cout        Le cout de cette action
      * @param probaSucces La probabilité de succès allant de 1 à 0
      */
@@ -20,10 +24,12 @@ public class Tir extends Action{
     }
 
     /**
-     * Fait tirer le personnage vers la case renseignée. Si le cout pour tirer dépasse le nombre de points d'actions du personnage, ne fait rien.
-     * Si la cible n'est pas visible ou pas dans la ligne de mire (en croix), ne fait rien. Si la cible est un opérateur, termine la partie.
+     * Fait tirer le personnage vers la case renseignée.&nbsp;Si le cout pour tirer dépasse le nombre de points d'actions du
+     * personnage, ne fait rien.&nbsp;Si la cible n'est pas visible ou pas dans la ligne de mire (en croix), ne fait rien.
+     * &nbsp;Si la cible est un opérateur, termine la partie.
+     *
      * @param env L'environnement
-     * @param perso Le personnage effectuant le déplacement
+     * @param perso Le personnage effectuant le tir
      * @param arr La destination
      */
     @Override
@@ -31,10 +37,11 @@ public class Tir extends Action{
     }
 
     /**
-     * Fait tirer l'opérateur vers la case renseignée. Si le cout pour tire dépasse le nombre de points d'actions du personnage, ne fait rien.
-     * Si la cible n'est pas visible ou pas dans la ligne de mire (en croix), ne fait rien.
+     * Fait tirer l'opérateur vers la case renseignée.&nbsp;Si le cout pour tirer dépasse le nombre de points d'actions de
+     * l'opérateur, ne fait rien.&nbsp;Si la cible n'est pas visible ou pas dans la ligne de mire (en croix), ne fait rien.
+     *
      * @param env L'environnement
-     * @param perso L'opérateur effectuant le déplacement
+     * @param perso L'opérateur effectuant le tir
      * @param arr La destination
      */
     @Override
@@ -71,11 +78,11 @@ public class Tir extends Action{
     }
 
     /**
-     * Renvoie la liste des cibles valides pour tirer depuis le personnage. Les cibles valides sont celles
-     * dans la croix autour du personnage (jusqu'aux bords du plateau) qui ne sont pas camouflés par du
-     * terrain.
+     * Renvoie la liste des cibles valides pour tirer depuis le personnage.&nbsp;Les cibles valides sont celles dans la croix
+     * autour du personnage (jusqu'aux bords du plateau) qui ne sont pas camouflés par du terrain.
+     *
      * @param env L'environnement
-     * @param perso Le personnage effectuant l'action
+     * @param perso Le personnage effectuant le tir
      * @return La liste des cibles valides
      */
     @Override
@@ -84,11 +91,11 @@ public class Tir extends Action{
     }
 
     /**
-     * Renvoie la liste des cibles valides pour tirer depuis l'opérateur. Les cibles valides sont celles
-     * dans la croix autour du personnage (jusqu'aux bords du plateau) qui ne sont pas camouflés par du
-     * terrain.
+     * Renvoie la liste des cibles valides pour tirer depuis l'opérateur.&nbsp;Les cibles valides sont celles dans la croix
+     * autour de l'opérateur (jusqu'aux bords du plateau) qui ne sont pas camouflés par du terrain.
+     *
      * @param env L'environnement
-     * @param perso L'opérateur effectuant l'action
+     * @param perso L'opérateur effectuant le tir
      * @return La liste des cibles valides
      */
     @Override

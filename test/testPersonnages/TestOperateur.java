@@ -78,7 +78,7 @@ public class TestOperateur {
         expect(envMock.getLargeur()).andReturn(10);
         replay(envMock);
 
-        assertThrows(IllegalArgumentException.class, () -> new Operateur(envMock,-1, 0, 5, deplMock, tirMock));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,-1, 0, 5, deplMock, tirMock));
 
         verify(envMock);
     }
@@ -89,7 +89,7 @@ public class TestOperateur {
         expect(envMock.getLargeur()).andReturn(10).times(2);
         replay(envMock);
 
-        assertThrows(IllegalArgumentException.class, () -> new Operateur(envMock,11, 0, 5, deplMock, tirMock));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,11, 0, 5, deplMock, tirMock));
 
         verify(envMock);
     }
@@ -100,7 +100,7 @@ public class TestOperateur {
         expect(envMock.getLargeur()).andReturn(10).times(2);
         replay(envMock);
 
-        assertThrows(IllegalArgumentException.class, () -> new Operateur(envMock,10, 0, 5, deplMock, tirMock));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,10, 0, 5, deplMock, tirMock));
 
         verify(envMock);
     }
@@ -148,7 +148,7 @@ public class TestOperateur {
         expect(envMock.getHauteur()).andReturn(10);
         replay(envMock);
 
-        assertThrows(IllegalArgumentException.class, () -> new Operateur(envMock,0, -1, 5, deplMock, tirMock));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,0, -1, 5, deplMock, tirMock));
 
         verify(envMock);
     }
@@ -160,7 +160,7 @@ public class TestOperateur {
         expect(envMock.getHauteur()).andReturn(10).times(2);
         replay(envMock);
 
-        assertThrows(IllegalArgumentException.class, () -> new Operateur(envMock,0, 10, 5, deplMock, tirMock));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,0, 10, 5, deplMock, tirMock));
 
         verify(envMock);
     }
@@ -172,7 +172,7 @@ public class TestOperateur {
         expect(envMock.getHauteur()).andReturn(10).times(2);
         replay(envMock);
 
-        assertThrows(IllegalArgumentException.class, () -> new Operateur(envMock,0, 11, 5, deplMock, tirMock));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,0, 11, 5, deplMock, tirMock));
 
         verify(envMock);
     }
@@ -220,7 +220,7 @@ public class TestOperateur {
         expect(envMock.getHauteur()).andReturn(10);
         replay(envMock);
 
-        assertThrows(IllegalArgumentException.class, () -> new Operateur(envMock,0, 0, -1, deplMock, tirMock));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,0, 0, -1, deplMock, tirMock));
 
         verify(envMock);
     }
@@ -232,7 +232,7 @@ public class TestOperateur {
         expect(envMock.getHauteur()).andReturn(10);
         replay(envMock);
 
-        assertThrows(NullPointerException.class, () -> new Operateur(envMock,0, 0, 5, null, tirMock));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,0, 0, 5, null, tirMock));
 
         verify(envMock);
     }
@@ -244,7 +244,7 @@ public class TestOperateur {
         expect(envMock.getHauteur()).andReturn(10);
         replay(envMock);
 
-        assertThrows(NullPointerException.class, () -> new Operateur(envMock,0, 0, 5, deplMock, null));
+        assertThrows(AssertionError.class, () -> new Operateur(envMock,0, 0, 5, deplMock, null));
 
         verify(envMock);
     }
