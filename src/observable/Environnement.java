@@ -26,10 +26,17 @@ public class Environnement extends Observable{
      *
      * @param largeur Le nombre de cases en largeur du plateau. Doit être &gt;&nbsp;0
      * @param hauteur Le nombre de cases en hauteur du plateau. Doit être &gt;&nbsp;0
+     * @param probaSuccesDeplacement La probabilité de succès des déplacements de l'opérateur. Doit être
+     *                               0 &le;&nbsp;proba &le;&nbsp;1
+     * @param probaSuccesTir La probabilité de succès des tirs de l'opérateur. Doit être
+     *                       0 &le;&nbsp;proba &le;&nbsp;1
      */
-    public Environnement(int largeur, int hauteur){
+    public Environnement(int largeur, int hauteur, double probaSuccesDeplacement, double probaSuccesTir){
         assert largeur > 0 : "La largeur doit être > 0 (largeur =" + largeur + ")";
         assert hauteur > 0 : "La hauteur doit être > 0 (hauteur =" + hauteur + ")";
+        assert probaSuccesDeplacement <= 1 && probaSuccesDeplacement >= 0 : "La probabilité de succès des déplacements de l'opérateur doit être 0 <= proba <= 1";
+        assert probaSuccesTir <= 1 && probaSuccesTir >= 0 : "La probabilité de succès des tirs de l'opérateur doit être 0 <= proba <= 1";
+
         this.largeur = largeur;
         this.hauteur = hauteur;
 
@@ -37,8 +44,8 @@ public class Environnement extends Observable{
         initPlateau(largeur, hauteur);
 
         // Creation des opérateurs
-        Deplacement deplacementOp = new Deplacement(1, 0.95);
-        Tir tirOp = new Tir(1, 0.85);
+        Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
+        Tir tirOp = new Tir(1, probaSuccesTir);
         operateur = new Operateur(this, largeur/2, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
