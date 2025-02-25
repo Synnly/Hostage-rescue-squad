@@ -45,4 +45,14 @@ public abstract class Case {
         this.recompense = 0.;
         this.estObjectif = false;
     }
+    public int getX(){
+        return x;
+    }
+    public int getY(){
+        return y;
+    }
+
+    public boolean estObjectif() {
+        return estObjectif;
+    }
 }

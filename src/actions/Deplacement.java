@@ -10,15 +10,11 @@ import personnages.Terroriste;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Action de déplacement représentant le déplacement du personnage vers une case
- */
 public class Deplacement extends Action{
 
     /**
      * Constructeur d'une action déplacement
-     *
-     * @param cout        Le cout de cette action
+     * @param cout Le cout de cette action
      * @param probaSucces La probabilité de succès allant de 1 à 0
      */
     public Deplacement(int cout, double probaSucces) {
@@ -26,11 +22,9 @@ public class Deplacement extends Action{
     }
 
     /**
-     * Déplace le personnage vers la case renseignée.&nbsp;Si le cout pour aller vers la case <code>arr</code> dépasse le
-     * nombre de points d'actions du personnage, ne fait rien.
-     *
+     * Déplace le personnage vers la case renseignée. Si le cout pour aller vers la case dépasse le nombre de points d'actions du personnage, ne fait rien.
      * @param env L'environnement
-     * @param perso Le personnage effectuant le déplacement
+     * @param perso L'opérateur effectuant le déplacement
      * @param arr La destination
      */
     @Override
@@ -48,11 +42,9 @@ public class Deplacement extends Action{
     }
 
     /**
-     * Déplace l'opérateur vers la case renseignée.&nbsp;Si le cout pour aller vers la case <code>arr</code> dépasse le
-     * nombre de points d'actions de l'opérateur, ne fait rien.
-     *
+     * Déplace l'opérateur vers la case renseignée. Si le cout pour aller vers la case dépasse le nombre de points d'actions de l'opérateur, ne fait rien.
      * @param env L'environnement
-     * @param perso L'opérateur effectuant le déplacement
+     * @param perso Le personnage effectuant le déplacement
      * @param arr La destination
      */
     @Override
@@ -78,7 +70,7 @@ public class Deplacement extends Action{
                 perso.setX(arr.x);
                 perso.setY(arr.y);
                 perso.removePointsAction(distance * cout);
-                if(arr.estObjectif){
+                if(arr.estObjectif()){
                     env.recupereObjectif((Objectif) arr, perso);
                 }
             }
@@ -93,7 +85,7 @@ public class Deplacement extends Action{
         int persoPA = perso.getPointsAction();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.x) + Math.abs(persoY - c.y) <= persoPA){
+            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= persoPA){
                 cases.add(c);
             }
         }
@@ -101,11 +93,9 @@ public class Deplacement extends Action{
     }
 
     /**
-     * Renvoie la liste des toutes les cases valides pour déplacer l'opérateur.&nbsp;Si aucune case n'est valide, renvoie une
-     * liste vide.
-     *
+     * Renvoie la liste des toutes les cases valides pour déplacer l'opérateur
      * @param env L'environnement
-     * @param perso L'opérateur se déplaçant
+     * @param perso L'opérateur se déplacant
      * @return La liste des cases
      */
     @Override
@@ -117,10 +107,10 @@ public class Deplacement extends Action{
         List<Terroriste> ennemis = env.getEnnemis();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.x) + Math.abs(persoY - c.y) <= persoPA){ // Distance suffisamment proche
+            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= persoPA){ // Distance suffisamment proche
                 boolean aEnnemi = false;
                 for(Terroriste ennemi : ennemis){   // Ennemi présent sur la case ?
-                    if(ennemi.getX() == c.x && ennemi.getY() == c.y){
+                    if(ennemi.getX() == c.getX() && ennemi.getY() == c.getY()){
                         aEnnemi = true;
                         break;
                     }
