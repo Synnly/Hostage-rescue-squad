@@ -7,9 +7,15 @@ import personnages.Personnage;
 
 import java.util.List;
 
+/**
+ * Action de fin de tour représentant un personnage finissant son tour et donnant la main au prochain
+ */
 public class FinTour extends Action{
     /**
      * Constructeur d'une action de fin de tour
+     *
+     * @param ignoredInt    Ignoré
+     * @param ignoredDouble Ignoré
      */
     public FinTour(int ignoredInt, double ignoredDouble) {
         super(ignoredInt, ignoredDouble);

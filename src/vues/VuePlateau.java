@@ -12,16 +12,32 @@ import personnages.Terroriste;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * La vue du plateau.&nbsp;Cette vue contient les cases du plateau, les opérateurs, terroristes et objectifs.
+ */
 public class VuePlateau extends Observer {
+    /**
+     * Le conteneur du plateau
+     */
     @FXML
     public GridPane gridPane;
+    /**
+     * La liste des boutons représentant chacun une case du plateau
+     */
     private Button[][] boutons;
+    /**
+     * L'environnement observé
+     */
     private final Environnement env;
 
+    /**
+     * La taille en largeur et hauteur de chaque case
+     */
     private final int tailleCase = 75;
 
     /**
      * Constructeur de la vue du plateau
+     *
      * @param env L'environnement
      */
     public VuePlateau(Environnement env){
@@ -30,6 +46,9 @@ public class VuePlateau extends Observer {
         this.env = env;
     }
 
+    /**
+     * Initialise les eléments graphiques
+     */
     @FXML
     public void initialize(){
         gridPane.setMinWidth(env.getLargeur() * tailleCase);
@@ -38,6 +57,7 @@ public class VuePlateau extends Observer {
 
     /**
      * Initialise le plateau en créant autant de boutons que de cases dans l'environnement
+     *
      * @param largeur Le nombre de cases en largeur
      * @param hauteur Le nombre de cases en hauteur
      */

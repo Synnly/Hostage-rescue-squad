@@ -29,14 +29,14 @@ public class Deplacement extends Action{
      */
     @Override
     public void effectuer(Environnement env, Personnage perso, Case arr) {
-        int distance = Math.abs(perso.getX() - arr.getX()) + Math.abs(perso.getY() - arr.getY());
+        int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
 
         if (distance * cout > perso.getPointsAction()){
             System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
         }
         else {
-            perso.setX(arr.getX());
-            perso.setY(arr.getY());
+            perso.setX(arr.x);
+            perso.setY(arr.y);
             perso.removePointsAction(distance * cout);
         }
     }
@@ -57,7 +57,7 @@ public class Deplacement extends Action{
         else {
             boolean ennemiPresent = false;
             for (Terroriste ennemi: env.getEnnemis()) {
-                if(ennemi.getX() == arr.getX() && ennemi.getY() == arr.getY()){
+                if(ennemi.getX() == arr.x && ennemi.getY() == arr.y){
                     ennemiPresent = true;
                     break;
                 }
@@ -66,12 +66,13 @@ public class Deplacement extends Action{
                 System.out.println("Un ennemi est présent sur cette case");
             }
             else {
+
+                perso.setX(arr.x);
+                perso.setY(arr.y);
+                perso.removePointsAction(distance * cout);
                 if(arr.estObjectif()){
                     env.recupereObjectif((Objectif) arr, perso);
                 }
-                perso.setX(arr.getX());
-                perso.setY(arr.getY());
-                perso.removePointsAction(distance * cout);
             }
         }
     }
