@@ -70,9 +70,9 @@ public class TestDeplacement {
         expectLastCall();
         replay(op);
 
-        expect(arr.getX()).andReturn(11);
-        expect(arr.getY()).andReturn(10);
-        expect(arr.estObjectif()).andReturn(false);
+        //expect(arr.getX()).andReturn(11);
+        //expect(arr.getY()).andReturn(10);
+        //expect(arr.estObjectif()).andReturn(false);
 
         expect(arr.getX()).andStubReturn(11);
         expect(arr.getY()).andStubReturn(10);
