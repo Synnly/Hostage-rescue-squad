@@ -76,8 +76,12 @@ public class Deplacement extends Action{
                     }
                     perso.setX(arr.x);
                     perso.setY(arr.y);
+                    if(arr.estObjectif()){
+                        env.recupereObjectif((Objectif) arr, perso);
+                    }
                 }
                 perso.removePointsAction(distance * cout);
+
             }
         }
     }
@@ -90,7 +94,7 @@ public class Deplacement extends Action{
         int persoPA = perso.getPointsAction();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.x) + Math.abs(persoY - c.y) <= persoPA){
+            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= persoPA){
                 cases.add(c);
             }
         }
@@ -112,10 +116,10 @@ public class Deplacement extends Action{
         List<Terroriste> ennemis = env.getEnnemis();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.x) + Math.abs(persoY - c.y) <= persoPA){ // Distance suffisamment proche
+            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= persoPA){ // Distance suffisamment proche
                 boolean aEnnemi = false;
                 for(Terroriste ennemi : ennemis){   // Ennemi présent sur la case ?
-                    if(ennemi.getX() == c.x && ennemi.getY() == c.y){
+                    if(ennemi.getX() == c.getX() && ennemi.getY() == c.getY()){
                         aEnnemi = true;
                         break;
                     }

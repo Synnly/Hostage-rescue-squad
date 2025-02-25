@@ -2,25 +2,32 @@ package personnages;
 
 import actions.Deplacement;
 import actions.Tir;
+import observable.Environnement;
 
+/**
+ * Personnage représentant les personnages controlés par le joueur
+ */
 public class Operateur extends Personnage{
     private boolean possedeObjectif = false;
 
     /**
      * Constructeur d'un opérateur
-     * @param x Sa coordonnée en largeur
-     * @param y Sa coordonnée en hauteur
-     * @param pointsAction Son nombre de points d'actions
-     * @param deplacement Son action de déplacement. Ne change jamais
-     * @param tir Son action de tir. Ne change jamais
+     *
+     * @param env          L'environnement
+     * @param x            Sa coordonnée en largeur.&nbsp;Doit être 0 &le;&nbsp;<code>x</code> &lt;&nbsp;<code>env.largeur</code>
+     * @param y            Sa coordonnée en hauteur.&nbsp;Doit être 0 &le;&nbsp;<code>y</code> &lt;&nbsp;<code>env.hauteur</code>
+     * @param pointsAction Son nombre de points d'actions.&nbsp;Doit être &ge;&nbsp;0.
+     * @param deplacement  Son action de déplacement.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
+     * @param tir          Son action de tir.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      */
-    public Operateur(int x, int y, int pointsAction, Deplacement deplacement, Tir tir) {
-        super(x, y, pointsAction, deplacement, tir);
+    public Operateur(Environnement env, int x, int y, int pointsAction, Deplacement deplacement, Tir tir) {
+        super(env, x, y, pointsAction, deplacement, tir);
     }
 
     /**
      * Indique si cet opérateur a un objectif
-     * @return vrai s'il a l'objectif, faux sinon
+     *
+     * @return <code>true</code> s'il a l'objectif, <code>false</code> sinon
      */
     public boolean possedeObjectif() {
         return possedeObjectif;
@@ -28,7 +35,8 @@ public class Operateur extends Personnage{
 
     /**
      * Définit si l'opérateur possède l'objectif
-     * @param possedeObjectif vrai s'il a l'objectif, faux sinon
+     *
+     * @param possedeObjectif <code>true</code> s'il a l'objectif, <code>false</code> sinon
      */
     public void setPossedeObjectif(boolean possedeObjectif) {
         this.possedeObjectif = possedeObjectif;
