@@ -18,6 +18,7 @@ import java.util.List;
 import static org.easymock.EasyMock.replay;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.easymock.EasyMock.*;
+
 public class TestDeplacement {
 
     private Environnement envMock = null;

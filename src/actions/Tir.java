@@ -46,11 +46,11 @@ public class Tir extends Action{
      */
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
-        if (perso.getX() == arr.x){ // Perso et case sur la meme ligne
-            int min = Math.min(perso.getX(), arr.x);
-            int max = Math.min(perso.getX(), arr.x);
+        if (perso.getX() == arr.getX()){ // Perso et case sur la meme ligne
+            int min = Math.min(perso.getX(), arr.getX());
+            int max = Math.min(perso.getX(), arr.getX());
             for(int x = min; x <= max; x++){
-                if(!env.getCase(x, perso.getY()).peutVoir){
+                if(!env.getCase(x, perso.getY()).peutVoir()){
                     return;
                 }
             }
@@ -64,7 +64,7 @@ public class Tir extends Action{
             int min = Math.min(perso.getY(), arr.y);
             int max = Math.min(perso.getY(), arr.y);
             for(int y = min; y <= max; y++){
-                if(!env.getCase(perso.getX(), y).peutVoir){
+                if(!env.getCase(perso.getX(), y).peutVoir()){
                     return;
                 }
             }

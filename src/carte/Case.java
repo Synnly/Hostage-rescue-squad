@@ -51,6 +51,9 @@ public abstract class Case {
     public int getY(){
         return y;
     }
+    public boolean peutVoir(){
+        return this.peutVoir;
+    }
 
     public boolean estObjectif() {
         return estObjectif;
