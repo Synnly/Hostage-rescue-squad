@@ -254,6 +254,10 @@ public class Environnement extends Observable{
         op.setPossedeObjectif(true);
         int index = cases.indexOf(obj);
         cases.set(index, new CaseNormale(this, obj.x, obj.y));
+
+        for(int i = 0; i < largeur; i++){
+            getCase(i, hauteur-1).recompense = 10;
+        }
     }
 
     /**

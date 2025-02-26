@@ -33,7 +33,7 @@ public class VuePlateau extends Observer {
     /**
      * La taille en largeur et hauteur de chaque case
      */
-    private final int tailleCase = 75;
+    private final int tailleCase = 90;
 
     /**
      * Constructeur de la vue du plateau
@@ -70,6 +70,7 @@ public class VuePlateau extends Observer {
                 button.setMinWidth(gridPane.getWidth()/largeur);
                 button.setMinHeight((gridPane.getHeight() - 40)/hauteur);
                 button.setStyle("-fx-background-color: #ffffff; -fx-border-color: gray");
+                button.setText(x + ","+ y + "\n"+env.getCase(x, y).recompense);
                 button.setOnAction(this);
                 gridPane.add(button, x, y);
                 boutons[x][y] = button;
@@ -131,6 +132,7 @@ public class VuePlateau extends Observer {
                 }
 
                 boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor);
+                boutons[x][y].setText(x + ","+ y + "\n"+env.getCase(x, y).recompense);
             }
         }
     }

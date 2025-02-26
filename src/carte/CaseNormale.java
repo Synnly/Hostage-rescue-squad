@@ -17,6 +17,5 @@ public class CaseNormale extends Case{
      */
     public CaseNormale(Environnement env, int x, int y){
         super(env, x, y, true);
-        this.recompense = -0.01;
     }
 }

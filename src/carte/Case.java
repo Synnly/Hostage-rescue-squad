@@ -43,7 +43,7 @@ public abstract class Case {
         this.x = x;
         this.y = y;
         this.peutVoir = peutVoir;
-        this.recompense = 0.;
+        this.recompense = -0.1;
         this.estObjectif = false;
     }
     public int getX(){
