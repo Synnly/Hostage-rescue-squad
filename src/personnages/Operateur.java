@@ -24,6 +24,11 @@ public class Operateur extends Personnage{
         super(env, x, y, pointsAction, deplacement, tir);
     }
 
+    public Operateur(Operateur op){
+        super(op);
+        this.possedeObjectif = op.possedeObjectif;
+    }
+
     /**
      * Indique si cet opérateur a un objectif
      *

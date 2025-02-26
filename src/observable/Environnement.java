@@ -2,6 +2,8 @@ package observable;
 
 import actions.*;
 import carte.*;
+import pdm.ActionPredite;
+import pdm.IterationValeur;
 import personnages.*;
 
 import java.util.ArrayList;
@@ -232,6 +234,7 @@ public class Environnement extends Observable{
         // Tour ennemi
         if(op.getPointsAction() == 0){
             tourEnnemi();
+            printPrediction();
         }
         notifyObservers();
     }
@@ -275,6 +278,7 @@ public class Environnement extends Observable{
     public void setFinTourActionActive(){
         operateur.setActionActive(operateur.getDeplacement());
         tourEnnemi();
+        printPrediction();
         notifyObservers();
     }
 
@@ -324,5 +328,26 @@ public class Environnement extends Observable{
             nombres.add(random.nextDouble());
         }
         return nombres;
+    }
+
+    public int getMenace() {
+        return menace;
+    }
+
+    public void printPrediction(){
+        Operateur op = getOperateurActif();
+
+        System.out.println("Predicting ...");
+        ActionPredite[][] actionPredites= IterationValeur.predict(this);
+        IterationValeur.printActions(actionPredites);
+
+        ActionPredite actionAFaire = actionPredites[op.getX()][op.getY()];
+
+        if(actionAFaire.action() instanceof FinTour){   // Martine pardon
+            System.out.println("L'ia vous conseille de " + actionAFaire.action());
+        }
+        else{
+            System.out.println("L'ia vous conseille de " + actionAFaire.action() + " vers la case x : " + actionAFaire.cible().x + " y : " + actionAFaire.cible().y);
+        }
     }
 }

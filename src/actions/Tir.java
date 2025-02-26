@@ -8,6 +8,7 @@ import personnages.Terroriste;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Action de tir représentant un personnage tirant sur un autre.
@@ -167,5 +168,27 @@ public class Tir extends Action{
             }
         }
         return casesValides;
+    }
+
+
+    @Override
+    public double qvaleur(Environnement env, Operateur op, int xDepart, int yDepart, Case arr, double[][] utilites, double gamma) {
+        Operateur opClone = new Operateur(op);
+        opClone.setX(xDepart); opClone.setY(yDepart);
+
+        List<Case> casesValides = getCasesValides(env, opClone);
+
+        // Qval initialisé à cas ou le tir echoue
+        double qval = (1-probaSucces) * (env.getCase(xDepart, yDepart).recompense + gamma * utilites[xDepart][yDepart]);
+
+        if(casesValides.contains(arr) && opClone.getPointsAction() >= cout){
+            qval += probaSucces * (1 + gamma * utilites[arr.x][arr.y]);
+        }
+        return qval;
+    }
+
+    @Override
+    public String toString() {
+        return "Tir";
     }
 }

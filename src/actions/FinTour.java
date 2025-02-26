@@ -6,6 +6,7 @@ import personnages.Operateur;
 import personnages.Personnage;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Action de fin de tour représentant un personnage finissant son tour et donnant la main au prochain
@@ -45,5 +46,15 @@ public class FinTour extends Action{
     @Override
     public List<Case> getCasesValides(Environnement env, Operateur perso) {
         return List.of();
+    }
+
+    @Override
+    public double qvaleur(Environnement ignoredEnv, Operateur ignoredOp, int xDepart, int yDepart, Case ignoredArr, double[][] utilites, double gamma) {
+        return -0.01 + gamma * utilites[xDepart][yDepart];
+    }
+
+    @Override
+    public String toString() {
+        return "Fin";
     }
 }

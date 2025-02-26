@@ -9,6 +9,7 @@ import personnages.Terroriste;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Deplacement extends Action{
 
@@ -130,4 +131,25 @@ public class Deplacement extends Action{
     }
 
 
+    @Override
+    public double qvaleur(Environnement env, Operateur op, int xDepart, int yDepart, Case arr, double[][] utilites, double gamma) {
+
+        Operateur opClone = new Operateur(op);
+        opClone.setX(xDepart); opClone.setY(yDepart);
+
+        List<Case> casesValides = getCasesValides(env, opClone);
+
+        // Qval initialisé à cas ou le deplacement echoue
+        double qval = (1-probaSucces) * (env.getCase(xDepart, yDepart).recompense + gamma * utilites[xDepart][yDepart]);
+
+        if(casesValides.contains(arr) && opClone.getPointsAction() >= cout){
+            qval += probaSucces * (arr.recompense + gamma * utilites[arr.x][arr.y]);
+        }
+        return qval;
+    }
+
+    @Override
+    public String toString() {
+        return "Dep";
+    }
 }

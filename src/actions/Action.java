@@ -6,6 +6,7 @@ import personnages.Operateur;
 import personnages.Personnage;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Type abstrait représentant une action pouvant être effectuée par le joueur comme un déplacement ou un tir.
@@ -71,4 +72,6 @@ public abstract class Action {
      * @return La liste des cases valides
      */
     public abstract List<Case> getCasesValides(Environnement env, Operateur perso);
+
+    public abstract double qvaleur(Environnement env, Operateur op, int xDepart, int yDepart, Case arr, double[][] utilites, double gamma);
 }

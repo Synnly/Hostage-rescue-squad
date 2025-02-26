@@ -81,6 +81,17 @@ public abstract class Personnage {
         this.finTour = new FinTour(0, 0);
     }
 
+    public Personnage(Personnage perso){
+        this.x = perso.x;
+        this.y = perso.y;
+        this.pointsAction = perso.pointsAction;
+        this.maxPointsAction = perso.pointsAction;
+        this.deplacement = perso.deplacement;
+        this.tir = perso.tir;
+        this.finTour = new FinTour(0, 0);
+        this.actionActive = perso.actionActive;
+    }
+
     /**
      * Définit quelle est l'action active pour ce personnage.&nbsp;Cette action sera celle exécutée quand le joueur
      * choisira la case cible (valide)
@@ -186,6 +197,5 @@ public abstract class Personnage {
     public FinTour getFinTour() {
         return finTour;
     }
-
 
 }
