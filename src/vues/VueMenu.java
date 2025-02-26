@@ -24,7 +24,6 @@ public class VueMenu {
      *  Réinitialise la partie
      */
     private void nouvellePartie(){
-        this.env.nouvellePartie();
-        env.notifyObservers();
+        this.env.finDePartie();
     }
 }

@@ -63,6 +63,14 @@ public class Environnement extends Observable{
     }
 
     /**
+     * Relance une partie
+     */
+    public void finDePartie(){
+        this.nouvellePartie();
+        this.notifyObservers();
+    }
+
+    /**
      * Fonction temporaire de creation de routine
      *
      * @return La routine

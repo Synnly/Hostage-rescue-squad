@@ -33,11 +33,19 @@ public class Deplacement extends Action{
 
         if (distance * cout > perso.getPointsAction()){
             System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
+            env.finDePartie();
         }
         else {
             perso.setX(arr.getX());
             perso.setY(arr.getY());
             perso.removePointsAction(distance * cout);
+
+            Operateur operateur = env.getOperateurActif();
+            if(operateur.getX() == arr.getX() && operateur.getY() == arr.getY()){
+                System.out.println("Un ennemi est présent sur cette case");
+                //Possible de throw une erreur à catch pour afficher l'alerte de défaite
+                env.finDePartie();
+            }
         }
     }
 
@@ -64,6 +72,8 @@ public class Deplacement extends Action{
             }
             if (ennemiPresent) {
                 System.out.println("Un ennemi est présent sur cette case");
+                //Possible de throw une erreur à catch pour afficher l'alerte de défaite
+                env.finDePartie();
             }
             else {
 
