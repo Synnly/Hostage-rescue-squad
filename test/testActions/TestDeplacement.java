@@ -12,6 +12,7 @@ import personnages.Operateur;
 import personnages.Terroriste;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.easymock.EasyMock.replay;
@@ -231,5 +232,73 @@ public class TestDeplacement {
 
         verify(envMock,arr);
     }
+    @Test
+    @DisplayName("Test le nombre de case valide ici :  0")
+    public void testEnnemiCaseValideNull(){
 
+        expect(envMock.getLargeur()).andStubReturn(20);
+        expect(envMock.getHauteur()).andStubReturn(20);
+        expect(envMock.getPlateau()).andStubReturn(new ArrayList<>());
+
+        replay(envMock);
+
+        Deplacement deplacement = new Deplacement(0,0.9);
+        Terroriste ennemi = new Terroriste(envMock,10, 10, 4, deplacement, tirMock);
+
+        List<Case> cases = deplacement.getCasesValides(envMock,ennemi);
+
+        assertEquals(cases.size() , 0);
+
+        verify(envMock);
+    }
+
+
+    @Test
+    @DisplayName("Test le nombre de cases valides ici :  3 (5 cases : 1 ennemi présent, 1 case trop éloignée, 3 valides)")
+    public void testOperateurCasesValideNonNull(){
+        Environnement envMockPourCase = createMock(Environnement.class);
+        expect(envMockPourCase.getLargeur()).andStubReturn(20);
+        expect(envMockPourCase.getHauteur()).andStubReturn(20);
+        replay(envMockPourCase);
+
+        Case case1 = new CaseNormale(envMockPourCase,11,11);
+        Case case2 = new CaseNormale(envMockPourCase,9,10);
+        Case case3 = new CaseNormale(envMockPourCase,10,11);
+        Case case4 = new CaseNormale(envMockPourCase,10,9);
+        Case case5 = new CaseNormale(envMockPourCase,14,13);
+
+
+        ArrayList<Case>  cases = new ArrayList<>(Arrays.asList(case1,case2,case3,case4,case5));
+
+        expect(envMock.getLargeur()).andStubReturn(20);
+        expect(envMock.getHauteur()).andStubReturn(20);
+        expect(envMock.getPlateau()).andStubReturn(cases);
+
+
+        expect(ennemi1.getX()).andStubReturn(3);
+        expect(ennemi1.getY()).andStubReturn(3);
+        replay(ennemi1);
+        expect(ennemi2.getX()).andStubReturn(10);
+        expect(ennemi2.getY()).andStubReturn(9);
+        replay(ennemi2);
+
+
+        List<Terroriste> ennemis = new ArrayList<>();
+        ennemis.add(ennemi1);
+        ennemis.add(ennemi2);
+
+        expect(envMock.getEnnemis()).andReturn(ennemis);
+
+        replay(envMock);
+
+
+        Deplacement deplacement = new Deplacement(1,0.9);
+        Operateur operateur = new Operateur(envMock,10, 10, 4, deplacement, tirMock);
+
+        List<Case> casesValides = deplacement.getCasesValides(envMock,operateur);
+
+        assertEquals(casesValides.size() , 3);
+
+        verify(envMock,envMockPourCase);
+    }
 }
