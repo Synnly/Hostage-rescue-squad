@@ -1,20 +1,29 @@
 package vues;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import observable.*;
 
-public abstract class Observer {
-    private Observable sujet;
+/**
+ * Type abstrait représentant un observateur d'un sujet observable.
+ */
+public abstract class Observer implements EventHandler<ActionEvent> {
+    /**
+     * Le sujet observé
+     */
+    protected final Observable sujet;
 
     /**
-     * Définit le sujet observé par cet observateur
+     * Constructeur d'un observateur type
+     *
      * @param sujet Le sujet
      */
-    public void setSujet(Observable sujet){
+    public Observer(Observable sujet){
         this.sujet = sujet;
     }
 
     /**
-     * Met à jour les élements graphiques de la vue
+     * Met à jour les élements graphiques de la vue associée à cet observateur
      */
     public abstract void update();
 }

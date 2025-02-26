@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VueActions">
+   <children>
+      <Button fx:id="boutonDepl" mnemonicParsing="false" text="Déplacer" onAction="#handle"/>
+      <Button fx:id="boutonTir" mnemonicParsing="false" text="Tirer" onAction="#handle" HBox.hgrow="NEVER" />
+      <Button fx:id="boutonFinTour" mnemonicParsing="false" text="Fin de tour" onAction="#handle" HBox.hgrow="NEVER" />
+   </children>
+</HBox>

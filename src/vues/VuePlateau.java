@@ -2,41 +2,62 @@ package vues;
 
 import carte.Case;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
 import observable.Environnement;
 import personnages.Operateur;
+import personnages.Terroriste;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
+/**
+ * La vue du plateau.&nbsp;Cette vue contient les cases du plateau, les opérateurs, terroristes et objectifs.
+ */
+public class VuePlateau extends Observer {
+    /**
+     * Le conteneur du plateau
+     */
     @FXML
     public GridPane gridPane;
-    @FXML
-    private MenuItem nouvellePartie;
-
-    private final Environnement env;
+    /**
+     * La liste des boutons représentant chacun une case du plateau
+     */
     private Button[][] boutons;
+    /**
+     * L'environnement observé
+     */
+    private final Environnement env;
+
+    /**
+     * La taille en largeur et hauteur de chaque case
+     */
+    private final int tailleCase = 75;
 
     /**
      * Constructeur de la vue du plateau
+     *
      * @param env L'environnement
      */
     public VuePlateau(Environnement env){
+        super(env);
         env.ajouterObserver(this);
         this.env = env;
     }
 
+    /**
+     * Initialise les eléments graphiques
+     */
     @FXML
     public void initialize(){
-        nouvellePartie.setOnAction(event-> nouvellePartie());
+        gridPane.setMinWidth(env.getLargeur() * tailleCase);
+        gridPane.setMinHeight(env.getHauteur() * tailleCase);
     }
 
     /**
      * Initialise le plateau en créant autant de boutons que de cases dans l'environnement
+     *
      * @param largeur Le nombre de cases en largeur
      * @param hauteur Le nombre de cases en hauteur
      */
@@ -77,37 +98,36 @@ public class VuePlateau extends Observer implements EventHandler<ActionEvent> {
 
         for (int x = 0; x < env.getLargeur(); x++) {
             for (int y = 0; y < env.getHauteur(); y++) {
-                boutons[x][y].setStyle("-fx-background-color: white; -fx-border-color: gray");
+                String bgColor = "white";
+                String bdColor = "gray";
 
-                if(casesValides.contains(env.getCase(x, y))){   // Cases valides
-                    boutons[x][y].setStyle("-fx-background-color: #ffff0090; -fx-border-color: gray");
-                }
-
-                if(env.getEnnemi().getX() == x && env.getEnnemi().getY() == y){ // Terroriste
-                    boutons[x][y].setStyle("-fx-background-color: red; -fx-border-color: gray");
+                for(Terroriste ennemi : env.getEnnemis()){      // Terroristes
+                    if (ennemi.getX() == x && ennemi.getY() == y) {
+                        bgColor = "red";
+                        break;
+                    }
                 }
 
                 if(env.getCase(x, y).estObjectif){
-                    boutons[x][y].setStyle("-fx-background-color: green; -fx-border-color: gray");
+                    bgColor = "green";
                 }
 
                 if(perso.getX() == x && perso.getY() == y){     // Operateur
                     if(perso.possedeObjectif()){
-                        boutons[x][y].setStyle("-fx-background-color: cyan; -fx-border-color: gray");
+                        bgColor = "cyan";
                     }
                     else{
-                        boutons[x][y].setStyle("-fx-background-color: blue; -fx-border-color: gray");
+                        bgColor = "blue";
                     }
                 }
+
+                // TOUJOURS LAISSER CETTE LIGNE EN DERNIER
+                if(casesValides.contains(env.getCase(x, y))){   // Cases valides
+                    bdColor = "#ffff00ff";
+                }
+
+                boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor);
             }
         }
-    }
-
-    /**
-     * Permet de réinitialiser la partie
-     */
-    private void nouvellePartie(){
-        this.env.nouvellePartie();
-        env.notifyObservers();
     }
 }

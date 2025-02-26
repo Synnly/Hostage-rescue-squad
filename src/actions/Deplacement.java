@@ -5,6 +5,7 @@ import carte.Objectif;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Personnage;
+import personnages.Terroriste;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,19 +24,19 @@ public class Deplacement extends Action{
     /**
      * Déplace le personnage vers la case renseignée. Si le cout pour aller vers la case dépasse le nombre de points d'actions du personnage, ne fait rien.
      * @param env L'environnement
-     * @param perso Le personnage effectuant le déplacement
+     * @param perso L'opérateur effectuant le déplacement
      * @param arr La destination
      */
     @Override
     public void effectuer(Environnement env, Personnage perso, Case arr) {
-        int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
+        int distance = Math.abs(perso.getX() - arr.getX()) + Math.abs(perso.getY() - arr.getY());
 
         if (distance * cout > perso.getPointsAction()){
             System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
         }
         else {
-            perso.setX(arr.x);
-            perso.setY(arr.y);
+            perso.setX(arr.getX());
+            perso.setY(arr.getY());
             perso.removePointsAction(distance * cout);
         }
     }
@@ -48,21 +49,31 @@ public class Deplacement extends Action{
      */
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
-        int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
+        int distance = Math.abs(perso.getX() - arr.getX()) + Math.abs(perso.getY() - arr.getY());
 
         if (distance * cout > perso.getPointsAction()){
             System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
         }
-        else if (env.getEnnemi().getX() == arr.x && env.getEnnemi().getY() == arr.y) {
-            System.out.println("Un ennemi est présent sur cette case");
-        }
         else {
-            if(arr.estObjectif){
-                env.recupereObjectif((Objectif) arr, perso);
+            boolean ennemiPresent = false;
+            for (Terroriste ennemi: env.getEnnemis()) {
+                if(ennemi.getX() == arr.getX() && ennemi.getY() == arr.getY()){
+                    ennemiPresent = true;
+                    break;
+                }
             }
-            perso.setX(arr.x);
-            perso.setY(arr.y);
-            perso.removePointsAction(distance * cout);
+            if (ennemiPresent) {
+                System.out.println("Un ennemi est présent sur cette case");
+            }
+            else {
+
+                perso.setX(arr.getX());
+                perso.setY(arr.getY());
+                perso.removePointsAction(distance * cout);
+                if(arr.estObjectif()){
+                    env.recupereObjectif((Objectif) arr, perso);
+                }
+            }
         }
     }
 
@@ -74,7 +85,7 @@ public class Deplacement extends Action{
         int persoPA = perso.getPointsAction();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.x) + Math.abs(persoY - c.y) <= persoPA){
+            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= persoPA){
                 cases.add(c);
             }
         }
@@ -93,10 +104,20 @@ public class Deplacement extends Action{
         int persoX = perso.getX();
         int persoY = perso.getY();
         int persoPA = perso.getPointsAction();
+        List<Terroriste> ennemis = env.getEnnemis();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.x) + Math.abs(persoY - c.y) <= persoPA && !(env.getEnnemi().getX() == c.x && env.getEnnemi().getY() == c.y)){
-                cases.add(c);
+            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= persoPA){ // Distance suffisamment proche
+                boolean aEnnemi = false;
+                for(Terroriste ennemi : ennemis){   // Ennemi présent sur la case ?
+                    if(ennemi.getX() == c.getX() && ennemi.getY() == c.getY()){
+                        aEnnemi = true;
+                        break;
+                    }
+                }
+                if (!aEnnemi) {
+                    cases.add(c);
+                }
             }
         }
         return cases;
