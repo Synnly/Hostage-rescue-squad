@@ -43,6 +43,18 @@ public class Environnement extends Observable{
         cases = new ArrayList<>();
         initPlateau(largeur, hauteur);
 
+        // Couvertures (temporaire)
+        for (int i = 0; i < largeur; i++){
+            cases.set((hauteur-3) * largeur + i, new Couverture(this, i, hauteur-3));
+        }
+        cases.set(1, new Couverture(this, 1, 0));
+        cases.set(4, new Couverture(this, 4, 0));
+        cases.set(9, new Couverture(this, 2, 1));
+        cases.set(19, new Couverture(this, 5, 2));
+        cases.set(31, new Couverture(this, 3, 4));
+        cases.set(29, new Couverture(this, 1, 4));
+        cases.set(32, new Couverture(this, 4, 4));
+
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
         Tir tirOp = new Tir(1, probaSuccesTir);
@@ -57,7 +69,7 @@ public class Environnement extends Observable{
         Tir tirTer = new Tir(0, 1);
         ennemis = new ArrayList<>(1);
 
-        Terroriste ennemi = new Terroriste(this, largeur/2, 0, 0, deplacementTer, tirTer);
+        Terroriste ennemi = new Terroriste(this, largeur/2+1, 0, 0, deplacementTer, tirTer);
         Terroriste ennemi2 = new Terroriste(this, largeur/2, 4, 0, deplacementTer, tirTer);
         ennemi.setRoutine(routine);
         ennemi2.setRoutine(routine);

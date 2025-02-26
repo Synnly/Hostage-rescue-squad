@@ -101,6 +101,10 @@ public class VuePlateau extends Observer {
                 String bgColor = "white";
                 String bdColor = "gray";
 
+                if(!env.getCase(x, y).peutVoir){    // Couverture
+                    bgColor = "lightgray";
+                }
+
                 for(Terroriste ennemi : env.getEnnemis()){      // Terroristes
                     if (ennemi.getX() == x && ennemi.getY() == y) {
                         bgColor = "red";
@@ -108,7 +112,7 @@ public class VuePlateau extends Observer {
                     }
                 }
 
-                if(env.getCase(x, y).estObjectif){
+                if(env.getCase(x, y).estObjectif){      // Objectif
                     bgColor = "green";
                 }
 

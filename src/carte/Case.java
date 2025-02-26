@@ -35,13 +35,14 @@ public abstract class Case {
      * @param env L'environnement
      * @param x Sa coordonnée en largeur. Doit être 0 &le;&nbsp;<code>x</code> &lt;&nbsp;<code>env.largeur</code>
      * @param y Sa coordonnée en hauteur. Doit être 0 &le;&nbsp;<code>y</code> &lt;&nbsp;<code>env.hauteur</code>
+     * @param peutVoir Indique si les personnages peuvent voir dans et à travers cette case
      */
-    public Case(Environnement env, int x, int y){
+    public Case(Environnement env, int x, int y, boolean peutVoir){
         assert x >= 0 && x < env.getLargeur() : "x doit être 0 <= x < " + env.getLargeur() + "(x = " + x + ")";
         assert y >= 0 && y < env.getHauteur() : "y doit être 0 <= y < " + env.getHauteur() + "(y = " + y + ")";
         this.x = x;
         this.y = y;
-        this.peutVoir = true;
+        this.peutVoir = peutVoir;
         this.recompense = 0.;
         this.estObjectif = false;
     }
