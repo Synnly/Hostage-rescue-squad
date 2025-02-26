@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<MenuBar  xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="vues.VueMenu">
+    <menus>
+        <Menu text="Jeu">
+            <items>
+                <MenuItem text="Nouvelle partie"  fx:id="nouvellePartie"/>
+                <SeparatorMenuItem/>
+                <MenuItem text="Quitter"/>
+            </items>
+        </Menu>
+        <Menu text="Aide">
+            <items>
+                <MenuItem text="Règle du jeu"/>
+                <MenuItem text="Conseils"/>
+            </items>
+        </Menu>
+    </menus>
+</MenuBar>
+
+

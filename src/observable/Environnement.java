@@ -12,11 +12,11 @@ import java.util.List;
  */
 public class Environnement extends Observable{
 
-    private final int largeur;
-    private final int hauteur;
-    private final List<Case> cases;
-    private final Operateur operateur;
-    private final List<Terroriste> ennemis;
+    private  int largeur;
+    private  int hauteur;
+    private  List<Case> cases;
+    private  Operateur operateur;
+    private  List<Terroriste> ennemis;
 
     /**
      * Constructeur de l'environnement. Initialise le plateau de taille <code>largeur</code> x <code>hauteur</code>,
@@ -30,7 +30,13 @@ public class Environnement extends Observable{
         assert hauteur > 0 : "La hauteur doit être > 0 (hauteur =" + hauteur + ")";
         this.largeur = largeur;
         this.hauteur = hauteur;
+        nouvellePartie();
+    }
 
+    /**
+     * Réinitialise les paramètres de départ d'une nouc-velle partie
+     */
+    public void nouvellePartie(){
         cases = new ArrayList<>();
         initPlateau(largeur, hauteur);
 

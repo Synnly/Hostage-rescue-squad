@@ -4,6 +4,7 @@ import carte.Case;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuBar;
 import javafx.scene.layout.GridPane;
 import observable.Environnement;
 import personnages.Operateur;

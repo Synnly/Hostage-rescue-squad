@@ -3,6 +3,10 @@
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="vueGlobaleVbox" fillWidth="false" minHeight="100.0" minWidth="100.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+    <fx:include fx:id="vueMenu" source="VueMenu.fxml" />
     <fx:include fx:id="vuePlateau" source="VuePlateau.fxml" />
     <fx:include fx:id="vueActions" source="VueActions.fxml" />
 </VBox>
+
+
+

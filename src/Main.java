@@ -22,12 +22,15 @@ public class Main extends Application {
         // Chargement vues
         VuePlateau vuePlateau = new VuePlateau(env);
         VueActions vueActions = new VueActions(env);
+        VueMenu vueMenu = new VueMenu(env);
         VueGlobale vueGlobale = new VueGlobale(env);
+
 
         loader.setControllerFactory(iC->{
             if (iC.equals(VueGlobale.class)) return vueGlobale;
             else if (iC.equals(VuePlateau.class)) return vuePlateau;
             else if (iC.equals(VueActions.class)) return vueActions;
+            else if (iC.equals(VueMenu.class)) return vueMenu;
             else return null;
         });
 
