@@ -27,6 +27,8 @@ public class TestDeplacement {
 
     private Terroriste ennemi1 = null;
     private Terroriste ennemi2 = null;
+    private Terroriste ennemi = null;
+
 
 
 
@@ -38,6 +40,7 @@ public class TestDeplacement {
         arr = createMock(CaseNormale.class);
         ennemi1 = createMock(Terroriste.class);
         ennemi2 = createMock(Terroriste.class);
+        ennemi = createMock(Terroriste.class);
         op = createMock(Operateur.class);
 
 
@@ -52,6 +55,7 @@ public class TestDeplacement {
         arr = null;
         ennemi1 = null;
         ennemi2 = null;
+        ennemi = null;
     }
     // ==================== Constructeur ====================
     @Test
@@ -105,8 +109,9 @@ public class TestDeplacement {
 
     }
 
+    // ==================== effectuer ====================
     @Test
-    @DisplayName("Test si un opérateur atteint sa case d'arrivé sachant qu'il a assez de points d'action et aucun obstacle")
+    @DisplayName("Test si un opérateur atteint sa case d'arrivée sachant qu'il a assez de points d'action et aucun obstacle")
     public void testCaseOperateurApresDeplacement(){
 
         expect(arr.getX()).andStubReturn(11);
@@ -145,7 +150,31 @@ public class TestDeplacement {
     }
 
     @Test
-    @DisplayName("Test si l'opérateur a bien était débité des points d'actions nécessaire à son déplacement")
+    @DisplayName("Test si un Ennemi atteint sa case d'arrivée sachant qu'il a assez de points d'action et aucun obstacle")
+    public void testCaseEnnemiApresDeplacement(){
+
+        expect(arr.getX()).andStubReturn(11);
+        expect(arr.getY()).andStubReturn(10);
+        replay(arr);
+
+
+        expect(envMock.getLargeur()).andStubReturn(20);
+        expect(envMock.getHauteur()).andStubReturn(20);
+        replay(envMock);
+
+        Deplacement deplacement = new Deplacement(0,0.9);
+        Terroriste ennemi = new Terroriste(envMock,10, 10, 4, deplacement, tirMock);
+
+        deplacement.effectuer(envMock,ennemi,arr);
+
+        assertEquals(ennemi.getX() , arr.getX());
+        assertEquals(ennemi.getY() , arr.getY());
+
+        verify(envMock,arr);
+    }
+
+    @Test
+    @DisplayName("Test si l'opérateur a bien été débité des points d'actions nécessaires à son déplacement")
     public void testPointsActionOperateurApresDeplacement(){
 
         expect(arr.getX()).andStubReturn(11);
@@ -179,4 +208,28 @@ public class TestDeplacement {
         assertEquals(3 , operateur.getPointsAction());
         verify(envMock,arr);
     }
+    @Test
+    @DisplayName("Test point d'action null avant et après Déplacement")
+    public void testPointActionAZeroApresDeplacement(){
+
+        expect(arr.getX()).andStubReturn(11);
+        expect(arr.getY()).andStubReturn(10);
+        replay(arr);
+
+
+        expect(envMock.getLargeur()).andStubReturn(20);
+        expect(envMock.getHauteur()).andStubReturn(20);
+        replay(envMock);
+
+        Deplacement deplacement = new Deplacement(0,0.9);
+        Terroriste ennemi = new Terroriste(envMock,10, 10, 4, deplacement, tirMock);
+        assertEquals(ennemi.getPointsAction() , 0);
+
+        deplacement.effectuer(envMock,ennemi,arr);
+
+        assertEquals(ennemi.getPointsAction() , 0);
+
+        verify(envMock,arr);
+    }
+
 }
