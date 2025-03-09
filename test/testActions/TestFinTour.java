@@ -13,10 +13,15 @@ import org.junit.jupiter.api.DisplayName;
 import personnages.Operateur;
 import personnages.Terroriste;
 
-import static org.easymock.EasyMock.createMock;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestTour {
+public class TestFinTour {
 
 
     private Environnement envMock = null;
@@ -67,4 +72,49 @@ public class TestTour {
         assertEquals(finTour.probaSucces , 0.9);
 
     }
+
+    @Test
+    @DisplayName("test de la fonction effectuer avec un Opérateur en paramètre qui remet à Zéro les points d'action")
+    public void testPointsActionOperateurAvantEffectuerAQuatreApresEffectuerEstANul(){
+
+        FinTour finTour = new FinTour(1,0.9);
+
+        expect(envMock.getLargeur()).andStubReturn(20);
+        expect(envMock.getHauteur()).andStubReturn(20);
+        replay(envMock);
+
+
+        Operateur operateur = new Operateur(envMock,10, 10, 4, deplMock, tirMock);
+        assertEquals(operateur.getPointsAction() , 4);
+
+        finTour.effectuer(envMock,operateur,arr);
+
+        assertEquals(operateur.getPointsAction() , 0);
+
+        verify(envMock);
+    }
+
+    @Test
+    @DisplayName("test de la fonction effectuer avec un Terroriste en paramètre qui remet à Zéro les points d'action")
+    public void testPointsActionTerroristeAvantEffectuerAQuatreApresEffectuerEstANul(){
+
+        FinTour finTour = new FinTour(1,0.9);
+
+        expect(envMock.getLargeur()).andStubReturn(20);
+        expect(envMock.getHauteur()).andStubReturn(20);
+        replay(envMock);
+
+
+        Terroriste terroriste = new Terroriste(envMock,10, 10, 4, deplMock, tirMock);
+        assertEquals(terroriste.getPointsAction() , 0);
+
+        finTour.effectuer(envMock,terroriste,arr);
+
+        assertEquals(terroriste.getPointsAction() , 0);
+
+        verify(envMock);
+    }
 }
+
+
+
