@@ -162,6 +162,7 @@ public class TestDeplacement {
 
         expect(envMock.getLargeur()).andStubReturn(20);
         expect(envMock.getHauteur()).andStubReturn(20);
+        expect(envMock.getOperateurActif()).andStubReturn(op);
         replay(envMock);
 
         Deplacement deplacement = new Deplacement(0,0.9);
@@ -221,6 +222,7 @@ public class TestDeplacement {
 
         expect(envMock.getLargeur()).andStubReturn(20);
         expect(envMock.getHauteur()).andStubReturn(20);
+        expect(envMock.getOperateurActif()).andStubReturn(op);
         replay(envMock);
 
         Deplacement deplacement = new Deplacement(0,0.9);
@@ -257,23 +259,29 @@ public class TestDeplacement {
     @Test
     @DisplayName("Test le nombre de cases valides ici :  3 (5 cases : 1 ennemi présent, 1 case trop éloignée, 3 valides)")
     public void testOperateurCasesValideNonNull(){
-        Environnement envMockPourCase = createMock(Environnement.class);
-        expect(envMockPourCase.getLargeur()).andStubReturn(20);
-        expect(envMockPourCase.getHauteur()).andStubReturn(20);
-        replay(envMockPourCase);
+        Environnement envMockForSize = createMock(Environnement.class);
+        expect(envMockForSize.getLargeur()).andStubReturn(20);
+        expect(envMockForSize.getHauteur()).andStubReturn(20);
+        replay(envMockForSize);
 
-        Case case1 = new CaseNormale(envMockPourCase,11,11);
-        Case case2 = new CaseNormale(envMockPourCase,9,10);
-        Case case3 = new CaseNormale(envMockPourCase,10,11);
-        Case case4 = new CaseNormale(envMockPourCase,10,9);
-        Case case5 = new CaseNormale(envMockPourCase,14,13);
+        Case case1 = new CaseNormale(envMockForSize,11,11);
+        Case case2 = new CaseNormale(envMockForSize,9,10);
+        Case case3 = new CaseNormale(envMockForSize,10,11);
+        Case case4 = new CaseNormale(envMockForSize,10,9);
+        Case case5 = new CaseNormale(envMockForSize,14,13);
 
 
         ArrayList<Case>  cases = new ArrayList<>(Arrays.asList(case1,case2,case3,case4,case5));
 
         expect(envMock.getLargeur()).andStubReturn(20);
         expect(envMock.getHauteur()).andStubReturn(20);
+
         expect(envMock.getPlateau()).andStubReturn(cases);
+
+        Deplacement deplacement = new Deplacement(1,0.9);
+        Operateur operateur = new Operateur(envMockForSize,10, 10, 4, deplacement, tirMock);
+        expect(envMock.getOperateurActif()).andStubReturn(operateur);
+
 
 
         expect(ennemi1.getX()).andStubReturn(3);
@@ -293,13 +301,11 @@ public class TestDeplacement {
         replay(envMock);
 
 
-        Deplacement deplacement = new Deplacement(1,0.9);
-        Operateur operateur = new Operateur(envMock,10, 10, 4, deplacement, tirMock);
 
         List<Case> casesValides = deplacement.getCasesValides(envMock,operateur);
 
         assertEquals(casesValides.size() , 3);
 
-        verify(envMock,envMockPourCase);
+        verify(envMock,envMockForSize);
     }
 }
