@@ -76,13 +76,19 @@ public class Deplacement extends Action{
                 env.finDePartie();
             }
             else {
-
-                perso.setX(arr.getX());
-                perso.setY(arr.getY());
-                perso.removePointsAction(distance * cout);
-                if(arr.estObjectif()){
-                    env.recupereObjectif((Objectif) arr, perso);
+                List<Double> nombres = env.getNombresAleatoires(1);
+                if(nombres.get(0) > probaSucces){
+                    System.out.println("L'action a échoué");
                 }
+                else {
+                    perso.setX(arr.x);
+                    perso.setY(arr.y);
+                    if(arr.estObjectif()){
+                        env.recupereObjectif((Objectif) arr, perso);
+                    }
+                }
+                perso.removePointsAction(distance * cout);
+
             }
         }
     }

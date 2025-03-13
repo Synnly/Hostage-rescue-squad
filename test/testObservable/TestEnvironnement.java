@@ -21,7 +21,7 @@ public class TestEnvironnement {
 
     @Before
     public void setup(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         op = env.getOperateurActif();
     }
 
@@ -35,7 +35,7 @@ public class TestEnvironnement {
     @Test
     @DisplayName("Creer un environnement avec une taille correcte fonctionne")
     public void testCreerEnvironnementAvecTailleCorrecteFonctionne(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         assertNotNull(env);
         assertEquals(10, env.getLargeur());
         assertEquals(10, env.getHauteur());
@@ -44,7 +44,7 @@ public class TestEnvironnement {
     @Test
     @DisplayName("Creer un environnement avec une largeur à 1 fonctionne")
     public void testCreerEnvironnementAvecLargeurAUnFonctionne(){
-        env = new Environnement(1, 10);
+        env = new Environnement(1, 10, 1, 1);
         assertNotNull(env);
         assertEquals(1, env.getLargeur());
         assertEquals(10, env.getHauteur());
@@ -53,19 +53,19 @@ public class TestEnvironnement {
     @Test
     @DisplayName("Creer un environnement avec une largeur à 0 lance une erreur")
     public void testCreerEnvironnementAvecLargeurAZeroLanceUneErreur(){
-        assertThrows(AssertionError.class, () -> new Environnement(0, 10));
+        assertThrows(AssertionError.class, () -> new Environnement(0, 10, 1, 1));
     }
 
     @Test
     @DisplayName("Creer un environnement avec une largeur à -1 lance une erreur")
     public void testCreerEnvironnementAvecLargeurAMoinsUnLanceUneErreur(){
-        assertThrows(AssertionError.class, () -> new Environnement(-1, 10));
+        assertThrows(AssertionError.class, () -> new Environnement(-1, 10, 1, 1));
     }
 
     @Test
     @DisplayName("Creer un environnement avec une hauteur à 1 fonctionne")
     public void testCreerEnvironnementAvecHauteurAUnFonctionne(){
-        env = new Environnement(10, 1);
+        env = new Environnement(10, 1, 1, 1);
         assertNotNull(env);
         assertEquals(10, env.getLargeur());
         assertEquals(1, env.getHauteur());
@@ -74,21 +74,54 @@ public class TestEnvironnement {
     @Test
     @DisplayName("Creer un environnement avec une hauteur à 0 lance une erreur")
     public void testCreerEnvironnementAvecHauteurAZeroLanceUneErreur(){
-        assertThrows(AssertionError.class, () -> new Environnement(10, 0));
+        assertThrows(AssertionError.class, () -> new Environnement(10, 0, 1, 1));
     }
 
     @Test
     @DisplayName("Creer un environnement avec une hauteur à -1 lance une erreur")
     public void testCreerEnvironnementAvecHauteurAMoinsUnLanceUneErreur(){
-        assertThrows(AssertionError.class, () -> new Environnement(10, -1));
+        assertThrows(AssertionError.class, () -> new Environnement(10, -1, 1, 1));
     }
+
+    @Test
+    @DisplayName("Creer un environnement avec une proba deplacement à 0 fonctionne")
+    public void testCreerEnvironnementAvecProbaSuccessDeplacementAZeroFonctionne(){
+        env = new Environnement(10, 10, 0, 1);
+        assertNotNull(env);
+        assertEquals(10, env.getLargeur());
+        assertEquals(10, env.getHauteur());
+        assertEquals(0, env.getOperateurActif().getDeplacement().probaSucces);
+    }
+
+    @Test
+    @DisplayName("Creer un environnement avec une proba deplacement à -1 lance une erreur")
+    public void testCreerEnvironnementAvecProbaSuccessDeplacementAMoinsUnFonctionne(){
+        assertThrows(AssertionError.class, () -> new Environnement(10, 10, -1, 1));
+    }
+
+    @Test
+    @DisplayName("Creer un environnement avec une proba tir à 0 fonctionne")
+    public void testCreerEnvironnementAvecProbaSuccessTirAZeroFonctionne(){
+        env = new Environnement(10, 10, 1, 0);
+        assertNotNull(env);
+        assertEquals(10, env.getLargeur());
+        assertEquals(10, env.getHauteur());
+        assertEquals(0, env.getOperateurActif().getTir().probaSucces);
+    }
+
+    @Test
+    @DisplayName("Creer un environnement avec une proba tir à -1 lance une erreur")
+    public void testCreerEnvironnementAvecProbaSuccessTirAMoinsUnFonctionne(){
+        assertThrows(AssertionError.class, () -> new Environnement(10, 10, 1, -1));
+    }
+
 
     // ==================== getCase ====================
 
     @Test
     @DisplayName("Recuperer case d'indice correct fonctionne")
     public void testRecupererCaseAvecIndicesCorrectsFonctionne(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         Case c = env.getCase(5, 5);
         assertNotNull(c);
         assertEquals(5, c.x);
@@ -98,7 +131,7 @@ public class TestEnvironnement {
     @Test
     @DisplayName("Recuperer case d'indice x à 0 fonctionne")
     public void testRecupererCaseAvecIndiceXAZeroFonctionne(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         Case c = env.getCase(0, 5);
         assertNotNull(c);
         assertEquals(0, c.x);
@@ -108,21 +141,21 @@ public class TestEnvironnement {
     @Test
     @DisplayName("Recuperer case d'indice x > largeur lance une erreur")
     public void testRecupererCaseAvecIndiceXSuperieurALargeurLanceUneErreur(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         assertThrows(AssertionError.class, () -> env.getCase(12, 5));
     }
 
     @Test
     @DisplayName("Recuperer case d'indice x = largeur lance une erreur")
     public void testRecupererCaseAvecIndiceXEgalALargeurLanceUneErreur(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         assertThrows(AssertionError.class, () -> env.getCase(10, 5));
     }
 
     @Test
     @DisplayName("Recuperer case d'indice y à 0 fonctionne")
     public void testRecupererCaseAvecIndiceYAZeroFonctionne(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         Case c = env.getCase(5, 0);
         assertNotNull(c);
         assertEquals(5, c.x);
@@ -132,14 +165,14 @@ public class TestEnvironnement {
     @Test
     @DisplayName("Recuperer case d'indice y > hauteur lance une erreur")
     public void testRecupererCaseAvecIndiceXSuperieurAHauteurLanceUneErreur(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         assertThrows(AssertionError.class, () -> env.getCase(5, 12));
     }
 
     @Test
     @DisplayName("Recuperer case d'indice y = hauteur lance une erreur")
     public void testRecupererCaseAvecIndiceXEgalAHauteurLanceUneErreur(){
-        env = new Environnement(10, 10);
+        env = new Environnement(10, 10, 1, 1);
         assertThrows(AssertionError.class, () -> env.getCase(5, 10));
     }
 
@@ -225,6 +258,8 @@ public class TestEnvironnement {
     @Test
     @DisplayName("Choisir une case de coordonnée x = 0 quand le deplacement est actif fonctionne")
     public void testChoisirCaseDeCoordonneeXEgaleAZeroQuandDeplacementActifFonctionne(){
+
+
         op.setX(1); op.setY(5);
         int nbPa = op.getPointsAction();
         assertEquals(nbPa, op.getPointsAction());
@@ -588,5 +623,40 @@ public class TestEnvironnement {
     @DisplayName("Verifier si un ennemi est sur la case sur une case null lance une erreur")
     public void testAEnnemiSurCaseNullLanceUneErreur(){
         assertThrows(AssertionError.class, () -> env.aEnnemisSurCase(null));
+    }
+
+
+    // ==================== getNombresAleatoires ====================
+    @Test
+    @DisplayName("Generer plusieurs nombres aleatoires fonctionne")
+    public void testGenererPlusieursNombresAleatoiresFonctionne(){
+        List<Double> nombres = env.getNombresAleatoires(5);
+
+        assertEquals(5, nombres.size());
+        for(int i = 0; i < 5; i++){
+            for(int j = i+1; j < 5; j++){
+                assertNotEquals(nombres.get(i), nombres.get(j));
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("Generer un nombre aleatoire fonctionne")
+    public void testGenererUnNombreAleatoireFonctionne(){
+        List<Double> nombres = env.getNombresAleatoires(1);
+
+        assertEquals(1, nombres.size());
+    }
+
+    @Test
+    @DisplayName("Generer zero nombres aleatoires lance une erreur")
+    public void testGenererZeroNombresAleatoiresLanceUneErreur(){
+        assertThrows(AssertionError.class, () -> env.getNombresAleatoires(0));
+    }
+
+    @Test
+    @DisplayName("Generer -1 nombres aleatoires lance une erreur")
+    public void testGenererMoinsUnNombresAleatoiresLanceUneErreur(){
+        assertThrows(AssertionError.class, () -> env.getNombresAleatoires(-1));
     }
 }

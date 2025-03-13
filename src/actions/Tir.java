@@ -36,6 +36,30 @@ public class Tir extends Action{
     public void effectuer(Environnement env, Personnage perso, Case arr) {
     }
 
+    public void effectuer(Environnement env, Terroriste perso, Case arr){
+        if (perso.getX() == arr.getX()){ // Ennemi et case sur la meme ligne
+            int min = Math.min(perso.getX(), arr.getX());
+            int max = Math.min(perso.getX(), arr.getX());
+            for(int x = min; x <= max; x++){    // Verification de la visibilité
+                if(!env.getCase(x, perso.getY()).peutVoir()){
+                    return;
+                }
+            }
+            System.out.println("Vous etes mort");
+
+        }
+        else if (perso.getY() == arr.getY()) { // Ennemi et case sur la meme colonne
+            int min = Math.min(perso.getY(), arr.getY());
+            int max = Math.min(perso.getY(), arr.getY());
+            for(int y = min; y <= max; y++){    // Verification de la visibilité
+                if(!env.getCase(perso.getX(), y).peutVoir()){
+                    return;
+                }
+            }
+            System.out.println("Vous etes mort");
+        }
+    }
+
     /**
      * Fait tirer l'opérateur vers la case renseignée.&nbsp;Si le cout pour tirer dépasse le nombre de points d'actions de
      * l'opérateur, ne fait rien.&nbsp;Si la cible n'est pas visible ou pas dans la ligne de mire (en croix), ne fait rien.
@@ -46,6 +70,8 @@ public class Tir extends Action{
      */
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
+        List<Double> nombres = env.getNombresAleatoires(1);
+
         if (perso.getX() == arr.getX()){ // Perso et case sur la meme ligne
             int min = Math.min(perso.getX(), arr.getX());
             int max = Math.min(perso.getX(), arr.getX());
@@ -55,8 +81,12 @@ public class Tir extends Action{
                 }
             }
             if(env.aEnnemisSurCase(arr)){
-                env.tuerEnnemis(arr);
                 perso.removePointsAction(cout);
+                if(nombres.get(0) > probaSucces){
+                    System.out.println("L'action a échoué");
+                    return;
+                }
+                env.tuerEnnemis(arr);
                 return;
             }
         }
@@ -69,8 +99,12 @@ public class Tir extends Action{
                 }
             }
             if(env.aEnnemisSurCase(arr)){
-                env.tuerEnnemis(arr);
                 perso.removePointsAction(cout);
+                if(nombres.get(0) > probaSucces){
+                    System.out.println("L'action a échoué");
+                    return;
+                }
+                env.tuerEnnemis(arr);
                 return;
             }
         }

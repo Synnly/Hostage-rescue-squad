@@ -6,17 +6,21 @@ import personnages.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * L'environnement d'une mission.
  */
 public class Environnement extends Observable{
 
-    private  int largeur;
-    private  int hauteur;
-    private  List<Case> cases;
-    private  Operateur operateur;
-    private  List<Terroriste> ennemis;
+    private int largeur;
+    private int hauteur;
+    private List<Case> cases;
+    private Operateur operateur;
+    private List<Terroriste> ennemis;
+    private int menace = 2;
+    private double probaSuccesDeplacement;
+    private double probaSuccesTir;
 
     /**
      * Constructeur de l'environnement. Initialise le plateau de taille <code>largeur</code> x <code>hauteur</code>,
@@ -24,25 +28,34 @@ public class Environnement extends Observable{
      *
      * @param largeur Le nombre de cases en largeur du plateau. Doit être &gt;&nbsp;0
      * @param hauteur Le nombre de cases en hauteur du plateau. Doit être &gt;&nbsp;0
+     * @param probaSuccesDeplacement La probabilité de succès des déplacements de l'opérateur. Doit être
+     *                               0 &le;&nbsp;proba &le;&nbsp;1
+     * @param probaSuccesTir La probabilité de succès des tirs de l'opérateur. Doit être
+     *                       0 &le;&nbsp;proba &le;&nbsp;1
      */
-    public Environnement(int largeur, int hauteur){
+    public Environnement(int largeur, int hauteur, double probaSuccesDeplacement, double probaSuccesTir){
         assert largeur > 0 : "La largeur doit être > 0 (largeur =" + largeur + ")";
         assert hauteur > 0 : "La hauteur doit être > 0 (hauteur =" + hauteur + ")";
+        assert probaSuccesDeplacement <= 1 && probaSuccesDeplacement >= 0 : "La probabilité de succès des déplacements de l'opérateur doit être 0 <= proba <= 1";
+        assert probaSuccesTir <= 1 && probaSuccesTir >= 0 : "La probabilité de succès des tirs de l'opérateur doit être 0 <= proba <= 1";
+
         this.largeur = largeur;
         this.hauteur = hauteur;
+        this.probaSuccesDeplacement = probaSuccesDeplacement;
+        this.probaSuccesTir = probaSuccesTir;
         nouvellePartie();
     }
 
     /**
      * Réinitialise les paramètres de départ d'une nouc-velle partie
      */
-    public void nouvellePartie(){
+    public void nouvellePartie( ){
         cases = new ArrayList<>();
         initPlateau(largeur, hauteur);
 
         // Creation des opérateurs
-        Deplacement deplacementOp = new Deplacement(1, 1);
-        Tir tirOp = new Tir(1, 1);
+        Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
+        Tir tirOp = new Tir(1, probaSuccesTir);
         operateur = new Operateur(this, largeur/2, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
@@ -186,9 +199,20 @@ public class Environnement extends Observable{
      * points d'action
      */
     public void tourEnnemi(){
-        for (Terroriste ennemi : ennemis) {
-            Case posEnnemi = getCase(ennemi.getX(), ennemi.getY());
-            ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+        List<Double> nombres = getNombresAleatoires(menace);
+        for(int i = 0; i < menace; i++) {
+            if(nombres.get(i) < 0.3){   // Tir
+                for (Terroriste ennemi : ennemis) {
+                    ennemi.getTir().effectuer(this, ennemi, getCase(operateur.getX(), operateur.getY()));
+                }
+            }
+            else {
+                for (Terroriste ennemi : ennemis) {     // Deplacement
+                    Case posEnnemi = getCase(ennemi.getX(), ennemi.getY());
+                    ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+                }
+            }
+            notifyObservers();
         }
         operateur.setActionActive(operateur.getDeplacement());
         operateur.resetPointsAction();
@@ -292,5 +316,20 @@ public class Environnement extends Observable{
             }
         }
         return false;
+    }
+
+    /**
+     * Renvoie une liste de réels aléatoires entre 1 et 0
+     * @param nb Le nombre de réels à générer. Doit être &gt;&nbsp;0
+     * @return La liste des nombres
+     */
+    public List<Double> getNombresAleatoires(int nb){
+        assert nb > 0 : "Le nombre de réels à générer doit être strictement positif";
+        Random random = new Random();
+        List<Double> nombres = new ArrayList<>();
+        for (int i = 0; i < nb; i++) {
+            nombres.add(random.nextDouble());
+        }
+        return nombres;
     }
 }
