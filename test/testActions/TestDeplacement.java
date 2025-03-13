@@ -98,6 +98,9 @@ public class TestDeplacement {
 
         expect(envMock.getEnnemis()).andReturn(ennemis);
 
+        List<Double> nbAlea = new ArrayList<>();
+        nbAlea.add(0.0);
+        expect(envMock.getNombresAleatoires(1)).andStubReturn(nbAlea);
 
 
         replay(envMock);
@@ -137,6 +140,9 @@ public class TestDeplacement {
         expect(envMock.getEnnemis()).andStubReturn(ennemis);
         expect(envMock.getLargeur()).andStubReturn(20);
         expect(envMock.getHauteur()).andStubReturn(20);
+        List<Double> nbAlea = new ArrayList<>();
+        nbAlea.add(0.0);
+        expect(envMock.getNombresAleatoires(1)).andStubReturn(nbAlea);
         replay(envMock);
 
         Deplacement deplacement = new Deplacement(1,0.9);
@@ -201,6 +207,10 @@ public class TestDeplacement {
         expect(envMock.getEnnemis()).andStubReturn(ennemis);
         expect(envMock.getLargeur()).andStubReturn(20);
         expect(envMock.getHauteur()).andStubReturn(20);
+
+        List<Double> nbAlea = new ArrayList<>();
+        nbAlea.add(0.0);
+        expect(envMock.getNombresAleatoires(1)).andStubReturn(nbAlea);
         replay(envMock);
 
         Deplacement deplacement = new Deplacement(1,0.9);

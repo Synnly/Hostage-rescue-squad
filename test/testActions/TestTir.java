@@ -143,6 +143,10 @@ public class TestTir {
         expect(envMock.getCase(10,3)).andStubReturn(case3);
         expect(envMock.getCase(10,4)).andStubReturn(case4);
         expect(envMock.getCase(10,5)).andStubReturn(case5);
+
+        List<Double> nbAlea = new ArrayList<>();
+        nbAlea.add(1.0);
+        expect(envMock.getNombresAleatoires(1)).andStubReturn(nbAlea);
         expect(envMock.aEnnemisSurCase(EasyMock.anyObject())).andStubReturn(true);
         envMock.tuerEnnemis(EasyMock.anyObject());
         expectLastCall().andAnswer(() ->{ennemis.remove(ennemi1); return null;});
@@ -238,7 +242,9 @@ public class TestTir {
         expect(envMock.getCase(10,4)).andStubReturn(case4);
         expect(envMock.getCase(10,5)).andStubReturn(case5);
         expect(envMock.aEnnemisSurCase(EasyMock.anyObject())).andStubReturn(false);
-
+        List<Double> nbAlea = new ArrayList<>();
+        nbAlea.add(1.0);
+        expect(envMock.getNombresAleatoires(1)).andStubReturn(nbAlea);
         replay(envMock);
 
         Deplacement deplacement = new Deplacement(1,0.9);
