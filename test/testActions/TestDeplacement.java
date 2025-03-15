@@ -318,4 +318,47 @@ public class TestDeplacement {
 
         verify(envMock,envMockForSize);
     }
+
+    // echoué
+    @Test
+    @DisplayName("Test si un opérateur reste sur sa case départ sachant qu'il a assez de points d'action et qu'il rate son action")
+    public void testCaseOperateurApresDeplacementEchoue(){
+
+        expect(arr.getX()).andStubReturn(10);
+        expect(arr.getY()).andStubReturn(10);
+        expect(arr.estObjectif()).andStubReturn(false);
+        replay(arr);
+
+
+        expect(ennemi1.getX()).andReturn(3);
+        expect(ennemi1.getY()).andReturn(3);
+        replay(ennemi1);
+        expect(ennemi2.getX()).andReturn(5);
+        expect(ennemi2.getY()).andReturn(5);
+        replay(ennemi2);
+
+
+        List<Terroriste> ennemis = new ArrayList<>();
+        ennemis.add(ennemi1);
+        ennemis.add(ennemi2);
+
+        expect(envMock.getEnnemis()).andStubReturn(ennemis);
+        expect(envMock.getLargeur()).andStubReturn(20);
+        expect(envMock.getHauteur()).andStubReturn(20);
+        List<Double> nbAlea = new ArrayList<>();
+        nbAlea.add(1.0);
+        expect(envMock.getNombresAleatoires(1)).andStubReturn(nbAlea);
+        replay(envMock);
+
+        Deplacement deplacement = new Deplacement(1,0.9);
+        Operateur operateur = new Operateur(envMock,10, 10, 4, deplacement, tirMock);
+
+        deplacement.effectuer(envMock,operateur,arr);
+
+        assertEquals(operateur.getX() , arr.getX());
+        assertEquals(operateur.getY() , arr.getY());
+
+
+        verify(envMock,arr);
+    }
 }
