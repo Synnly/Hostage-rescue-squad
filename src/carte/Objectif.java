@@ -18,4 +18,14 @@ public class Objectif extends Case{
         super.estObjectif = true;
         this.recompense = 10;
     }
+
+    public Objectif(Objectif o) {
+        super(o);
+        super.estObjectif = true;
+        this.recompense = 10;
+    }
+
+    public Objectif copy(){
+        return new Objectif(this);
+    }
 }

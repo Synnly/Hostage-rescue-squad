@@ -25,6 +25,13 @@ public class Routine {
         cases.add(c);
     }
 
+    public Routine(Routine r){
+        this.cases = new ArrayList<>();
+        for(Case c: r.cases){
+            cases.add(c.copy());
+        }
+    }
+
     /**
      * Insère une case dans la liste de cases de cette routine
      *

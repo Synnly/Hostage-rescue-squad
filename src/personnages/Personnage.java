@@ -1,9 +1,9 @@
 package personnages;
 
-import actions.Action;
-import actions.Deplacement;
-import actions.FinTour;
-import actions.Tir;
+import coups.Coup;
+import coups.Deplacement;
+import coups.FinTour;
+import coups.Tir;
 import observable.Environnement;
 
 
@@ -33,7 +33,7 @@ public abstract class Personnage {
      *
      * @see Deplacement
      */
-    protected Action actionActive;
+    protected Coup coupActive;
     /**
      * L'action de déplacement de ce personnage.&nbsp;Cette action définit comment et à quel cout ce personnage se
      * déplace sur le plateau.
@@ -78,7 +78,7 @@ public abstract class Personnage {
         this.maxPointsAction = pointsAction;
         this.deplacement = deplacement;
         this.tir = tir;
-        this.finTour = new FinTour(0, 0);
+        this.finTour = new FinTour(1, 0);
     }
 
     public Personnage(Personnage perso){
@@ -88,8 +88,8 @@ public abstract class Personnage {
         this.maxPointsAction = perso.pointsAction;
         this.deplacement = perso.deplacement;
         this.tir = perso.tir;
-        this.finTour = new FinTour(0, 0);
-        this.actionActive = perso.actionActive;
+        this.finTour = new FinTour(1, 0);
+        this.coupActive = perso.coupActive;
     }
 
     /**
@@ -98,15 +98,16 @@ public abstract class Personnage {
      *
      * @param a L'action
      */
-    public void setActionActive(Action a){actionActive = a;}
+    public void setActionActive(Coup a){
+        coupActive = a;}
 
     /**
      * Renvoie l'action active pour ce personnage
      *
      * @return L 'action active
      */
-    public Action getActionActive() {
-        return actionActive;
+    public Coup getActionActive() {
+        return coupActive;
     }
 
     /**
@@ -198,4 +199,10 @@ public abstract class Personnage {
         return finTour;
     }
 
+    public abstract Personnage copy();
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y +") " + pointsAction + " PA";
+    }
 }

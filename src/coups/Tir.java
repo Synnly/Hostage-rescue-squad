@@ -1,4 +1,4 @@
-package actions;
+package coups;
 
 import carte.Case;
 import observable.Environnement;
@@ -8,12 +8,11 @@ import personnages.Terroriste;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Action de tir représentant un personnage tirant sur un autre.
  */
-public class Tir extends Action{
+public class Tir extends Coup {
     /**
      * Constructeur d'une action de tir
      *
@@ -22,6 +21,10 @@ public class Tir extends Action{
      */
     public Tir(int cout, double probaSucces) {
         super(cout, probaSucces);
+    }
+
+    public Tir(Tir t){
+        super(t);
     }
 
     /**
@@ -109,7 +112,7 @@ public class Tir extends Action{
                 return;
             }
         }
-        System.out.println("Aucun ennemi présent sur cette case");
+//        System.out.println("Aucun ennemi présent sur cette case");
     }
 
     /**
@@ -135,29 +138,33 @@ public class Tir extends Action{
      */
     @Override
     public List<Case> getCasesValides(Environnement env, Operateur perso) {
+        return getCasesValides(env, env.getCase(perso.getX(), perso.getY()));
+    }
+
+    public List<Case> getCasesValides(Environnement env, Case caseDepart){
         List<Case> casesValides = new ArrayList<>();
         Case c;
         for(Terroriste ennemi : env.getEnnemis()) {
             boolean peutVoir = false;
             c = env.getCase(ennemi.getX(), ennemi.getY());
 
-            if (perso.getY() == c.y) { // Perso et case sur la meme ligne
-                int min = Math.min(perso.getX(), c.x);
-                int max = Math.max(perso.getX(), c.x);
+            if (caseDepart.y == c.y) { // Perso et case sur la meme ligne
+                int min = Math.min(caseDepart.x, c.x);
+                int max = Math.max(caseDepart.x, c.x);
                 peutVoir = true;
                 for (int x = min; x <= max; x++) {
-                    if (!env.getCase(x, perso.getY()).peutVoir) {
+                    if (!env.getCase(x, caseDepart.y).peutVoir) {
                         peutVoir = false;
                         break;
                     }
                 }
             }
-            else if (perso.getX() == c.x) { // Perso et case sur la meme colonne
-                int min = Math.min(perso.getY(), c.y);
-                int max = Math.max(perso.getY(), c.y);
+            else if (caseDepart.x == c.x) { // Perso et case sur la meme colonne
+                int min = Math.min(caseDepart.y, c.y);
+                int max = Math.max(caseDepart.y, c.y);
                 peutVoir = true;
                 for (int y = min; y <= max; y++) {
-                    if (!env.getCase(perso.getX(), y).peutVoir) {
+                    if (!env.getCase(caseDepart.x, y).peutVoir) {
                         peutVoir = false;
                         break;
                     }
@@ -169,7 +176,6 @@ public class Tir extends Action{
         }
         return casesValides;
     }
-
 
     @Override
     public double qvaleur(Environnement env, Operateur op, int xDepart, int yDepart, Case arr, double[][] utilites, double gamma) {
@@ -190,5 +196,9 @@ public class Tir extends Action{
     @Override
     public String toString() {
         return "Tir";
+    }
+
+    public Tir copy(){
+        return new Tir(this);
     }
 }

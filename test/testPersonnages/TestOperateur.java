@@ -1,7 +1,7 @@
 package testPersonnages;
 
-import actions.Deplacement;
-import actions.Tir;
+import coups.Deplacement;
+import coups.Tir;
 import observable.Environnement;
 import org.junit.After;
 import org.junit.Before;

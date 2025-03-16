@@ -1,7 +1,7 @@
 package personnages;
 
-import actions.Deplacement;
-import actions.Tir;
+import coups.Deplacement;
+import coups.Tir;
 import observable.Environnement;
 
 /**
@@ -45,5 +45,9 @@ public class Operateur extends Personnage{
      */
     public void setPossedeObjectif(boolean possedeObjectif) {
         this.possedeObjectif = possedeObjectif;
+    }
+
+    public Operateur copy(){
+        return new Operateur(this);
     }
 }

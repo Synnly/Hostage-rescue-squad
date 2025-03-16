@@ -46,6 +46,23 @@ public abstract class Case {
         this.recompense = -0.1;
         this.estObjectif = false;
     }
+
+    public Case(Case c){
+        this.x = c.x;
+        this.y = c.y;
+        this.peutVoir = c.peutVoir;
+        this.recompense = -0.1;
+        this.estObjectif = false;
+    }
+
+    protected Case(int x, int y, boolean peutVoir){
+        this.x = x;
+        this.y = y;
+        this.peutVoir = peutVoir;
+        this.recompense = 0;
+        this.estObjectif = false;
+    }
+
     public int getX(){
         return x;
     }
@@ -55,5 +72,12 @@ public abstract class Case {
 
     public boolean estObjectif() {
         return estObjectif;
+    }
+
+    public abstract Case copy();
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ')';
     }
 }

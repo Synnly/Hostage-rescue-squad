@@ -1,4 +1,4 @@
-package actions;
+package coups;
 
 import carte.Case;
 import carte.Objectif;
@@ -9,9 +9,8 @@ import personnages.Terroriste;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class Deplacement extends Action{
+public class Deplacement extends Coup {
 
     /**
      * Constructeur d'une action déplacement
@@ -22,6 +21,9 @@ public class Deplacement extends Action{
         super(cout, probaSucces);
     }
 
+    public Deplacement(Deplacement d){
+        super(d);
+    }
     /**
      * Déplace le personnage vers la case renseignée. Si le cout pour aller vers la case dépasse le nombre de points d'actions du personnage, ne fait rien.
      * @param env L'environnement
@@ -89,10 +91,9 @@ public class Deplacement extends Action{
         ArrayList<Case> cases = new ArrayList<>();
         int persoX = perso.getX();
         int persoY = perso.getY();
-        int persoPA = perso.getPointsAction();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= persoPA){
+            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= 1){
                 cases.add(c);
             }
         }
@@ -107,14 +108,24 @@ public class Deplacement extends Action{
      */
     @Override
     public List<Case> getCasesValides(Environnement env, Operateur perso) {
+        return getCasesValides(env, env.getCase(perso.getX(), perso.getY()));
+    }
+
+    /**
+     * Renvoie la liste des toutes les cases valides pour déplacer l'opérateur
+     * @param env L'environnement
+     * @param caseDepart La case de départ
+     * @return La liste des cases
+     */
+    @Override
+    public List<Case> getCasesValides(Environnement env, Case caseDepart) {
         ArrayList<Case> cases = new ArrayList<>();
-        int persoX = perso.getX();
-        int persoY = perso.getY();
-        int persoPA = perso.getPointsAction();
+        int caseX = caseDepart.x;
+        int caseY = caseDepart.y;
         List<Terroriste> ennemis = env.getEnnemis();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= persoPA){ // Distance suffisamment proche
+            if(Math.abs(caseX - c.getX()) + Math.abs(caseY - c.getY()) <= 1 && caseDepart != c){ // Distance suffisamment proche
                 boolean aEnnemi = false;
                 for(Terroriste ennemi : ennemis){   // Ennemi présent sur la case ?
                     if(ennemi.getX() == c.getX() && ennemi.getY() == c.getY()){
@@ -133,6 +144,9 @@ public class Deplacement extends Action{
 
     @Override
     public double qvaleur(Environnement env, Operateur op, int xDepart, int yDepart, Case arr, double[][] utilites, double gamma) {
+        if(op.possedeObjectif() && arr.y == env.getLargeur()-1){    // Cas terminal
+            return 0;
+        }
 
         Operateur opClone = new Operateur(op);
         opClone.setX(xDepart); opClone.setY(yDepart);
@@ -151,5 +165,9 @@ public class Deplacement extends Action{
     @Override
     public String toString() {
         return "Dep";
+    }
+
+    public Deplacement copy(){
+        return new Deplacement(this);
     }
 }

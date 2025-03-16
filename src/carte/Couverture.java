@@ -13,4 +13,12 @@ public class Couverture extends Case{
     public Couverture(Environnement env, int x, int y) {
         super(env, x, y, false);
     }
+
+    public Couverture(Couverture c){
+        super(c);
+    }
+
+    public Couverture copy(){
+        return new Couverture(this);
+    }
 }

@@ -1,17 +1,17 @@
-package actions;
+package coups;
 
+import carte.AucuneCase;
 import carte.Case;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Personnage;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Action de fin de tour représentant un personnage finissant son tour et donnant la main au prochain
  */
-public class FinTour extends Action{
+public class FinTour extends Coup {
     /**
      * Constructeur d'une action de fin de tour
      *
@@ -20,6 +20,10 @@ public class FinTour extends Action{
      */
     public FinTour(int ignoredInt, double ignoredDouble) {
         super(ignoredInt, ignoredDouble);
+    }
+
+    public FinTour(FinTour f){
+        super(f);
     }
 
     /**
@@ -40,12 +44,17 @@ public class FinTour extends Action{
 
     @Override
     public List<Case> getCasesValides(Environnement env, Personnage perso) {
-        return List.of();
+        return List.of(AucuneCase.instance);
     }
 
     @Override
     public List<Case> getCasesValides(Environnement env, Operateur perso) {
-        return List.of();
+        return List.of(AucuneCase.instance);
+    }
+
+    @Override
+    public List<Case> getCasesValides(Environnement env, Case caseDepart){
+        return List.of(AucuneCase.instance);
     }
 
     @Override
@@ -56,5 +65,9 @@ public class FinTour extends Action{
     @Override
     public String toString() {
         return "Fin";
+    }
+
+    public FinTour copy(){
+        return new FinTour(this);
     }
 }

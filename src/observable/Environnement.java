@@ -1,9 +1,10 @@
 package observable;
 
-import actions.*;
+import coups.*;
 import carte.*;
-import pdm.ActionPredite;
-import pdm.IterationValeur;
+import mdp.Action;
+import mdp.Etat;
+import mdp.IterationValeur;
 import personnages.*;
 
 import java.util.ArrayList;
@@ -18,9 +19,14 @@ public class Environnement extends Observable{
     private final int largeur;
     private final int hauteur;
     private final List<Case> cases;
-    private final Operateur operateur;
-    private final List<Terroriste> ennemis;
+    private Operateur operateur;
+    private List<Terroriste> ennemis;
     private int menace = 2;
+    private boolean echec = false;
+    private boolean missionFinie = false;
+    private final double probaTirEnnemi = 0.3;
+    private final double probaDeplacementEnnemi = 0.7;
+
 
     /**
      * Constructeur de l'environnement. Initialise le plateau de taille <code>largeur</code> x <code>hauteur</code>,
@@ -46,9 +52,6 @@ public class Environnement extends Observable{
         initPlateau(largeur, hauteur);
 
         // Couvertures (temporaire)
-        for (int i = 0; i < largeur; i++){
-            cases.set((hauteur-3) * largeur + i, new Couverture(this, i, hauteur-3));
-        }
         cases.set(1, new Couverture(this, 1, 0));
         cases.set(4, new Couverture(this, 4, 0));
         cases.set(9, new Couverture(this, 2, 1));
@@ -77,6 +80,22 @@ public class Environnement extends Observable{
         ennemi2.setRoutine(routine);
         ennemis.add(ennemi);
         ennemis.add(ennemi2);
+    }
+
+
+    public Environnement(Environnement env){
+        this.largeur = env.largeur;
+        this.hauteur = env.hauteur;
+        this.operateur = env.operateur.copy();
+        this.menace = env.menace;
+        this.cases = new ArrayList<>();
+        for(Case c:env.cases){
+            cases.add(c.copy());
+        }
+        this.ennemis = new ArrayList<>();
+        for(Terroriste t:env.ennemis){
+            ennemis.add(t.copy());
+        }
     }
 
     /**
@@ -197,7 +216,7 @@ public class Environnement extends Observable{
     public void tourEnnemi(){
         List<Double> nombres = getNombresAleatoires(menace);
         for(int i = 0; i < menace; i++) {
-            if(nombres.get(i) < 0.3){   // Tir
+            if(nombres.get(i) < probaTirEnnemi){   // Tir
                 for (Terroriste ennemi : ennemis) {
                     ennemi.getTir().effectuer(this, ennemi, getCase(operateur.getX(), operateur.getY()));
                 }
@@ -339,19 +358,97 @@ public class Environnement extends Observable{
     }
 
     public void printPrediction(){
-        Operateur op = getOperateurActif();
+        Action actionPredite = IterationValeur.predict(this);
 
-        System.out.println("Predicting ...");
-        ActionPredite[][] actionPredites= IterationValeur.predict(this);
-        IterationValeur.printActions(actionPredites);
-
-        ActionPredite actionAFaire = actionPredites[op.getX()][op.getY()];
-
-        if(actionAFaire.action() instanceof FinTour){   // Martine pardon
-            System.out.println("L'ia vous conseille de " + actionAFaire.action());
+        if(actionPredite.coups().get(0) instanceof FinTour){   // Martine pardon
+            System.out.println("L'ia vous conseille de terminer le tour");
         }
         else{
-            System.out.println("L'ia vous conseille de " + actionAFaire.action() + " vers la case x : " + actionAFaire.cible().x + " y : " + actionAFaire.cible().y);
+            System.out.println("L'ia vous conseille de " + actionPredite.coups().get(0) + " vers la case " + actionPredite.cibles().get(0));
         }
+
+        for (int i = 1; i < actionPredite.coups().size(); i++) {
+            if(actionPredite.coups().get(i) instanceof FinTour){   // Martine pardon
+                System.out.println("puis de terminer le tour");
+            }
+            else{
+                System.out.println("puis de " + actionPredite.coups().get(i) + " vers la case " + actionPredite.cibles().get(i));
+            }
+        }
+    }
+
+    public boolean estCaseDangereuse(Case c) {
+        boolean peutVoir = false;
+
+        for(Terroriste terro:ennemis) {
+            if (terro.getY() == c.y) { // Terroriste et case sur la meme ligne
+                int min = Math.min(terro.getX(), c.x);
+                int max = Math.max(terro.getX(), c.x);
+                peutVoir = true;
+                for (int x = min; x <= max; x++) {
+                    if (!getCase(x, terro.getY()).peutVoir) {
+                        peutVoir = false;
+                        break;
+                    }
+                }
+            } else if (terro.getX() == c.x) { // Terroriste et case sur la meme colonne
+                int min = Math.min(terro.getY(), c.y);
+                int max = Math.max(terro.getY(), c.y);
+                peutVoir = true;
+                for (int y = min; y <= max; y++) {
+                    if (!getCase(terro.getX(), y).peutVoir) {
+                        peutVoir = false;
+                        break;
+                    }
+                }
+            }
+            if (peutVoir) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Environnement copy(){
+        return new Environnement(this);
+    }
+
+    public void setEtat(Etat e){
+        this.operateur = e.operateur();
+        this.ennemis = new ArrayList<>(e.ennemis());
+    }
+
+    public boolean isEchec() {
+        return echec;
+    }
+
+    public boolean isMissionFinie() {
+        return missionFinie;
+    }
+
+    public void effectuerCoupsTerroristes(List<Coup> coups){
+        for(Terroriste t : ennemis){
+            for(Coup c : coups) {
+
+                // Martine excuse-moi pour ce que je vais faire
+                if(c instanceof Tir) {
+                    c.effectuer(this, t, getCase(operateur.getX(), operateur.getY()));
+                }
+                else if(c instanceof Deplacement) {
+                    c.effectuer(this, t, t.getRoutine().prochaineCase(getCase(t.getX(), t.getY())));
+                }
+            }
+        }
+    }
+
+    public double getProbaCoupEnnemi(Coup c){
+        // Martine excuse-moi encore une fois pour ce que je vais faire
+        if(c instanceof Tir) {
+            return probaTirEnnemi;
+        }
+        else if(c instanceof Deplacement) {
+            return probaDeplacementEnnemi;
+        }
+        else return 0;
     }
 }

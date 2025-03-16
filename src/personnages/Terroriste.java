@@ -1,7 +1,7 @@
 package personnages;
 
-import actions.Deplacement;
-import actions.Tir;
+import coups.Deplacement;
+import coups.Tir;
 import carte.Routine;
 import observable.Environnement;
 
@@ -28,6 +28,11 @@ public class Terroriste extends Personnage{
         super(env, x, y, 0, deplacement, tir);
     }
 
+    public Terroriste(Terroriste t){
+        super(t);
+        this.routine = t.routine;
+    }
+
     /**
      * Définit la routine du terroriste
      *
@@ -44,5 +49,9 @@ public class Terroriste extends Personnage{
      */
     public Routine getRoutine() {
         return routine;
+    }
+
+    public Terroriste copy(){
+        return new Terroriste(this);
     }
 }

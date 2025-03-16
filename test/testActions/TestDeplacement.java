@@ -1,6 +1,6 @@
 package testActions;
-import actions.Deplacement;
-import actions.Tir;
+import coups.Deplacement;
+import coups.Tir;
 import carte.Case;
 import carte.CaseNormale;
 import observable.Environnement;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.easymock.EasyMock.replay;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.easymock.EasyMock.*;
 public class TestDeplacement {
 

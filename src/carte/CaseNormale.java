@@ -18,4 +18,12 @@ public class CaseNormale extends Case{
     public CaseNormale(Environnement env, int x, int y){
         super(env, x, y, true);
     }
+
+    public CaseNormale(CaseNormale c){
+        super(c);
+    }
+
+    public CaseNormale copy(){
+        return new CaseNormale(this);
+    }
 }
