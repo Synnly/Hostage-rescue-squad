@@ -24,6 +24,13 @@ public interface MDP {
     double valeurTuerEnnemi = 2;
     double valeurDeplacement = -0.4;
 
+    /**
+     * Calcule la récompense R(s, a, s')
+     * @param etatDepart L'état de départ, ie s
+     * @param action L'action, ie a
+     * @param etatArrivee L'état d'arrivée, ie s'
+     * @return La récompense R(s, a, s')
+     */
     static double recompense(Etat etatDepart, Action action, Etat etatArrivee){
         double recomp = 0;
         // deplacement
@@ -60,6 +67,13 @@ public interface MDP {
         return recomp;
     }
 
+    /**
+     * Calcule tous les états accessibles en fonction de si l'action échoue ou non et leur probabilité correspondante
+     * @param env L'environnement
+     * @param etatDepart L'etat de départ
+     * @param action L'action effectuée
+     * @return Le dictionnaire ayant pour clé l'état et en valeur la probabilité d'y arriver
+     */
     static Map<Etat, Double> transition(Environnement env, Etat etatDepart, Action action){
         Map<Etat, Double> etats = new HashMap<>();
         etats.put(etatDepart, 1.);
@@ -86,6 +100,16 @@ public interface MDP {
         return etats;
     }
 
+    /**
+     * Calcule l'état intermédiaire d'arrivée
+     * @param env L'environnement
+     * @param etatDepart L'état de départ
+     * @param coup Le coup à effectuer
+     * @param perso Le personnage effectuant le coup
+     * @param cible La case ciblée par le coup
+     * @param succes true si le coup réussi, false sinon
+     * @return L'état d'arrivée
+     */
     static Etat simuler(Environnement env, Etat etatDepart, Coup coup, Personnage perso, Case cible, boolean succes){
         env.setEtat(etatDepart);
         coup.probaSucces = succes ? 1 : 0;

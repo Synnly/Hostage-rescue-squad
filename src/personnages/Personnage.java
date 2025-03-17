@@ -199,6 +199,11 @@ public abstract class Personnage {
         return finTour;
     }
 
+    /**
+     * Renvoie une instance en copie profonde de cet objet. Tous les champs de cette instance sont aussi des copies
+     * profondes
+     * @return La copie
+     */
     public abstract Personnage copy();
 
     @Override

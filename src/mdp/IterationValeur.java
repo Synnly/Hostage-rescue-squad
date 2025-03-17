@@ -14,6 +14,12 @@ public class IterationValeur implements MDP{
     private static double epsilon = 0.0001;
     private static int maxTour = 5;
 
+    /**
+     * Calcule et prédis la meilleure action à effectuer. Lance le calcul des utilités des état immédiatement accessibles,
+     * ie les états accessibles en une action joueur, sur autant de fils d'exécutions que d'actions différentes possibles.
+     * @param env L'environnement
+     * @return La meilleure action prédite
+     */
     public static Action predict(Environnement env) {
         Set<Action> actions = getAllActionsPossibleOperateur(env);
 
@@ -53,7 +59,7 @@ public class IterationValeur implements MDP{
      * @param listeCoups La liste de tous les coups possibles
      * @param maxNbCoups Le nombre maximal de coups en un tour
      * @param op L'opérateur effectuant les coups
-     * @return L'ensemble des actions possibles
+     * @return L'ensemble des suites de coups possibles
      */
     private static Set<List<Coup>> getAllSuitesCoupsPossibleOperateur(Coup[] listeCoups, int maxNbCoups, Operateur op){
         Set<List<Coup>> actionsPossibles = new HashSet<>();
@@ -89,6 +95,12 @@ public class IterationValeur implements MDP{
         return actionsPossibles;
     }
 
+    /**
+     * Calcule tous les arrangements de coups possibles pour les terroristes
+     * @param listeCoups La liste de tous les coups possibles
+     * @param maxNbCoups Le nombre maximal de coups en un tour
+     * @return L'ensemble des suites de coups possibles
+     */
     private static Set<List<Coup>> getAllSuitesCoupsPossibleTerroristes(Coup[] listeCoups, int maxNbCoups){
         Set<List<Coup>> actionsPossibles = new HashSet<>();
         
@@ -221,6 +233,13 @@ public class IterationValeur implements MDP{
         return caseEtat;
     }
 
+    /**
+     * Calcule l'utilité de l'état si le tour actuel est celui du joueur
+     * @param env L'environnement
+     * @param etatDepart L'état de départ
+     * @param tour Le numéro du tour
+     * @return La somme des utilités pondéré par leurs probabilités des états accessibles si <code>tour</code> < <code>IterationValeur.maxTour</code>, <code>MDP.valeurEchec</code> sinon
+     */
     private static double utiliteEtatTourJoueur(Environnement env, Etat etatDepart, int tour){
         // Si mission pas réussie au bout de maxTour alors échec
         if(tour >= maxTour){
@@ -241,6 +260,13 @@ public class IterationValeur implements MDP{
         return sumUtil * gamma;
     }
 
+    /**
+     * Calcule l'utilité de l'état si le tour actuel est celui du terroriste
+     * @param env L'environnement
+     * @param etatDepart L'état de départ
+     * @param tour Le numéro du tour
+     * @return La somme des utilités pondéré par leurs probabilités des états accessibles si <code>tour</code> < <code>IterationValeur.maxTour</code>, <code>MDP.valeurEchec</code> sinon
+     */
     private static double utiliteEtatTourEnnemi(Environnement env, Etat etatDepart, int tour){
         // Si mission pas réussie au bout de maxTour alors échec
         if(tour >= maxTour){
@@ -277,6 +303,12 @@ public class IterationValeur implements MDP{
         private Action action;
         private Etat etatDepart;
 
+        /**
+         * Constructeur d'un fil d'execution calculant l'utilité de l'action en partant de l'état de départ
+         * @param env L'enrionnement
+         * @param action L'action effectuée
+         * @param etatDepart L'état de départ
+         */
         public IterationValeurThread(Environnement env, Action action, Etat etatDepart){
             this.env = env;
             this.action = action;

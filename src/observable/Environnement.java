@@ -357,6 +357,9 @@ public class Environnement extends Observable{
         return menace;
     }
 
+    /**
+     * Affiche dans le terminal la meilleure action prédite par l'IA
+     */
     public void printPrediction(){
         Action actionPredite = IterationValeur.predict(this);
 
@@ -377,55 +380,44 @@ public class Environnement extends Observable{
         }
     }
 
-    public boolean estCaseDangereuse(Case c) {
-        boolean peutVoir = false;
-
-        for(Terroriste terro:ennemis) {
-            if (terro.getY() == c.y) { // Terroriste et case sur la meme ligne
-                int min = Math.min(terro.getX(), c.x);
-                int max = Math.max(terro.getX(), c.x);
-                peutVoir = true;
-                for (int x = min; x <= max; x++) {
-                    if (!getCase(x, terro.getY()).peutVoir) {
-                        peutVoir = false;
-                        break;
-                    }
-                }
-            } else if (terro.getX() == c.x) { // Terroriste et case sur la meme colonne
-                int min = Math.min(terro.getY(), c.y);
-                int max = Math.max(terro.getY(), c.y);
-                peutVoir = true;
-                for (int y = min; y <= max; y++) {
-                    if (!getCase(terro.getX(), y).peutVoir) {
-                        peutVoir = false;
-                        break;
-                    }
-                }
-            }
-            if (peutVoir) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Renvoie une instance en copie profonde de cet objet. Tous les champs de cette instance sont aussi des copies
+     * profondes
+     * @return La copie
+     */
     public Environnement copy(){
         return new Environnement(this);
     }
 
+    /**
+     * Modifie l'état de l'environnement
+     * @param e Le nouvel état
+     */
     public void setEtat(Etat e){
         this.operateur = e.operateur();
         this.ennemis = new ArrayList<>(e.ennemis());
     }
 
+    /**
+     * Indique si la mission est un échec
+     * @return true si la mission est un échec, false sinon
+     */
     public boolean isEchec() {
         return echec;
     }
 
+    /**
+     * Indique si la mission est finie, ie un échec ou une réussite
+     * @return true si la mission est finie, false sinon
+     */
     public boolean isMissionFinie() {
         return missionFinie;
     }
 
+    /**
+     * Fait effectuer les coups à tous les terroristes
+     * @param coups La liste des coups
+     */
     public void effectuerCoupsTerroristes(List<Coup> coups){
         for(Terroriste t : ennemis){
             for(Coup c : coups) {
@@ -441,6 +433,11 @@ public class Environnement extends Observable{
         }
     }
 
+    /**
+     * Calcule la probabilité que les ennemis effectuent le coup fourni
+     * @param c Le coup
+     * @return La probabilité
+     */
     public double getProbaCoupEnnemi(Coup c){
         // Martine excuse-moi encore une fois pour ce que je vais faire
         if(c instanceof Tir) {
