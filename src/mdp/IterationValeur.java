@@ -10,9 +10,9 @@ import personnages.Terroriste;
 import java.util.*;
 
 public class IterationValeur implements MDP{
-    private static double gamma = 0.80;
+    private static double gamma = 0.90;
     private static double epsilon = 0.0001;
-    private static int maxTour = 5;
+    private static int maxTour = 4;
 
     /**
      * Calcule et prédis la meilleure action à effectuer. Lance le calcul des utilités des état immédiatement accessibles,
@@ -29,6 +29,22 @@ public class IterationValeur implements MDP{
         double maxUtil = -Double.MAX_VALUE;
         Action bestAction = null;
 
+//        for(Action action : actions){
+//            IterationValeurThread thread = new IterationValeurThread(env, action, new Etat(env));
+//            thread.start();
+//
+//            try {
+//                thread.join(0);
+//                System.out.println(thread.value + " " + thread.action);
+//                if(thread.value > maxUtil){
+//                    maxUtil = thread.value;
+//                    bestAction = thread.action;
+//                }
+//            } catch (InterruptedException e) {
+//                System.out.println("Thread (" + threads.get(thread) + ") a rencontré une erreur : " + e.getMessage());
+//            }
+//        }
+        
         // Lancement du multi threading
         for(Action action : actions){
             IterationValeurThread thread = new IterationValeurThread(env, action, new Etat(env));
@@ -40,6 +56,7 @@ public class IterationValeur implements MDP{
         for(IterationValeurThread t : threads.keySet()){
             try {
                 t.join(0);
+                System.out.println(t.value + " " + t.action);
                 if(t.value > maxUtil){
                     maxUtil = t.value;
                     bestAction = threads.get(t);
@@ -248,6 +265,7 @@ public class IterationValeur implements MDP{
 
         Set<Action> actions = getAllActionsPossibleOperateur(env);
         double sumUtil = 0;
+//        System.out.println(tour + " " + env.getOperateurActif().getPointsAction());
 
         for(Action action : actions){
             Map<Etat, Double> probaEtats = MDP.transition(env.copy(), etatDepart, action);
@@ -317,6 +335,7 @@ public class IterationValeur implements MDP{
 
         public void run(){
             Map<Etat, Double> probaEtats = MDP.transition(env.copy(), etatDepart, action);
+//            System.out.println(action + "\n\t" + probaEtats + "\n");
 
             // Ajout des utilités des états d'arrivée pondéré par proba d'y arriver
             for(Etat etatArrivee : probaEtats.keySet()){

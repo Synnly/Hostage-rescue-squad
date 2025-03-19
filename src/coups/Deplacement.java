@@ -32,10 +32,15 @@ public class Deplacement extends Coup {
      */
     @Override
     public void effectuer(Environnement env, Personnage perso, Case arr) {
+        if(perso instanceof Operateur){ // Si type de perso est operateur mais connu qu'au runtime
+            effectuer(env, (Operateur) perso, arr);
+            return;
+        }
+
         int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
 
         if (distance * cout > perso.getPointsAction()){
-            System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
+//            System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
         }
         else {
             perso.setX(arr.x);
@@ -55,7 +60,7 @@ public class Deplacement extends Coup {
         int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
 
         if (distance * cout > perso.getPointsAction()){
-            System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
+//            System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
         }
         else {
             boolean ennemiPresent = false;
@@ -71,7 +76,7 @@ public class Deplacement extends Coup {
             else {
                 List<Double> nombres = env.getNombresAleatoires(1);
                 if(nombres.get(0) > probaSucces){
-                    System.out.println("L'action a échoué");
+//                    System.out.println("L'action a échoué");
                 }
                 else {
                     perso.setX(arr.x);
@@ -125,7 +130,7 @@ public class Deplacement extends Coup {
         List<Terroriste> ennemis = env.getEnnemis();
 
         for (Case c: env.getPlateau()) {
-            if(Math.abs(caseX - c.getX()) + Math.abs(caseY - c.getY()) <= 1 && caseDepart != c){ // Distance suffisamment proche
+            if(Math.abs(caseX - c.getX()) + Math.abs(caseY - c.getY()) <= 1 && (caseDepart.x != c.x || caseDepart.y != c.y)){ // Distance suffisamment proche
                 boolean aEnnemi = false;
                 for(Terroriste ennemi : ennemis){   // Ennemi présent sur la case ?
                     if(ennemi.getX() == c.getX() && ennemi.getY() == c.getY()){

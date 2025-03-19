@@ -11,6 +11,7 @@ import observable.Environnement;
  * Type abstrait représentant un personnage effectuant des actions sur le plateau.
  */
 public abstract class Personnage {
+    protected int id;
     /**
      * Sa coordonnée en largeur
      */
@@ -72,6 +73,7 @@ public abstract class Personnage {
         assert deplacement != null : "Action déplacement null";
         assert tir != null : "Action tir null";
 
+        this.id = FabriqueIDPersonnage.nextID();
         this.x = x;
         this.y = y;
         this.pointsAction = pointsAction;
@@ -82,6 +84,7 @@ public abstract class Personnage {
     }
 
     public Personnage(Personnage perso){
+        this.id = perso.id;
         this.x = perso.x;
         this.y = perso.y;
         this.pointsAction = perso.pointsAction;
@@ -170,6 +173,14 @@ public abstract class Personnage {
      */
     public void resetPointsAction(){
         pointsAction = maxPointsAction;
+    }
+
+    public int getMaxPointsAction() {
+        return maxPointsAction;
+    }
+
+    public int getId() {
+        return id;
     }
 
     /**

@@ -101,6 +101,7 @@ public class VuePlateau extends Observer {
             for (int y = 0; y < env.getHauteur(); y++) {
                 String bgColor = "white";
                 String bdColor = "gray";
+                String textColor = "black";
 
                 if(!env.getCase(x, y).peutVoir){    // Couverture
                     bgColor = "lightgray";
@@ -123,6 +124,7 @@ public class VuePlateau extends Observer {
                     }
                     else{
                         bgColor = "blue";
+                        textColor = "white";
                     }
                 }
 
@@ -131,7 +133,7 @@ public class VuePlateau extends Observer {
                     bdColor = "#ffff00ff";
                 }
 
-                boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor);
+                boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor + "; -fx-text-fill: " + textColor);
                 boutons[x][y].setText(x + ","+ y + "\n"+env.getCase(x, y).recompense);
             }
         }

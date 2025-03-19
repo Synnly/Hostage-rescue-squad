@@ -14,15 +14,15 @@ import java.util.Map;
 
 public interface MDP {
 
-    double valeurEchec = -9e20;
+    double valeurEchec = -1e5;
     double valeurReussite = 10;
     // ATTENTION /!\
     // LA VALEUR DE LA REUSSITE DE MISSION DOIT ETRE REDUIT DE LA VALEUR
     // DE RECUPERATION DE L'OBJECTIF
-    double valeurObjectif = 5;
+    double valeurObjectif = 1e10;
     double valeurDeltaMenace = 0; // > 0 quand niveau de menace augmente, < 0 sinon
     double valeurTuerEnnemi = 2;
-    double valeurDeplacement = -0.4;
+    double valeurDeplacement = -10;
 
     /**
      * Calcule la récompense R(s, a, s')
@@ -79,17 +79,20 @@ public interface MDP {
         etats.put(etatDepart, 1.);
 
         // parcours des coups composant l'action
-        for(int i = 0; i < action.cibles().size(); i++){
+        for(int i = 0; i < action.coups().size(); i++){
             Map<Etat, Double> etatsTemp = new HashMap<>(2 * etats.size());
 
             // action des coups sur les etats
             for(Etat e : etats.keySet()){
                 if(!e.estTerminal()) {
-                    Etat etatSucces = simuler(env.copy(), e, action.coups().get(i).copy(), action.personnage().copy(), action.cibles().get(i).copy(), true);
-                    Etat etatEchec = simuler(env.copy(), e, action.coups().get(i).copy(), action.personnage().copy(), action.cibles().get(i).copy(), false);
+                    Etat etatSucces = simuler(env, e, action.coups().get(i), action.personnage(), action.cibles().get(i), true);
+                    Etat etatEchec = simuler(env, e, action.coups().get(i), action.personnage(), action.cibles().get(i), false);
 
                     etatsTemp.put(etatSucces, etats.get(e) * action.coups().get(i).probaSucces);
                     etatsTemp.put(etatEchec, etats.get(e) * (1 - action.coups().get(i).probaSucces));
+
+//                    System.out.println(etatsTemp + " " + action.coups().get(i)+ " " + action.cibles().get(i) + "\n\t"  + "\n\t" + etatSucces);
+//                    System.out.println(etatsTemp + " " + action.coups().get(i)+ " " + action.cibles().get(i) + "\n\t" + etatEchec + "\n\t" + etatSucces);
                 }
                 else{
                     etatsTemp.put(e, etats.get(e));
@@ -111,10 +114,16 @@ public interface MDP {
      * @return L'état d'arrivée
      */
     static Etat simuler(Environnement env, Etat etatDepart, Coup coup, Personnage perso, Case cible, boolean succes){
-        env.setEtat(etatDepart);
-        coup.probaSucces = succes ? 1 : 0;
+//        System.out.println("Etat avant " + coup + " vers " + cible + " (succes = " + succes + ") : " + etatDepart);
+        Environnement envCopy = env.copy();
+        Coup coupCopy = coup.copy();
+        envCopy.setEtat(etatDepart);
+        envCopy = envCopy.copy(); // ligne necessaire sinon instance de perso en copie de surface
+        coupCopy.probaSucces = succes ? 1 : 0;
 
-        coup.effectuer(env, perso, cible);
-        return new Etat(env);
+        coupCopy.effectuer(envCopy, envCopy.getPersonnage(perso), cible.copy());
+
+//        System.out.println("Etat apres " + coupCopy + " vers " + cible + " (probaSucces = " + coupCopy.probaSucces + ") : " + new Etat(envCopy) + "\n");
+        return new Etat(envCopy);
     }
 }

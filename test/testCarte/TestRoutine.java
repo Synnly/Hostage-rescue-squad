@@ -1,5 +1,6 @@
 package testCarte;
 
+import carte.Case;
 import carte.CaseNormale;
 import carte.Routine;
 import observable.Environnement;
@@ -47,7 +48,7 @@ public class TestRoutine {
     @Test
     @DisplayName("Creer une routine avec une case null lance une erreur")
     public void testCreerRoutineAvecCaseNullLanceUneErreur() {
-        assertThrows(AssertionError.class, () -> new Routine(null));
+        assertThrows(AssertionError.class, () -> new Routine((Case) null));
     }
 
     // ==================== ajouterCase ====================

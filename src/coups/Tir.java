@@ -37,7 +37,13 @@ public class Tir extends Coup {
      * @param arr La destination
      */
     @Override
-    public void effectuer(Environnement env, Personnage perso, Case arr) {
+    public void effectuer(Environnement env, Personnage perso, Case arr){
+        if(perso instanceof Operateur){
+            effectuer(env, (Operateur) perso, arr);
+        }
+        else if(perso instanceof Terroriste){
+            effectuer(env, (Terroriste) perso, arr);
+        }
     }
 
     public void effectuer(Environnement env, Terroriste terro, Case arr){
@@ -87,7 +93,7 @@ public class Tir extends Coup {
             if(env.aEnnemisSurCase(arr)){
                 perso.removePointsAction(cout);
                 if(nombres.get(0) > probaSucces){
-                    System.out.println("L'action a échoué");
+//                    System.out.println("L'action a échoué");
                     return;
                 }
                 env.tuerEnnemis(arr);
@@ -105,7 +111,7 @@ public class Tir extends Coup {
             if(env.aEnnemisSurCase(arr)){
                 perso.removePointsAction(cout);
                 if(nombres.get(0) > probaSucces){
-                    System.out.println("L'action a échoué");
+//                    System.out.println("L'action a échoué");
                     return;
                 }
                 env.tuerEnnemis(arr);

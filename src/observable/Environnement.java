@@ -448,4 +448,25 @@ public class Environnement extends Observable{
         }
         else return 0;
     }
+
+    /**
+     * Renvoie le personnage de l'environnement (généralement copié quand cette fonction est utilisée) qui correspond au
+     * personnage fourni
+     * @param perso Le personnage contre qui comparer
+     * @return Le personnage qui correspond
+     */
+    public Personnage getPersonnage(Personnage perso){
+        if(operateur.getId() == perso.getId()){
+            return operateur;
+        }
+
+        for(Terroriste t:ennemis){
+            if(t.equals(perso)) {
+                if(t.getId() == perso.getId()){
+                    return t;
+                }
+            }
+        }
+        return null;
+    }
 }
