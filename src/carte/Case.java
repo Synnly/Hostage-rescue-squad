@@ -1,11 +1,13 @@
 package carte;
 
 import observable.Environnement;
+import outils.FabriqueIdentifiant;
 
 /**
  * Type abstrait représentant une case du plateau.
  */
 public abstract class Case {
+    public final int id;
     /**
      * La coordonnée en largeur de la case
      */
@@ -40,6 +42,7 @@ public abstract class Case {
     public Case(Environnement env, int x, int y, boolean peutVoir){
         assert x >= 0 && x < env.getLargeur() : "x doit être 0 <= x < " + env.getLargeur() + "(x = " + x + ")";
         assert y >= 0 && y < env.getHauteur() : "y doit être 0 <= y < " + env.getHauteur() + "(y = " + y + ")";
+        this.id = FabriqueIdentifiant.nextIdCase();
         this.x = x;
         this.y = y;
         this.peutVoir = peutVoir;
@@ -48,6 +51,7 @@ public abstract class Case {
     }
 
     public Case(Case c){
+        this.id = c.id;
         this.x = c.x;
         this.y = c.y;
         this.peutVoir = c.peutVoir;
@@ -56,6 +60,7 @@ public abstract class Case {
     }
 
     protected Case(int x, int y, boolean peutVoir){
+        this.id = FabriqueIdentifiant.nextIdCase();
         this.x = x;
         this.y = y;
         this.peutVoir = peutVoir;

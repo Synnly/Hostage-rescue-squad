@@ -271,7 +271,12 @@ public class Environnement extends Observable{
         assert obj.x == op.getX() && obj.y == op.getY() : "L'opérateur doit être sur l'objectif";
 
         op.setPossedeObjectif(true);
-        int index = cases.indexOf(obj);
+        int index = -1;
+        for(Case c : cases){
+            if (c.id == obj.id){
+                index = cases.indexOf(c);
+            }
+        }
         cases.set(index, new CaseNormale(this, obj.x, obj.y));
 
         for(int i = 0; i < largeur; i++){
@@ -461,10 +466,17 @@ public class Environnement extends Observable{
         }
 
         for(Terroriste t:ennemis){
-            if(t.equals(perso)) {
-                if(t.getId() == perso.getId()){
-                    return t;
-                }
+            if(t.getId() == perso.getId()){
+                return t;
+            }
+        }
+        return null;
+    }
+
+    public Case getCase(Case c){
+        for(Case c1:cases){
+            if(c.id == c1.id){
+                return c1;
             }
         }
         return null;
