@@ -18,26 +18,26 @@ l'exécution séquentielle des tests
     @Test
     @DisplayName("Test de sur les valeurs de fabrique identifiant")
     public void testDeLincrementationDesIdentifiants() {
-        FabriqueIdentifiant.getInstance().resetId();
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 0);
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 1);
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 2);
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 3);
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 4);
+        FabriqueIdentifiant.resetIdPersonnage();
+        assertEquals(0, FabriqueIdentifiant.nextIdPersonnage());
+        assertEquals(1, FabriqueIdentifiant.nextIdPersonnage());
+        assertEquals(2, FabriqueIdentifiant.nextIdPersonnage());
+        assertEquals(3, FabriqueIdentifiant.nextIdPersonnage());
+        assertEquals(4, FabriqueIdentifiant.nextIdPersonnage());
 
     }
 
     @Test
     @DisplayName("Test de la remise à zéro des identifiant")
     public void testDuResetDesIdentifiants() {
-        FabriqueIdentifiant.getInstance().resetId();
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 0);
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 1);
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 2);
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 3);
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 4);
-        FabriqueIdentifiant.getInstance().resetId();
-        assertEquals(FabriqueIdentifiant.getInstance().getId(), 0);
+        FabriqueIdentifiant.resetIdPersonnage();
+        assertEquals(0, FabriqueIdentifiant.nextIdPersonnage());
+        assertEquals(1, FabriqueIdentifiant.nextIdPersonnage());
+        assertEquals(2, FabriqueIdentifiant.nextIdPersonnage());
+        assertEquals(3, FabriqueIdentifiant.nextIdPersonnage());
+        assertEquals(4, FabriqueIdentifiant.nextIdPersonnage());
+        FabriqueIdentifiant.resetIdPersonnage();
+        assertEquals(0, FabriqueIdentifiant.nextIdPersonnage());
 
 
 

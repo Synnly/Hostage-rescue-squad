@@ -5,6 +5,7 @@ import coups.Deplacement;
 import coups.FinTour;
 import coups.Tir;
 import observable.Environnement;
+import outils.FabriqueIdentifiant;
 
 
 /**
@@ -73,7 +74,7 @@ public abstract class Personnage {
         assert deplacement != null : "Action déplacement null";
         assert tir != null : "Action tir null";
 
-        this.id = FabriqueIDPersonnage.nextID();
+        this.id = FabriqueIdentifiant.nextIdPersonnage();
         this.x = x;
         this.y = y;
         this.pointsAction = pointsAction;

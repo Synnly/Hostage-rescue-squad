@@ -2,14 +2,14 @@ package outils;
 
 public class FabriqueIdentifiant {
     private static FabriqueIdentifiant instance =  new FabriqueIdentifiant();
-    private int identifiant = 0;
+    private static int idPersonnage = 0;
     public static FabriqueIdentifiant getInstance(){
         return instance;
     }
-    public int getId(){
-        return identifiant++;
+    public static int nextIdPersonnage(){
+        return idPersonnage++;
     }
-    public void resetId(){
-        identifiant = 0;
+    public static void resetIdPersonnage(){
+        idPersonnage = 0;
     }
 }
