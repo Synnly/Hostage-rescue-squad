@@ -14,13 +14,13 @@ import java.util.Map;
 
 public interface MDP {
 
-    double valeurEchec = -10;
-    double valeurReussite = 10;
+    double valeurEchec = -10000;
+    double valeurReussite = 10000;
     // ATTENTION /!\
     // LA VALEUR DE LA REUSSITE DE MISSION DOIT ETRE REDUIT DE LA VALEUR
     // DE RECUPERATION DE L'OBJECTIF
     double valeurObjectif = 10000;
-    double valeurDeltaMenace = 0; // > 0 quand niveau de menace augmente, < 0 sinon
+    double valeurDeltaMenace = 2; // > 0 quand niveau de menace augmente, < 0 sinon
     double valeurTuerEnnemi = 2;
     double valeurDeplacement = -1;
 

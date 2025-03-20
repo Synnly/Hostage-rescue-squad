@@ -55,7 +55,7 @@ public class Tir extends Coup {
                     return;
                 }
             }
-//            System.out.println("Vous etes mort");
+            env.terminerMission(false);
 
         }
         else if (terro.getX() == arr.x) { // Ennemi et case sur la meme colonne
@@ -66,7 +66,7 @@ public class Tir extends Coup {
                     return;
                 }
             }
-//            System.out.println("Vous etes mort");
+            env.terminerMission(false);
         }
     }
 

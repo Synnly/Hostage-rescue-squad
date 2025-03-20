@@ -45,25 +45,21 @@ public class Deplacement extends Coup {
 
         if (distance * cout > perso.getPointsAction()){
 //            System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
-            env.finDePartie();
         }
         else {
             perso.setX(arr.getX());
             perso.setY(arr.getY());
             perso.removePointsAction(distance * cout);
-
-            Operateur operateur = env.getOperateurActif();
-            if(operateur.getX() == arr.getX() && operateur.getY() == arr.getY()){
-                System.out.println("Un ennemi est présent sur cette case");
-                //Possible de throw une erreur à catch pour afficher l'alerte de défaite
-                env.finDePartie();
-            }
         }
     }
 
     public void effectuer(Environnement env, Terroriste terroriste, Case arr){
         terroriste.setX(arr.x);
         terroriste.setY(arr.y);
+
+        if(env.getOperateurActif().getX() == arr.getX() && env.getOperateurActif().getY() == arr.getY()){
+            env.terminerMission(false);
+        }
     }
 
     /**
@@ -89,8 +85,6 @@ public class Deplacement extends Coup {
             }
             if (ennemiPresent) {
 //                System.out.println("Un ennemi est présent sur cette case");
-                //Possible de throw une erreur à catch pour afficher l'alerte de défaite
-                env.finDePartie();
             }
             else {
                 List<Double> nombres = env.getNombresAleatoires(1);
@@ -103,9 +97,12 @@ public class Deplacement extends Coup {
                     if(arr.estObjectif()){
                         env.recupereObjectif((Objectif) arr, perso);
                     }
+
+                    if(perso.getY() == env.getHauteur() - 1 && perso.possedeObjectif()){
+                        env.terminerMission(true);
+                    }
                 }
                 perso.removePointsAction(distance * cout);
-
             }
         }
     }

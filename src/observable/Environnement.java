@@ -27,6 +27,8 @@ public class Environnement extends Observable{
     private boolean missionFinie = false;
     private final double probaTirEnnemi = 0.3;
     private final double probaDeplacementEnnemi = 0.7;
+    private final double probaSuccesDeplacement = 0.9;
+    private final double probaSuccesTir = 0.7;
 
 
     /**
@@ -240,7 +242,6 @@ public class Environnement extends Observable{
                     ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
                 }
             }
-            notifyObservers();
         }
 
         operateur.setActionActive(operateur.getDeplacement());
@@ -265,9 +266,10 @@ public class Environnement extends Observable{
         // Tour ennemi
         if(op.getPointsAction() == 0){
             tourEnnemi();
-            printPrediction();
-
-            op.resetPointsAction();
+            if(!isMissionFinie()) {
+                op.resetPointsAction();
+                printPrediction();
+            }
         }
         notifyObservers();
     }
@@ -489,5 +491,10 @@ public class Environnement extends Observable{
             }
         }
         return null;
+    }
+
+    public void terminerMission(boolean succes){
+        missionFinie = true;
+        echec = !succes;
     }
 }

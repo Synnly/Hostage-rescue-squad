@@ -91,6 +91,16 @@ public class VuePlateau extends Observer {
         int y = Integer.parseInt(coords[1]);
 
         env.choisirCase(x, y);
+
+        if(env.isMissionFinie()){
+            if(env.isEchec()){
+                System.out.println("Vous êtes mort");
+            }
+            else {
+                System.out.println("Mission réussie");
+            }
+            env.finDePartie();
+        }
     }
 
     @Override
