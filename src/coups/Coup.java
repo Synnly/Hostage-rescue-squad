@@ -1,4 +1,4 @@
-package actions;
+package coups;
 
 import carte.Case;
 import observable.Environnement;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Type abstrait représentant une action pouvant être effectuée par le joueur comme un déplacement ou un tir.
  */
-public abstract class Action {
+public abstract class Coup {
     /**
      * Le cout en points d'actions de cette action.&nbsp;Ce cout est déduit des points d'actions du personnage lorsqu'il
      * effectue cette action.
@@ -20,7 +20,7 @@ public abstract class Action {
      * La probabilité de succès de l'action.&nbsp;Une probabilité de 1 représente une action n'échouant jamais et 0 au
      * contraire une action échouant toujours
      */
-    public final double probaSucces;
+    public double probaSucces;
 
     /**
      * Constructeur d'une action type
@@ -28,9 +28,14 @@ public abstract class Action {
      * @param cout        Le cout de cette action
      * @param probaSucces La probabilité de succès allant de 1 à 0
      */
-    public Action(int cout, double probaSucces){
+    public Coup(int cout, double probaSucces){
         this.cout = cout;
         this.probaSucces = probaSucces;
+    }
+
+    public Coup(Coup c){
+        this.cout = c.cout;
+        this.probaSucces = c.probaSucces;
     }
 
     /**
@@ -71,4 +76,20 @@ public abstract class Action {
      * @return La liste des cases valides
      */
     public abstract List<Case> getCasesValides(Environnement env, Operateur perso);
+
+    public abstract List<Case> getCasesValides(Environnement env, Case caseDepart);
+
+    public abstract Coup copy();
+
+    public boolean estDeplacement(){
+        return false;
+    }
+
+    public boolean estTir(){
+        return false;
+    }
+
+    public boolean estFinTour(){
+        return false;
+    }
 }

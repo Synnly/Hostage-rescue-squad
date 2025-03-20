@@ -1,7 +1,10 @@
 package observable;
 
-import actions.*;
+import coups.*;
 import carte.*;
+import mdp.Action;
+import mdp.Etat;
+import mdp.IterationValeur;
 import personnages.*;
 
 import java.util.ArrayList;
@@ -19,8 +22,12 @@ public class Environnement extends Observable{
     private Operateur operateur;
     private List<Terroriste> ennemis;
     private int menace = 2;
-    private double probaSuccesDeplacement;
-    private double probaSuccesTir;
+
+    private boolean echec = false;
+    private boolean missionFinie = false;
+    private final double probaTirEnnemi = 0.3;
+    private final double probaDeplacementEnnemi = 0.7;
+
 
     /**
      * Constructeur de l'environnement. Initialise le plateau de taille <code>largeur</code> x <code>hauteur</code>,
@@ -41,9 +48,22 @@ public class Environnement extends Observable{
 
         this.largeur = largeur;
         this.hauteur = hauteur;
-        this.probaSuccesDeplacement = probaSuccesDeplacement;
-        this.probaSuccesTir = probaSuccesTir;
         nouvellePartie();
+    }
+
+    public Environnement(Environnement env){
+        this.largeur = env.largeur;
+        this.hauteur = env.hauteur;
+        this.operateur = env.operateur.copy();
+        this.menace = env.menace;
+        this.cases = new ArrayList<>();
+        for(Case c:env.cases){
+            cases.add(c.copy());
+        }
+        this.ennemis = new ArrayList<>();
+        for(Terroriste t:env.ennemis){
+            ennemis.add(t.copy());
+        }
     }
 
     /**
@@ -52,6 +72,15 @@ public class Environnement extends Observable{
     public void nouvellePartie( ){
         cases = new ArrayList<>();
         initPlateau(largeur, hauteur);
+
+        // Couvertures (temporaire)
+        cases.set(1, new Couverture(this, 1, 0));
+        cases.set(4, new Couverture(this, 4, 0));
+        cases.set(9, new Couverture(this, 2, 1));
+        cases.set(19, new Couverture(this, 5, 2));
+        cases.set(31, new Couverture(this, 3, 4));
+        cases.set(29, new Couverture(this, 1, 4));
+        cases.set(32, new Couverture(this, 4, 4));
 
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
@@ -67,7 +96,7 @@ public class Environnement extends Observable{
         Tir tirTer = new Tir(0, 1);
         ennemis = new ArrayList<>(1);
 
-        Terroriste ennemi = new Terroriste(this, largeur/2, 0, 0, deplacementTer, tirTer);
+        Terroriste ennemi = new Terroriste(this, largeur/2+1, 0, 0, deplacementTer, tirTer);
         Terroriste ennemi2 = new Terroriste(this, largeur/2, 4, 0, deplacementTer, tirTer);
         ennemi.setRoutine(routine);
         ennemi2.setRoutine(routine);
@@ -195,13 +224,12 @@ public class Environnement extends Observable{
     }
 
     /**
-     * Effectue le tour des ennemis.&nbsp;Remet l'action choisie par les opérateurs au déplacement et leur redonne tous leurs
-     * points d'action
+     * Effectue le tour des ennemis.&nbsp;Remet l'action choisie par les opérateurs au déplacement
      */
     public void tourEnnemi(){
         List<Double> nombres = getNombresAleatoires(menace);
         for(int i = 0; i < menace; i++) {
-            if(nombres.get(i) < 0.3){   // Tir
+            if(nombres.get(i) < probaTirEnnemi){   // Tir
                 for (Terroriste ennemi : ennemis) {
                     ennemi.getTir().effectuer(this, ennemi, getCase(operateur.getX(), operateur.getY()));
                 }
@@ -214,8 +242,8 @@ public class Environnement extends Observable{
             }
             notifyObservers();
         }
+
         operateur.setActionActive(operateur.getDeplacement());
-        operateur.resetPointsAction();
     }
 
     /**
@@ -237,6 +265,7 @@ public class Environnement extends Observable{
         // Tour ennemi
         if(op.getPointsAction() == 0){
             tourEnnemi();
+            printPrediction();
 
             op.resetPointsAction();
         }
@@ -255,9 +284,16 @@ public class Environnement extends Observable{
 
         assert obj.x == op.getX() && obj.y == op.getY() : "L'opérateur doit être sur l'objectif";
 
-        op.setPossedeObjectif(true);
-        int index = cases.indexOf(obj);
+        int index = -1;
+        for(int i = 0; i < cases.size(); i++){
+            if (cases.get(i).id == obj.id){
+                index = i;
+            }
+        }
+        assert index != -1: "Objectif non trouvé";
+
         cases.set(index, new CaseNormale(this, obj.x, obj.y));
+        op.setPossedeObjectif(true);
     }
 
     /**
@@ -282,6 +318,7 @@ public class Environnement extends Observable{
     public void setFinTourActionActive(){
         operateur.setActionActive(operateur.getDeplacement());
         tourEnnemi();
+        printPrediction();
         notifyObservers();
     }
 
@@ -331,5 +368,126 @@ public class Environnement extends Observable{
             nombres.add(random.nextDouble());
         }
         return nombres;
+    }
+
+    public int getMenace() {
+        return menace;
+    }
+
+    /**
+     * Affiche dans le terminal la meilleure action prédite par l'IA
+     */
+    public void printPrediction(){
+        Action actionPredite = IterationValeur.predict(this);
+
+        if(actionPredite.coups().get(0).estFinTour()){
+            System.out.println("L'ia vous conseille de terminer le tour");
+        }
+        else{
+            System.out.println("L'ia vous conseille de " + actionPredite.coups().get(0) + " vers la case " + actionPredite.cibles().get(0));
+        }
+
+        for (int i = 1; i < actionPredite.coups().size(); i++) {
+            if(actionPredite.coups().get(i).estFinTour()){
+                System.out.println("puis de terminer le tour");
+            }
+            else{
+                System.out.println("puis de " + actionPredite.coups().get(i) + " vers la case " + actionPredite.cibles().get(i));
+            }
+        }
+    }
+
+    /**
+     * Renvoie une instance en copie profonde de cet objet. Tous les champs de cette instance sont aussi des copies
+     * profondes
+     * @return La copie
+     */
+    public Environnement copy(){
+        return new Environnement(this);
+    }
+
+    /**
+     * Modifie l'état de l'environnement
+     * @param e Le nouvel état
+     */
+    public void setEtat(Etat e){
+        this.operateur = e.operateur();
+        this.ennemis = new ArrayList<>(e.ennemis());
+    }
+
+    /**
+     * Indique si la mission est un échec
+     * @return true si la mission est un échec, false sinon
+     */
+    public boolean isEchec() {
+        return echec;
+    }
+
+    /**
+     * Indique si la mission est finie, ie un échec ou une réussite
+     * @return true si la mission est finie, false sinon
+     */
+    public boolean isMissionFinie() {
+        return missionFinie;
+    }
+
+    /**
+     * Fait effectuer les coups à tous les terroristes
+     * @param coups La liste des coups
+     */
+    public void effectuerCoupsTerroristes(List<Coup> coups){
+        for(Terroriste t : ennemis){
+            for(Coup c : coups) {
+                if(c.estTir()) {
+                    c.effectuer(this, t, getCase(operateur.getX(), operateur.getY()));
+                }
+                else if(c.estDeplacement()) {
+                    c.effectuer(this, t, t.getRoutine().prochaineCase(getCase(t.getX(), t.getY())));
+                }
+            }
+        }
+    }
+
+    /**
+     * Calcule la probabilité que les ennemis effectuent le coup fourni
+     * @param c Le coup
+     * @return La probabilité
+     */
+    public double getProbaCoupEnnemi(Coup c){
+        if(c.estTir()) {
+            return probaTirEnnemi;
+        }
+        else if(c.estDeplacement()) {
+            return probaDeplacementEnnemi;
+        }
+        else return 0;
+    }
+
+    /**
+     * Renvoie le personnage de l'environnement (généralement copié quand cette fonction est utilisée) qui correspond au
+     * personnage fourni
+     * @param perso Le personnage contre qui comparer
+     * @return Le personnage qui correspond
+     */
+    public Personnage getPersonnage(Personnage perso){
+        if(operateur.getId() == perso.getId()){
+            return operateur;
+        }
+
+        for(Terroriste t:ennemis){
+            if(t.getId() == perso.getId()){
+                return t;
+            }
+        }
+        return null;
+    }
+
+    public Case getCase(Case c){
+        for(Case c1:cases){
+            if(c.id == c1.id){
+                return c1;
+            }
+        }
+        return null;
     }
 }

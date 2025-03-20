@@ -14,8 +14,18 @@ public class Objectif extends Case{
      * @param y Sa coordonnée en hauteur. Doit être 0 &le;&nbsp;<code>y</code> &lt;&nbsp;<code>env.hauteur</code>
      */
     public Objectif(Environnement env, int x, int y) {
-        super(env, x, y);
+        super(env, x, y, true);
         super.estObjectif = true;
         this.recompense = 10;
+    }
+
+    public Objectif(Objectif o) {
+        super(o);
+        super.estObjectif = true;
+        this.recompense = 10;
+    }
+
+    public Objectif copy(){
+        return new Objectif(this);
     }
 }

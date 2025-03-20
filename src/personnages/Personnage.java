@@ -1,16 +1,18 @@
 package personnages;
 
-import actions.Action;
-import actions.Deplacement;
-import actions.FinTour;
-import actions.Tir;
+import coups.Coup;
+import coups.Deplacement;
+import coups.FinTour;
+import coups.Tir;
 import observable.Environnement;
+import outils.FabriqueIdentifiant;
 
 
 /**
  * Type abstrait représentant un personnage effectuant des actions sur le plateau.
  */
 public abstract class Personnage {
+    protected int id;
     /**
      * Sa coordonnée en largeur
      */
@@ -33,7 +35,7 @@ public abstract class Personnage {
      *
      * @see Deplacement
      */
-    protected Action actionActive;
+    protected Coup coupActive;
     /**
      * L'action de déplacement de ce personnage.&nbsp;Cette action définit comment et à quel cout ce personnage se
      * déplace sur le plateau.
@@ -72,13 +74,26 @@ public abstract class Personnage {
         assert deplacement != null : "Action déplacement null";
         assert tir != null : "Action tir null";
 
+        this.id = FabriqueIdentifiant.nextIdPersonnage();
         this.x = x;
         this.y = y;
         this.pointsAction = pointsAction;
         this.maxPointsAction = pointsAction;
         this.deplacement = deplacement;
         this.tir = tir;
-        this.finTour = new FinTour(0, 0);
+        this.finTour = new FinTour(1, 0);
+    }
+
+    public Personnage(Personnage perso){
+        this.id = perso.id;
+        this.x = perso.x;
+        this.y = perso.y;
+        this.pointsAction = perso.pointsAction;
+        this.maxPointsAction = perso.maxPointsAction;
+        this.deplacement = perso.deplacement;
+        this.tir = perso.tir;
+        this.finTour = new FinTour(1, 0);
+        this.coupActive = perso.coupActive;
     }
 
     /**
@@ -87,15 +102,16 @@ public abstract class Personnage {
      *
      * @param a L'action
      */
-    public void setActionActive(Action a){actionActive = a;}
+    public void setActionActive(Coup a){
+        coupActive = a;}
 
     /**
      * Renvoie l'action active pour ce personnage
      *
      * @return L 'action active
      */
-    public Action getActionActive() {
-        return actionActive;
+    public Coup getActionActive() {
+        return coupActive;
     }
 
     /**
@@ -160,6 +176,14 @@ public abstract class Personnage {
         pointsAction = maxPointsAction;
     }
 
+    public int getMaxPointsAction() {
+        return maxPointsAction;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     /**
      * Renvoie l'action de déplacement de ce personnage
      *
@@ -187,5 +211,23 @@ public abstract class Personnage {
         return finTour;
     }
 
+    /**
+     * Renvoie une instance en copie profonde de cet objet. Tous les champs de cette instance sont aussi des copies
+     * profondes
+     * @return La copie
+     */
+    public abstract Personnage copy();
 
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y +") " + pointsAction + " PA";
+    }
+
+    public boolean estOperateur(){
+        return false;
+    }
+
+    public boolean estTerroriste(){
+        return false;
+    }
 }

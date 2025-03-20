@@ -34,7 +34,7 @@ public class VuePlateau extends Observer {
     /**
      * La taille en largeur et hauteur de chaque case
      */
-    private final int tailleCase = 75;
+    private final int tailleCase = 90;
 
     /**
      * Constructeur de la vue du plateau
@@ -71,6 +71,7 @@ public class VuePlateau extends Observer {
                 button.setMinWidth(gridPane.getWidth()/largeur);
                 button.setMinHeight((gridPane.getHeight() - 40)/hauteur);
                 button.setStyle("-fx-background-color: #ffffff; -fx-border-color: gray");
+                button.setText(x + ","+ y);
                 button.setOnAction(this);
                 gridPane.add(button, x, y);
                 boutons[x][y] = button;
@@ -101,6 +102,11 @@ public class VuePlateau extends Observer {
             for (int y = 0; y < env.getHauteur(); y++) {
                 String bgColor = "white";
                 String bdColor = "gray";
+                String textColor = "black";
+
+                if(!env.getCase(x, y).peutVoir){    // Couverture
+                    bgColor = "lightgray";
+                }
 
                 for(Terroriste ennemi : env.getEnnemis()){      // Terroristes
                     if (ennemi.getX() == x && ennemi.getY() == y) {
@@ -109,7 +115,7 @@ public class VuePlateau extends Observer {
                     }
                 }
 
-                if(env.getCase(x, y).estObjectif){
+                if(env.getCase(x, y).estObjectif){      // Objectif
                     bgColor = "green";
                 }
 
@@ -119,6 +125,7 @@ public class VuePlateau extends Observer {
                     }
                     else{
                         bgColor = "blue";
+                        textColor = "white";
                     }
                 }
 
@@ -127,7 +134,8 @@ public class VuePlateau extends Observer {
                     bdColor = "#ffff00ff";
                 }
 
-                boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor);
+                boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor + "; -fx-text-fill: " + textColor);
+                boutons[x][y].setText(x + ","+ y);
             }
         }
     }

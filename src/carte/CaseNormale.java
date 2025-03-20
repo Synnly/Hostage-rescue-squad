@@ -16,7 +16,14 @@ public class CaseNormale extends Case{
      * @param y Sa coordonnée en hauteur. Doit être 0 &le;&nbsp;<code>y</code> &lt;&nbsp;<code>env.hauteur</code>
      */
     public CaseNormale(Environnement env, int x, int y){
-        super(env, x, y);
-        this.recompense = -0.01;
+        super(env, x, y, true);
+    }
+
+    public CaseNormale(CaseNormale c){
+        super(c);
+    }
+
+    public CaseNormale copy(){
+        return new CaseNormale(this);
     }
 }

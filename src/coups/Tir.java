@@ -1,4 +1,4 @@
-package actions;
+package coups;
 
 import carte.Case;
 import observable.Environnement;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Action de tir représentant un personnage tirant sur un autre.
  */
-public class Tir extends Action{
+public class Tir extends Coup {
     /**
      * Constructeur d'une action de tir
      *
@@ -21,6 +21,10 @@ public class Tir extends Action{
      */
     public Tir(int cout, double probaSucces) {
         super(cout, probaSucces);
+    }
+
+    public Tir(Tir t){
+        super(t);
     }
 
     /**
@@ -33,30 +37,36 @@ public class Tir extends Action{
      * @param arr La destination
      */
     @Override
-    public void effectuer(Environnement env, Personnage perso, Case arr) {
+    public void effectuer(Environnement env, Personnage perso, Case arr){
+        if(perso.estOperateur()){
+            effectuer(env, (Operateur) perso, arr);
+        }
+        else if(perso.estOperateur()){
+            effectuer(env, (Terroriste) perso, arr);
+        }
     }
 
-    public void effectuer(Environnement env, Terroriste perso, Case arr){
-        if (perso.getX() == arr.getX()){ // Ennemi et case sur la meme ligne
-            int min = Math.min(perso.getX(), arr.getX());
-            int max = Math.min(perso.getX(), arr.getX());
+    public void effectuer(Environnement env, Terroriste terro, Case arr){
+        if (terro.getY() == arr.y){ // Ennemi et case sur la meme ligne
+            int min = Math.min(terro.getX(), arr.x);
+            int max = Math.max(terro.getX(), arr.x);
             for(int x = min; x <= max; x++){    // Verification de la visibilité
-                if(!env.getCase(x, perso.getY()).peutVoir()){
+                if(!env.getCase(x, terro.getY()).peutVoir() && x != terro.getX()){
                     return;
                 }
             }
-            System.out.println("Vous etes mort");
+//            System.out.println("Vous etes mort");
 
         }
-        else if (perso.getY() == arr.getY()) { // Ennemi et case sur la meme colonne
-            int min = Math.min(perso.getY(), arr.getY());
-            int max = Math.min(perso.getY(), arr.getY());
+        else if (terro.getX() == arr.x) { // Ennemi et case sur la meme colonne
+            int min = Math.min(terro.getY(), arr.y);
+            int max = Math.max(terro.getY(), arr.y);
             for(int y = min; y <= max; y++){    // Verification de la visibilité
-                if(!env.getCase(perso.getX(), y).peutVoir()){
+                if(!env.getCase(terro.getX(), y).peutVoir() && y != terro.getY()){
                     return;
                 }
             }
-            System.out.println("Vous etes mort");
+//            System.out.println("Vous etes mort");
         }
     }
 
@@ -72,43 +82,43 @@ public class Tir extends Action{
     public void effectuer(Environnement env, Operateur perso, Case arr) {
         List<Double> nombres = env.getNombresAleatoires(1);
 
-        if (perso.getX() == arr.getX()){ // Perso et case sur la meme ligne
-            int min = Math.min(perso.getX(), arr.getX());
-            int max = Math.min(perso.getX(), arr.getX());
+        if (perso.getY() == arr.y){ // Perso et case sur la meme ligne
+            int min = Math.min(perso.getX(), arr.x);
+            int max = Math.max(perso.getX(), arr.x);
             for(int x = min; x <= max; x++){
-                if(!env.getCase(x, perso.getY()).peutVoir()){
+                if(!env.getCase(x, perso.getY()).peutVoir() && x != perso.getX()){
                     return;
                 }
             }
             if(env.aEnnemisSurCase(arr)){
                 perso.removePointsAction(cout);
                 if(nombres.get(0) > probaSucces){
-                    System.out.println("L'action a échoué");
+//                    System.out.println("L'action a échoué");
                     return;
                 }
                 env.tuerEnnemis(arr);
                 return;
             }
         }
-        else if (perso.getY() == arr.y) { // Perso et case sur la meme colonne
+        else if (perso.getX() == arr.x) { // Perso et case sur la meme colonne
             int min = Math.min(perso.getY(), arr.y);
-            int max = Math.min(perso.getY(), arr.y);
+            int max = Math.max(perso.getY(), arr.y);
             for(int y = min; y <= max; y++){
-                if(!env.getCase(perso.getX(), y).peutVoir()){
+                if(!env.getCase(perso.getX(), y).peutVoir() && y != perso.getY()){
                     return;
                 }
             }
             if(env.aEnnemisSurCase(arr)){
                 perso.removePointsAction(cout);
                 if(nombres.get(0) > probaSucces){
-                    System.out.println("L'action a échoué");
+//                    System.out.println("L'action a échoué");
                     return;
                 }
                 env.tuerEnnemis(arr);
                 return;
             }
         }
-        System.out.println("Aucun ennemi présent sur cette case");
+//        System.out.println("Aucun ennemi présent sur cette case");
     }
 
     /**
@@ -134,29 +144,33 @@ public class Tir extends Action{
      */
     @Override
     public List<Case> getCasesValides(Environnement env, Operateur perso) {
+        return getCasesValides(env, env.getCase(perso.getX(), perso.getY()));
+    }
+
+    public List<Case> getCasesValides(Environnement env, Case caseDepart){
         List<Case> casesValides = new ArrayList<>();
         Case c;
         for(Terroriste ennemi : env.getEnnemis()) {
             boolean peutVoir = false;
             c = env.getCase(ennemi.getX(), ennemi.getY());
 
-            if (perso.getY() == c.y) { // Perso et case sur la meme ligne
-                int min = Math.min(perso.getX(), c.x);
-                int max = Math.max(perso.getX(), c.x);
+            if (caseDepart.y == c.y) { // Perso et case sur la meme ligne
+                int min = Math.min(caseDepart.x, c.x);
+                int max = Math.max(caseDepart.x, c.x);
                 peutVoir = true;
                 for (int x = min; x <= max; x++) {
-                    if (!env.getCase(x, perso.getY()).peutVoir) {
+                    if (!env.getCase(x, caseDepart.y).peutVoir) {
                         peutVoir = false;
                         break;
                     }
                 }
             }
-            else if (perso.getX() == c.x) { // Perso et case sur la meme colonne
-                int min = Math.min(perso.getY(), c.y);
-                int max = Math.max(perso.getY(), c.y);
+            else if (caseDepart.x == c.x) { // Perso et case sur la meme colonne
+                int min = Math.min(caseDepart.y, c.y);
+                int max = Math.max(caseDepart.y, c.y);
                 peutVoir = true;
                 for (int y = min; y <= max; y++) {
-                    if (!env.getCase(perso.getX(), y).peutVoir) {
+                    if (!env.getCase(caseDepart.x, y).peutVoir) {
                         peutVoir = false;
                         break;
                     }
@@ -167,5 +181,19 @@ public class Tir extends Action{
             }
         }
         return casesValides;
+    }
+
+    @Override
+    public String toString() {
+        return "Tir";
+    }
+
+    public Tir copy(){
+        return new Tir(this);
+    }
+
+    @Override
+    public boolean estTir(){
+        return true;
     }
 }
