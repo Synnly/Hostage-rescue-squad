@@ -270,18 +270,16 @@ public class Environnement extends Observable{
 
         assert obj.x == op.getX() && obj.y == op.getY() : "L'opérateur doit être sur l'objectif";
 
-        op.setPossedeObjectif(true);
         int index = -1;
-        for(Case c : cases){
-            if (c.id == obj.id){
-                index = cases.indexOf(c);
+        for(int i = 0; i < cases.size(); i++){
+            if (cases.get(i).id == obj.id){
+                index = i;
             }
         }
-        cases.set(index, new CaseNormale(this, obj.x, obj.y));
+        assert index != -1: "Objectif non trouvé";
 
-        for(int i = 0; i < largeur; i++){
-            getCase(i, hauteur-1).recompense = 10;
-        }
+        cases.set(index, new CaseNormale(this, obj.x, obj.y));
+        op.setPossedeObjectif(true);
     }
 
     /**
@@ -426,7 +424,6 @@ public class Environnement extends Observable{
     public void effectuerCoupsTerroristes(List<Coup> coups){
         for(Terroriste t : ennemis){
             for(Coup c : coups) {
-
                 // Martine excuse-moi pour ce que je vais faire
                 if(c instanceof Tir) {
                     c.effectuer(this, t, getCase(operateur.getX(), operateur.getY()));

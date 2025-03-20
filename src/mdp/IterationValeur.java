@@ -10,9 +10,9 @@ import personnages.Terroriste;
 import java.util.*;
 
 public class IterationValeur implements MDP{
-    private static double gamma = 0.90;
+    private static double gamma = 0.5;
     private static double epsilon = 0.0001;
-    private static int maxTour = 4;
+    private static int maxTour = 3;
 
     /**
      * Calcule et prédis la meilleure action à effectuer. Lance le calcul des utilités des état immédiatement accessibles,
@@ -26,24 +26,8 @@ public class IterationValeur implements MDP{
         System.out.println("Launching " + actions.size() + " threads");
         long start = System.currentTimeMillis();
         Map<IterationValeurThread, Action> threads = new HashMap<>(actions.size());
-        double maxUtil = -Double.MAX_VALUE;
+        double maxUtil = Double.NEGATIVE_INFINITY;
         Action bestAction = null;
-
-//        for(Action action : actions){
-//            IterationValeurThread thread = new IterationValeurThread(env, action, new Etat(env));
-//            thread.start();
-//
-//            try {
-//                thread.join(0);
-//                System.out.println(thread.value + " " + thread.action);
-//                if(thread.value > maxUtil){
-//                    maxUtil = thread.value;
-//                    bestAction = thread.action;
-//                }
-//            } catch (InterruptedException e) {
-//                System.out.println("Thread (" + threads.get(thread) + ") a rencontré une erreur : " + e.getMessage());
-//            }
-//        }
         
         // Lancement du multi threading
         for(Action action : actions){
@@ -56,7 +40,7 @@ public class IterationValeur implements MDP{
         for(IterationValeurThread t : threads.keySet()){
             try {
                 t.join(0);
-                System.out.println(t.value + " " + t.action);
+//                System.out.println(t.value + " " + t.action);
                 if(t.value > maxUtil){
                     maxUtil = t.value;
                     bestAction = threads.get(t);
@@ -221,7 +205,6 @@ public class IterationValeur implements MDP{
                 }
             }
         }
-
         return actionPossibles;
     }
 
@@ -259,23 +242,38 @@ public class IterationValeur implements MDP{
      */
     private static double utiliteEtatTourJoueur(Environnement env, Etat etatDepart, int tour){
         // Si mission pas réussie au bout de maxTour alors échec
-        if(tour >= maxTour){
-            return MDP.valeurEchec; 
+        if(tour > maxTour){
+            return 0;
         }
+
+//        System.out.println(etatDepart.operateur().getX() + ", " + etatDepart.operateur().getY() + " " + tour);
 
         Set<Action> actions = getAllActionsPossibleOperateur(env);
         double sumUtil = 0;
-//        System.out.println(tour + " " + env.getOperateurActif().getPointsAction());
 
         for(Action action : actions){
             Map<Etat, Double> probaEtats = MDP.transition(env.copy(), etatDepart, action);
-            
+
             // Ajout des utilités des états d'arrivée pondéré par proba d'y arriver
             for(Etat etatArrivee : probaEtats.keySet()){
-                sumUtil += probaEtats.get(etatArrivee) * (MDP.recompense(etatDepart, action, etatArrivee) + utiliteEtatTourEnnemi(env.copy(), etatArrivee, tour));
+                Environnement envCopy = env.copy();
+                envCopy.setEtat(etatArrivee);
+                envCopy = envCopy.copy();
+
+                Environnement envTemp = env.copy();
+                envTemp.setEtat(etatDepart);
+                envTemp = envTemp.copy();
+                double utilTourJoueur = utiliteEtatTourEnnemi(envCopy, etatArrivee, tour);
+                if(!envTemp.getOperateurActif().possedeObjectif() && envCopy.getOperateurActif().possedeObjectif() && utilTourJoueur != -10.0){
+//                    System.out.println(utilTourJoueur);
+                }
+//                if(action.coups().get(0) instanceof FinTour){
+//                    System.out.println(probaEtats.get(etatArrivee) + " " +MDP.recompense(etatDepart, action, etatArrivee) + " " + utilTourJoueur + " " + tour);
+//                }
+                sumUtil += probaEtats.get(etatArrivee) * (MDP.recompense(etatDepart, action, etatArrivee) + gamma * utilTourJoueur);
             }
         }
-        return sumUtil * gamma;
+        return sumUtil/actions.size();
     }
 
     /**
@@ -290,6 +288,13 @@ public class IterationValeur implements MDP{
         if(tour >= maxTour){
             return MDP.valeurEchec;
         }
+        if(env.getEnnemis().isEmpty()){     // Aucun ennemi, donc pas de changement
+            Environnement envCopy = env.copy();
+            envCopy.setEtat(etatDepart);
+            envCopy = envCopy.copy();
+            return utiliteEtatTourJoueur(envCopy, etatDepart, tour + 1);
+        }
+
         Terroriste terro = env.getEnnemis().get(0);
         Set<List<Coup>> suitesCoupsPossible = getAllSuitesCoupsPossibleTerroristes(new coups.Coup[]{terro.getDeplacement(), terro.getTir()}, env.getMenace());
         double sumUtil = 0;
@@ -297,22 +302,34 @@ public class IterationValeur implements MDP{
         Map<Etat, Double> probaEtats = new HashMap<>();
         for(List<Coup> suiteCoups : suitesCoupsPossible) {
             Environnement envCopy = env.copy();
+            envCopy.setEtat(etatDepart);
+            envCopy = envCopy.copy();
             envCopy.effectuerCoupsTerroristes(suiteCoups);
+//
+//            System.out.println("Etat avant : " + etatDepart);
+//            System.out.println("\t" + suiteCoups);
+//            System.out.println("Etat apres : " + new Etat(envCopy) + "\n");
 
             // Proba de la suite de coups ennemi
             double proba = 1;
             for(Coup c : suiteCoups){
                 proba *= env.getProbaCoupEnnemi(c);
             }
-            probaEtats.put(new Etat(envCopy), proba);
+
+            Etat etatTemp = new Etat(envCopy);
+            etatTemp.operateur().resetPointsAction();   // On redonne les PA à l'opérateur
+            probaEtats.put(etatTemp, proba);
         }
 
         // Ajout des utilités des états d'arrivée pondéré par proba d'y arriver
         for(Etat etatArrivee : probaEtats.keySet()){
-            sumUtil += probaEtats.get(etatArrivee) * utiliteEtatTourJoueur(env.copy(), etatArrivee, tour + 1);
+            Environnement envCopy = env.copy();
+            envCopy.setEtat(etatArrivee);
+            envCopy = envCopy.copy();
+            sumUtil += probaEtats.get(etatArrivee) * (gamma * utiliteEtatTourJoueur(envCopy, etatArrivee, tour + 1));
         }
 
-        return sumUtil * gamma;
+        return sumUtil;
     }
 
     private static class IterationValeurThread extends Thread{

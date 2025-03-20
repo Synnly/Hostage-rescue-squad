@@ -89,7 +89,7 @@ public abstract class Personnage {
         this.x = perso.x;
         this.y = perso.y;
         this.pointsAction = perso.pointsAction;
-        this.maxPointsAction = perso.pointsAction;
+        this.maxPointsAction = perso.maxPointsAction;
         this.deplacement = perso.deplacement;
         this.tir = perso.tir;
         this.finTour = new FinTour(1, 0);

@@ -19,7 +19,7 @@ public class FinTour extends Coup {
      * @param ignoredDouble Ignoré
      */
     public FinTour(int ignoredInt, double ignoredDouble) {
-        super(ignoredInt, ignoredDouble);
+        super(ignoredInt, 1);
     }
 
     public FinTour(FinTour f){

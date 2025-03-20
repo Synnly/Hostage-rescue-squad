@@ -36,6 +36,10 @@ public class Deplacement extends Coup {
             effectuer(env, (Operateur) perso, arr);
             return;
         }
+        else if(perso instanceof Terroriste){
+            effectuer(env, (Terroriste) perso, arr);
+            return;
+        }
 
         int distance = Math.abs(perso.getX() - arr.x) + Math.abs(perso.getY() - arr.y);
 
@@ -47,6 +51,11 @@ public class Deplacement extends Coup {
             perso.setY(arr.y);
             perso.removePointsAction(distance * cout);
         }
+    }
+
+    public void effectuer(Environnement env, Terroriste terroriste, Case arr){
+        terroriste.setX(arr.x);
+        terroriste.setY(arr.y);
     }
 
     /**
@@ -71,7 +80,7 @@ public class Deplacement extends Coup {
                 }
             }
             if (ennemiPresent) {
-                System.out.println("Un ennemi est présent sur cette case");
+//                System.out.println("Un ennemi est présent sur cette case");
             }
             else {
                 List<Double> nombres = env.getNombresAleatoires(1);
