@@ -1,4 +1,4 @@
-package testActions;
+package testCoups;
 import coups.Deplacement;
 import coups.Tir;
 import carte.Case;
@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestDeplacement {
 

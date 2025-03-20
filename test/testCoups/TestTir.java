@@ -1,12 +1,11 @@
-package testActions;
+package testCoups;
 
-import actions.Deplacement;
-import actions.Tir;
+import coups.Deplacement;
+import coups.Tir;
 import carte.Case;
 import carte.CaseNormale;
 import observable.Environnement;
 import org.easymock.EasyMock;
-import org.easymock.IExpectationSetters;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

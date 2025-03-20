@@ -1,8 +1,8 @@
-package testActions;
+package testCoups;
 
-import actions.Deplacement;
-import actions.FinTour;
-import actions.Tir;
+import coups.Deplacement;
+import coups.FinTour;
+import coups.Tir;
 import carte.Case;
 import carte.CaseNormale;
 import observable.Environnement;
@@ -12,10 +12,6 @@ import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import personnages.Operateur;
 import personnages.Terroriste;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.easymock.EasyMock.*;
 import static org.easymock.EasyMock.verify;
