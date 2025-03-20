@@ -27,8 +27,8 @@ public class Environnement extends Observable{
     private boolean missionFinie = false;
     private final double probaTirEnnemi = 0.3;
     private final double probaDeplacementEnnemi = 0.7;
-    private final double probaSuccesDeplacement = 0.9;
-    private final double probaSuccesTir = 0.7;
+    private final double probaSuccesDeplacement;
+    private final double probaSuccesTir;
 
 
     /**
@@ -48,6 +48,9 @@ public class Environnement extends Observable{
         assert probaSuccesDeplacement <= 1 && probaSuccesDeplacement >= 0 : "La probabilité de succès des déplacements de l'opérateur doit être 0 <= proba <= 1";
         assert probaSuccesTir <= 1 && probaSuccesTir >= 0 : "La probabilité de succès des tirs de l'opérateur doit être 0 <= proba <= 1";
 
+
+        this.probaSuccesDeplacement = probaSuccesDeplacement;
+        this.probaSuccesTir = probaSuccesTir;
         this.largeur = largeur;
         this.hauteur = hauteur;
         nouvellePartie();
@@ -66,6 +69,8 @@ public class Environnement extends Observable{
         for(Terroriste t:env.ennemis){
             ennemis.add(t.copy());
         }
+        this.probaSuccesDeplacement = env.probaSuccesDeplacement;
+        this.probaSuccesTir = env.probaSuccesTir;
     }
 
     /**

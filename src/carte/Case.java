@@ -93,4 +93,8 @@ public abstract class Case {
     public String toString() {
         return "(" + x + ", " + y + ')';
     }
+
+    public int getId() {
+        return id;
+    }
 }

@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 public class TestRoutine {
@@ -70,11 +70,16 @@ public class TestRoutine {
     @Test
     @DisplayName("Ajouter une case apres une case fonctionne")
     public void testAjouterCaseApresCaseFonctionne() {
+        expect(caseNormaleMock1.getId()).andReturn(1).atLeastOnce();
+        expect(caseNormaleMock2.getId()).andReturn(2).atLeastOnce();
+
         routine = new Routine(caseNormaleMock1);
         routine.ajouterCase(caseNormaleMock1, caseNormaleMock2);
 
+        replay(caseNormaleMock1, caseNormaleMock2);
         assertEquals(caseNormaleMock2, routine.prochaineCase(caseNormaleMock1));
         assertEquals(caseNormaleMock1, routine.prochaineCase(caseNormaleMock2));
+        verify(caseNormaleMock1, caseNormaleMock2);
     }
 
     @Test
@@ -96,19 +101,28 @@ public class TestRoutine {
     @Test
     @DisplayName("Obtenir la prochaine case dans routine de taille 2 fonctionne")
     public void testObtenirProchaineCaseDansRoutineDeTailleDeuxFonctionne() {
+        expect(caseNormaleMock1.getId()).andReturn(1).times(3);
+        expect(caseNormaleMock2.getId()).andReturn(2).times(3);
+
+        replay(caseNormaleMock1, caseNormaleMock2);
         routine = new Routine(caseNormaleMock1);
         routine.ajouterCase(caseNormaleMock1, caseNormaleMock2);
 
         assertEquals(caseNormaleMock2, routine.prochaineCase(caseNormaleMock1));
         assertEquals(caseNormaleMock1, routine.prochaineCase(caseNormaleMock2));
+        verify(caseNormaleMock1, caseNormaleMock2);
     }
 
     @Test
     @DisplayName("Obtenir la prochaine case dans routine de taille 1 fonctionne")
     public void testObtenirProchaineCaseDansRoutineDeTailleUnFonctionne() {
+        expect(caseNormaleMock1.getId()).andReturn(1).times(2);
+
+        replay(caseNormaleMock1);
         routine = new Routine(caseNormaleMock1);
 
         assertEquals(caseNormaleMock1, routine.prochaineCase(caseNormaleMock1));
+        verify(caseNormaleMock1);
     }
 
     @Test
@@ -122,8 +136,15 @@ public class TestRoutine {
     @Test
     @DisplayName("Obtenir la prochaine case apres une case pas dans routine lance une erreur")
     public void testObtenirProchaineCaseApresCasePasDansRoutineLanceUneErreur() {
+        expect(caseNormaleMock1.getId()).andReturn(1);
+        expect(caseNormaleMock2.getId()).andReturn(2);
+
         routine = new Routine(caseNormaleMock1);
 
+        replay(caseNormaleMock1, caseNormaleMock2);
+
         assertThrows(AssertionError.class, () -> routine.prochaineCase(caseNormaleMock2));
+
+        verify(caseNormaleMock1, caseNormaleMock2);
     }
 }

@@ -64,8 +64,8 @@ public class TestFinTour {
     public void testFinTourAvecParametresAttendus(){
         FinTour finTour = new FinTour(1,0.9);
 
-        assertEquals(finTour.cout , 1);
-        assertEquals(finTour.probaSucces , 0.9);
+        assertEquals(1, finTour.cout);
+        assertEquals(1, finTour.probaSucces);
 
     }
 

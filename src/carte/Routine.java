@@ -56,12 +56,12 @@ public class Routine {
     public Case prochaineCase(Case c){
         assert c != null : "La case précédente ne peut être null";
         for(int i = 0; i< cases.size(); i++){
-            if(cases.get(i).id == c.id){
+            if(cases.get(i).getId() == c.getId()){
                 return cases.get((i + 1) % cases.size());
             }
         }
 
-        assert true: "La case c n'existe pas dans la routine";
+        assert false: "La case c n'existe pas dans la routine";
         return null; // Inutile vu que si c pas dans la liste, assert se déclenche
     }
 }

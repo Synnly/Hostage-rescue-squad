@@ -105,8 +105,8 @@ public class TestDeplacement {
 
         replay(envMock);
         deplacement.effectuer(envMock,op,arr);
-        assertEquals(deplacement.cout , 1);
-        assertEquals(deplacement.probaSucces , 0.9);
+        assertEquals(1, deplacement.cout);
+        assertEquals(0.9, deplacement.probaSucces);
 
         verify(envMock,op,arr);
 
@@ -165,13 +165,12 @@ public class TestDeplacement {
         expect(arr.getY()).andStubReturn(10);
         replay(arr);
 
-
         expect(envMock.getLargeur()).andStubReturn(20);
         expect(envMock.getHauteur()).andStubReturn(20);
         expect(envMock.getOperateurActif()).andStubReturn(op);
         replay(envMock);
 
-        Deplacement deplacement = new Deplacement(0,0.9);
+        Deplacement deplacement = new Deplacement(0,1);
         Terroriste ennemi = new Terroriste(envMock,10, 10, 4, deplacement, tirMock);
 
         deplacement.effectuer(envMock,ennemi,arr);
@@ -314,7 +313,7 @@ public class TestDeplacement {
 
         List<Case> casesValides = deplacement.getCasesValides(envMock,operateur);
 
-        assertEquals(casesValides.size() , 3);
+        assertEquals(3, casesValides.size());
 
         verify(envMock,envMockForSize);
     }
