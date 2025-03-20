@@ -54,4 +54,9 @@ public class Terroriste extends Personnage{
     public Terroriste copy(){
         return new Terroriste(this);
     }
+
+    @Override
+    public boolean estTerroriste(){
+        return true;
+    }
 }

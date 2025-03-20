@@ -79,7 +79,17 @@ public abstract class Coup {
 
     public abstract List<Case> getCasesValides(Environnement env, Case caseDepart);
 
-    public abstract double qvaleur(Environnement env, Operateur op, int xDepart, int yDepart, Case arr, double[][] utilites, double gamma);
-
     public abstract Coup copy();
+
+    public boolean estDeplacement(){
+        return false;
+    }
+
+    public boolean estTir(){
+        return false;
+    }
+
+    public boolean estFinTour(){
+        return false;
+    }
 }

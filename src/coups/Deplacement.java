@@ -32,11 +32,11 @@ public class Deplacement extends Coup {
      */
     @Override
     public void effectuer(Environnement env, Personnage perso, Case arr) {
-        if(perso instanceof Operateur){ // Si type de perso est operateur mais connu qu'au runtime
+        if(perso.estOperateur()){ // Si type de perso est operateur mais connu qu'au runtime
             effectuer(env, (Operateur) perso, arr);
             return;
         }
-        else if(perso instanceof Terroriste){
+        else if(perso.estTerroriste()){
             effectuer(env, (Terroriste) perso, arr);
             return;
         }
@@ -155,27 +155,6 @@ public class Deplacement extends Coup {
         return cases;
     }
 
-
-    @Override
-    public double qvaleur(Environnement env, Operateur op, int xDepart, int yDepart, Case arr, double[][] utilites, double gamma) {
-        if(op.possedeObjectif() && arr.y == env.getLargeur()-1){    // Cas terminal
-            return 0;
-        }
-
-        Operateur opClone = new Operateur(op);
-        opClone.setX(xDepart); opClone.setY(yDepart);
-
-        List<Case> casesValides = getCasesValides(env, opClone);
-
-        // Qval initialisé à cas ou le deplacement echoue
-        double qval = (1-probaSucces) * (env.getCase(xDepart, yDepart).recompense + gamma * utilites[xDepart][yDepart]);
-
-        if(casesValides.contains(arr) && opClone.getPointsAction() >= cout){
-            qval += probaSucces * (arr.recompense + gamma * utilites[arr.x][arr.y]);
-        }
-        return qval;
-    }
-
     @Override
     public String toString() {
         return "Dep";
@@ -183,5 +162,10 @@ public class Deplacement extends Coup {
 
     public Deplacement copy(){
         return new Deplacement(this);
+    }
+
+    @Override
+    public boolean estDeplacement(){
+        return true;
     }
 }

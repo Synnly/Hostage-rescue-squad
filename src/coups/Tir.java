@@ -38,10 +38,10 @@ public class Tir extends Coup {
      */
     @Override
     public void effectuer(Environnement env, Personnage perso, Case arr){
-        if(perso instanceof Operateur){
+        if(perso.estOperateur()){
             effectuer(env, (Operateur) perso, arr);
         }
-        else if(perso instanceof Terroriste){
+        else if(perso.estOperateur()){
             effectuer(env, (Terroriste) perso, arr);
         }
     }
@@ -184,27 +184,16 @@ public class Tir extends Coup {
     }
 
     @Override
-    public double qvaleur(Environnement env, Operateur op, int xDepart, int yDepart, Case arr, double[][] utilites, double gamma) {
-        Operateur opClone = new Operateur(op);
-        opClone.setX(xDepart); opClone.setY(yDepart);
-
-        List<Case> casesValides = getCasesValides(env, opClone);
-
-        // Qval initialisé à cas ou le tir echoue
-        double qval = (1-probaSucces) * (env.getCase(xDepart, yDepart).recompense + gamma * utilites[xDepart][yDepart]);
-
-        if(casesValides.contains(arr) && opClone.getPointsAction() >= cout){
-            qval += probaSucces * (1 + gamma * utilites[arr.x][arr.y]);
-        }
-        return qval;
-    }
-
-    @Override
     public String toString() {
         return "Tir";
     }
 
     public Tir copy(){
         return new Tir(this);
+    }
+
+    @Override
+    public boolean estTir(){
+        return true;
     }
 }

@@ -33,15 +33,16 @@ public interface MDP {
      */
     static double recompense(Etat etatDepart, Action action, Etat etatArrivee){
         double recomp = 0;
-        // deplacement
+
+        // actions
         for(Coup coup : action.coups()){
-            if (coup instanceof Deplacement) {
+            if (coup.estDeplacement()) {
                 recomp +=  valeurDeplacement;
             }
-            else if (coup instanceof Tir) {
+            else if (coup.estTir()) {
                 recomp += Math.min(1, etatDepart.ennemis().size() - etatArrivee.ennemis().size()) * valeurTuerEnnemi;
             }
-            else if (coup instanceof FinTour) {
+            else if (coup.estFinTour()) {
                 recomp += valeurDeplacement;
             }
         }
@@ -96,8 +97,6 @@ public interface MDP {
                         Etat etat = simuler(env, e, action.coups().get(i), action.personnage(), action.cibles().get(i), action.coups().get(i).probaSucces == 1);
                         etatsTemp.put(etat, etats.get(e) * action.coups().get(i).probaSucces);
                     }
-//                    System.out.println(etatsTemp + " " + action.coups().get(i)+ " " + action.cibles().get(i) + "\n\t"  + "\n\t" + etatSucces);
-//                    System.out.println(etatsTemp + " " + action.coups().get(i)+ " " + action.cibles().get(i) + "\n\t" + etatEchec + "\n\t" + etatSucces);
                 }
                 else{
                     etatsTemp.put(e, etats.get(e));
@@ -119,8 +118,6 @@ public interface MDP {
      * @return L'état d'arrivée
      */
     static Etat simuler(Environnement env, Etat etatDepart, Coup coup, Personnage perso, Case cible, boolean succes){
-//        System.out.println("Etat avant " + coup + " vers " + cible + " (succes = " + succes + ") : " + etatDepart);
-
         // Copie profonde de l'environnement dans l'etat de depart
         Environnement envCopy = env.copy();
         Coup coupCopy = coup.copy();
@@ -130,7 +127,6 @@ public interface MDP {
 
         coupCopy.effectuer(envCopy, envCopy.getPersonnage(perso), envCopy.getCase(cible));
 
-//        System.out.println("Etat apres " + coupCopy + " vers " + cible + " (probaSucces = " + coupCopy.probaSucces + ") : " + new Etat(envCopy) + "\n");
         return new Etat(envCopy);
     }
 }

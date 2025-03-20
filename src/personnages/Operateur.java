@@ -50,4 +50,9 @@ public class Operateur extends Personnage{
     public Operateur copy(){
         return new Operateur(this);
     }
+
+    @Override
+    public boolean estOperateur(){
+        return true;
+    }
 }

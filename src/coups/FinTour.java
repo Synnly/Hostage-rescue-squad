@@ -58,16 +58,16 @@ public class FinTour extends Coup {
     }
 
     @Override
-    public double qvaleur(Environnement ignoredEnv, Operateur ignoredOp, int xDepart, int yDepart, Case ignoredArr, double[][] utilites, double gamma) {
-        return -0.01 + gamma * utilites[xDepart][yDepart];
-    }
-
-    @Override
     public String toString() {
         return "Fin";
     }
 
     public FinTour copy(){
         return new FinTour(this);
+    }
+
+    @Override
+    public boolean estFinTour(){
+        return true;
     }
 }

@@ -222,4 +222,12 @@ public abstract class Personnage {
     public String toString() {
         return "(" + x + ", " + y +") " + pointsAction + " PA";
     }
+
+    public boolean estOperateur(){
+        return false;
+    }
+
+    public boolean estTerroriste(){
+        return false;
+    }
 }

@@ -40,7 +40,6 @@ public class IterationValeur implements MDP{
         for(IterationValeurThread t : threads.keySet()){
             try {
                 t.join(0);
-//                System.out.println(t.value + " " + t.action);
                 if(t.value > maxUtil){
                     maxUtil = t.value;
                     bestAction = threads.get(t);
@@ -246,8 +245,6 @@ public class IterationValeur implements MDP{
             return 0;
         }
 
-//        System.out.println(etatDepart.operateur().getX() + ", " + etatDepart.operateur().getY() + " " + tour);
-
         Set<Action> actions = getAllActionsPossibleOperateur(env);
         double sumUtil = 0;
 
@@ -260,17 +257,7 @@ public class IterationValeur implements MDP{
                 envCopy.setEtat(etatArrivee);
                 envCopy = envCopy.copy();
 
-                Environnement envTemp = env.copy();
-                envTemp.setEtat(etatDepart);
-                envTemp = envTemp.copy();
-                double utilTourJoueur = utiliteEtatTourEnnemi(envCopy, etatArrivee, tour);
-                if(!envTemp.getOperateurActif().possedeObjectif() && envCopy.getOperateurActif().possedeObjectif() && utilTourJoueur != -10.0){
-//                    System.out.println(utilTourJoueur);
-                }
-//                if(action.coups().get(0) instanceof FinTour){
-//                    System.out.println(probaEtats.get(etatArrivee) + " " +MDP.recompense(etatDepart, action, etatArrivee) + " " + utilTourJoueur + " " + tour);
-//                }
-                sumUtil += probaEtats.get(etatArrivee) * (MDP.recompense(etatDepart, action, etatArrivee) + gamma * utilTourJoueur);
+                sumUtil += probaEtats.get(etatArrivee) * (MDP.recompense(etatDepart, action, etatArrivee) + gamma * utiliteEtatTourEnnemi(envCopy, etatArrivee, tour));
             }
         }
         return sumUtil/actions.size();
@@ -305,10 +292,6 @@ public class IterationValeur implements MDP{
             envCopy.setEtat(etatDepart);
             envCopy = envCopy.copy();
             envCopy.effectuerCoupsTerroristes(suiteCoups);
-//
-//            System.out.println("Etat avant : " + etatDepart);
-//            System.out.println("\t" + suiteCoups);
-//            System.out.println("Etat apres : " + new Etat(envCopy) + "\n");
 
             // Proba de la suite de coups ennemi
             double proba = 1;
@@ -352,7 +335,6 @@ public class IterationValeur implements MDP{
 
         public void run(){
             Map<Etat, Double> probaEtats = MDP.transition(env.copy(), etatDepart, action);
-//            System.out.println(action + "\n\t" + probaEtats + "\n");
 
             // Ajout des utilités des états d'arrivée pondéré par proba d'y arriver
             for(Etat etatArrivee : probaEtats.keySet()){

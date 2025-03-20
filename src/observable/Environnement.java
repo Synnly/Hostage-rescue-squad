@@ -366,7 +366,7 @@ public class Environnement extends Observable{
     public void printPrediction(){
         Action actionPredite = IterationValeur.predict(this);
 
-        if(actionPredite.coups().get(0) instanceof FinTour){   // Martine pardon
+        if(actionPredite.coups().get(0).estFinTour()){
             System.out.println("L'ia vous conseille de terminer le tour");
         }
         else{
@@ -374,7 +374,7 @@ public class Environnement extends Observable{
         }
 
         for (int i = 1; i < actionPredite.coups().size(); i++) {
-            if(actionPredite.coups().get(i) instanceof FinTour){   // Martine pardon
+            if(actionPredite.coups().get(i).estFinTour()){
                 System.out.println("puis de terminer le tour");
             }
             else{
@@ -424,11 +424,10 @@ public class Environnement extends Observable{
     public void effectuerCoupsTerroristes(List<Coup> coups){
         for(Terroriste t : ennemis){
             for(Coup c : coups) {
-                // Martine excuse-moi pour ce que je vais faire
-                if(c instanceof Tir) {
+                if(c.estTir()) {
                     c.effectuer(this, t, getCase(operateur.getX(), operateur.getY()));
                 }
-                else if(c instanceof Deplacement) {
+                else if(c.estDeplacement()) {
                     c.effectuer(this, t, t.getRoutine().prochaineCase(getCase(t.getX(), t.getY())));
                 }
             }
@@ -441,11 +440,10 @@ public class Environnement extends Observable{
      * @return La probabilité
      */
     public double getProbaCoupEnnemi(Coup c){
-        // Martine excuse-moi encore une fois pour ce que je vais faire
-        if(c instanceof Tir) {
+        if(c.estTir()) {
             return probaTirEnnemi;
         }
-        else if(c instanceof Deplacement) {
+        else if(c.estDeplacement()) {
             return probaDeplacementEnnemi;
         }
         else return 0;
