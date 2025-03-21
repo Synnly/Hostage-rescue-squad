@@ -10,9 +10,9 @@ import personnages.Terroriste;
 import java.util.*;
 
 public class IterationValeur implements MDP{
-    private static double gamma = 0.5;
+    private static double gamma = 0.8;
     private static double epsilon = 0.0001;
-    private static int maxTour = 3;
+    private static int maxTour = 4;
 
     /**
      * Calcule et prédis la meilleure action à effectuer. Lance le calcul des utilités des état immédiatement accessibles,
@@ -29,41 +29,26 @@ public class IterationValeur implements MDP{
         double maxUtil = Double.NEGATIVE_INFINITY;
         Action bestAction = null;
 
+
+        // Lancement du multi threading
         for(Action action : actions){
             IterationValeurThread thread = new IterationValeurThread(env, action, new Etat(env));
             threads.put(thread, action);
             thread.start();
-
-            try {
-                thread.join(0);
-                if(thread.value > maxUtil){
-                    maxUtil = thread.value;
-                    bestAction = threads.get(thread);
-                }
-            } catch (InterruptedException e) {
-                System.out.println("Thread (" + thread + ") a rencontré une erreur : " + e.getMessage());
-            }
         }
 
-        // Lancement du multi threading
-//        for(Action action : actions){
-//            IterationValeurThread thread = new IterationValeurThread(env, action, new Etat(env));
-//            threads.put(thread, action);
-//            thread.start();
-//        }
-//
-//        // Rendez vous
-//        for(IterationValeurThread t : threads.keySet()){
-//            try {
-//                t.join(0);
-//                if(t.value > maxUtil){
-//                    maxUtil = t.value;
-//                    bestAction = threads.get(t);
-//                }
-//            } catch (InterruptedException e) {
-//                System.out.println("Thread (" + threads.get(t) + ") a rencontré une erreur : " + e.getMessage());
-//            }
-//        }
+        // Rendez vous
+        for(IterationValeurThread t : threads.keySet()){
+            try {
+                t.join(0);
+                if(t.value > maxUtil){
+                    maxUtil = t.value;
+                    bestAction = threads.get(t);
+                }
+            } catch (InterruptedException e) {
+                System.out.println("Thread (" + threads.get(t) + ") a rencontré une erreur : " + e.getMessage());
+            }
+        }
         long finish = System.currentTimeMillis();
         System.out.println("Finished in " + (finish - start)/1000. + " s");
         return bestAction;

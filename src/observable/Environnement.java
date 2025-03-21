@@ -271,7 +271,7 @@ public class Environnement extends Observable{
         // Effectuer l'action
         Operateur op = getOperateurActif();
         op.getActionActive().effectuer(this, op, c);
-        System.out.println(op.getPointsAction() + " " + op.getMaxPointsAction());
+
         // Tour ennemi
         if(op.getPointsAction() == 0){
             tourEnnemi();
