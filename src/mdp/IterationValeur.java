@@ -28,26 +28,42 @@ public class IterationValeur implements MDP{
         Map<IterationValeurThread, Action> threads = new HashMap<>(actions.size());
         double maxUtil = Double.NEGATIVE_INFINITY;
         Action bestAction = null;
-        
-        // Lancement du multi threading
+
         for(Action action : actions){
             IterationValeurThread thread = new IterationValeurThread(env, action, new Etat(env));
             threads.put(thread, action);
             thread.start();
-        }
 
-        // Rendez vous
-        for(IterationValeurThread t : threads.keySet()){
             try {
-                t.join(0);
-                if(t.value > maxUtil){
-                    maxUtil = t.value;
-                    bestAction = threads.get(t);
+                thread.join(0);
+                if(thread.value > maxUtil){
+                    maxUtil = thread.value;
+                    bestAction = threads.get(thread);
                 }
             } catch (InterruptedException e) {
-                System.out.println("Thread (" + threads.get(t) + ") a rencontré une erreur : " + e.getMessage());
+                System.out.println("Thread (" + thread + ") a rencontré une erreur : " + e.getMessage());
             }
         }
+
+        // Lancement du multi threading
+//        for(Action action : actions){
+//            IterationValeurThread thread = new IterationValeurThread(env, action, new Etat(env));
+//            threads.put(thread, action);
+//            thread.start();
+//        }
+//
+//        // Rendez vous
+//        for(IterationValeurThread t : threads.keySet()){
+//            try {
+//                t.join(0);
+//                if(t.value > maxUtil){
+//                    maxUtil = t.value;
+//                    bestAction = threads.get(t);
+//                }
+//            } catch (InterruptedException e) {
+//                System.out.println("Thread (" + threads.get(t) + ") a rencontré une erreur : " + e.getMessage());
+//            }
+//        }
         long finish = System.currentTimeMillis();
         System.out.println("Finished in " + (finish - start)/1000. + " s");
         return bestAction;
@@ -108,14 +124,11 @@ public class IterationValeur implements MDP{
             List<Coup> actionComplete = new ArrayList<>();
             int idAction = i; // Identifiant de l'action, ie une sequence d'indice de coups
 
-            int k = Math.max(1, (int) (Math.log(i) / Math.log(listeCoups.length)));
-            
-            for (int j = 0; j < maxNbCoups; j++) {
-                int indiceCoup = (int) (idAction % Math.pow(listeCoups.length, k));
+            for (int k = maxNbCoups-1; k >= 0; k--) {
+                int indiceCoup = (int) (idAction / Math.pow(listeCoups.length, k));
                 actionComplete.add(listeCoups[indiceCoup]);
-                idAction = idAction / listeCoups.length;
+                idAction = (int) (idAction % Math.pow(listeCoups.length, k));
             }
-
             actionsPossibles.add(actionComplete);
         }
         return actionsPossibles;

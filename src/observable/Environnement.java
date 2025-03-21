@@ -22,6 +22,8 @@ public class Environnement extends Observable{
     private Operateur operateur;
     private List<Terroriste> ennemis;
     private int menace = 2;
+    private final int maxMenace = 7;
+    private final int minMenace = 2;
 
     private boolean echec = false;
     private boolean missionFinie = false;
@@ -85,7 +87,7 @@ public class Environnement extends Observable{
         cases.set(4, new Couverture(this, 4, 0));
         cases.set(9, new Couverture(this, 2, 1));
         cases.set(19, new Couverture(this, 5, 2));
-        cases.set(31, new Couverture(this, 3, 4));
+//        cases.set(31, new Couverture(this, 3, 4));
         cases.set(29, new Couverture(this, 1, 4));
         cases.set(32, new Couverture(this, 4, 4));
 
@@ -109,6 +111,8 @@ public class Environnement extends Observable{
         ennemi2.setRoutine(routine);
         ennemis.add(ennemi);
         ennemis.add(ennemi2);
+
+        missionFinie = false;
     }
 
     /**
@@ -501,5 +505,16 @@ public class Environnement extends Observable{
     public void terminerMission(boolean succes){
         missionFinie = true;
         echec = !succes;
+    }
+
+    public void augmenterMenace(){
+        menace ++;
+        if (menace > maxMenace){
+            menace = maxMenace;
+        }
+    }
+
+    public void resetMenace(){
+        menace = minMenace;
     }
 }

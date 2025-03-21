@@ -115,6 +115,13 @@ public class Tir extends Coup {
                     return;
                 }
                 env.tuerEnnemis(arr);
+                if(env.getEnnemis().isEmpty()) {
+                    env.resetMenace();
+                }
+                else{
+                    env.augmenterMenace();
+                }
+
                 return;
             }
         }
