@@ -64,4 +64,20 @@ public class Routine {
         assert false: "La case c n'existe pas dans la routine";
         return null; // Inutile vu que si c pas dans la liste, assert se déclenche
     }
+
+    public int taille(){
+        return cases.size();
+    }
+
+    public int nextIndex(int i){
+        if(i == -1){
+            return i;
+        }
+
+        return (i+1) % cases.size();
+    }
+
+    public Case getCase(int i){
+        return i == -1 ? null : cases.get(i);
+    }
 }

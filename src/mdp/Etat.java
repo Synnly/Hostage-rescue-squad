@@ -6,10 +6,21 @@ import personnages.Terroriste;
 
 import java.util.List;
 
-public record Etat(Operateur operateur, List<Terroriste> ennemis, int menace, boolean estEchec, boolean estTerminal){
+public abstract class Etat{
+    int[] indCaseOperateurs;
+    boolean[] aObjectif;
+    int[] indCaseTerroristes;
+    int menace;
 
-    public Etat(Environnement env){
-        this(env.getOperateurActif(), env.getEnnemis(), env.getMenace(), env.isEchec(), env.isMissionFinie());
+    public Etat(int[] indCaseOperateurs, boolean[] aObjectif, int[] indCaseTerroristes, int menace){
+        this.indCaseOperateurs = indCaseOperateurs;
+        this.aObjectif = aObjectif;
+        this.indCaseTerroristes = indCaseTerroristes;
+        this.menace = menace;
     }
+
+    public abstract boolean estTerminal();
+
+    public abstract boolean estReussite();
 }
 

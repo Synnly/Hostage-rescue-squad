@@ -3,6 +3,8 @@ package carte;
 import observable.Environnement;
 import outils.FabriqueIdentifiant;
 
+import java.util.Objects;
+
 /**
  * Type abstrait représentant une case du plateau.
  */

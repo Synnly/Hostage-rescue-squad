@@ -518,4 +518,12 @@ public class Environnement extends Observable{
     public void resetMenace(){
         menace = minMenace;
     }
+
+    public int getMinMenace() {
+        return minMenace;
+    }
+
+    public int getMaxMenace() {
+        return maxMenace;
+    }
 }
