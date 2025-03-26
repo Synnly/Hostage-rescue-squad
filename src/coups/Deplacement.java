@@ -113,11 +113,19 @@ public class Deplacement extends Coup {
         int persoX = perso.getX();
         int persoY = perso.getY();
 
-        for (Case c: env.getPlateau()) {
-            if(Math.abs(persoX - c.getX()) + Math.abs(persoY - c.getY()) <= 1){
-                cases.add(c);
-            }
+        if(persoX < env.getLargeur() - 1) {
+            cases.add(env.getCase(persoX + 1, persoY));
         }
+        if(persoX > 0) {
+            cases.add(env.getCase(persoX - 1, persoY));
+        }
+        if(persoY < env.getHauteur() - 1) {
+            cases.add(env.getCase(persoX, persoY + 1));
+        }
+        if(persoY > 0) {
+            cases.add(env.getCase(persoX, persoY - 1));
+        }
+
         return cases;
     }
 

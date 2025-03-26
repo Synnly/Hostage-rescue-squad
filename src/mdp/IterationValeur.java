@@ -1,56 +1,67 @@
 package mdp;
 
-import carte.Case;
-import coups.Coup;
-import observable.Environnement;
-import personnages.Operateur;
-import personnages.Personnage;
-import personnages.Terroriste;
-
 import java.util.*;
 
-public class IterationValeur{
+public class IterationValeur {
     private static double gamma = 0.8;
     private static double epsilon = 0.0001;
 
+    public static Action predict(MDP mdp, Etat s) {
+        return iterationValeur(mdp).get(s);
+    }
 
-    /**
-     * Calcule et prédis la meilleure action à effectuer. Lance le calcul des utilités des état immédiatement accessibles,
-     * ie les états accessibles en une action joueur, sur autant de fils d'exécutions que d'actions différentes possibles.
-     * @param env L'environnement
-     * @return La meilleure action prédite
-     */
-    public static Action predict(Environnement env) {
-        Set<Action> actions = getAllActionsPossibleOperateur(env);
-
-        System.out.println("Launching " + actions.size() + " threads");
-        long start = System.currentTimeMillis();
-        Map<IterationValeurThread, Action> threads = new HashMap<>(actions.size());
-        double maxUtil = Double.NEGATIVE_INFINITY;
-        Action bestAction = null;
-
-
-        // Lancement du multi threading
-        for(Action action : actions){
-            IterationValeurThread thread = new IterationValeurThread(env, action, new Etat(env));
-            threads.put(thread, action);
-            thread.start();
+    public static double qValeur(MDP mdp, Etat s, Action a, Map<Etat, Double> utils) {
+        double util = 0;
+        Map<Etat, Double> distribution = mdp.transition(s, a);
+        for (Etat sPrime : distribution.keySet()) {
+            util += distribution.get(sPrime) * (mdp.recompense(s, a, sPrime) + gamma * utils.get(sPrime));
         }
 
-        // Rendez vous
-        for(IterationValeurThread t : threads.keySet()){
-            try {
-                t.join(0);
-                if(t.value > maxUtil){
-                    maxUtil = t.value;
-                    bestAction = threads.get(t);
+        return util;
+    }
+
+    public static Map<Etat, Action> iterationValeur(MDP mdp) {
+        Map<Etat, Double> util = new HashMap<>();
+        Map<Etat, Action> bestAction = new HashMap<>();
+        Map<Etat, Action[]> actions = mdp.getActions();
+
+        for (Etat e : mdp.getEtats()) {
+            util.put(e, 0.);
+            bestAction.put(e, null);
+        }
+
+        double delta;
+        do {
+            delta = 0;
+            Map<Etat, Double> utilClone = new HashMap<>();
+
+            for (Etat e : util.keySet()) {
+                double max = Double.NEGATIVE_INFINITY;
+
+                for(Action a : actions.get(e)){
+                    System.out.println(a);
                 }
-            } catch (InterruptedException e) {
-                System.out.println("Thread (" + threads.get(t) + ") a rencontré une erreur : " + e.getMessage());
+
+                for (Action a : actions.get(e)) {
+                    System.out.println(e + "\n\t" + a);
+                    double qval = qValeur(mdp, e, a, util);
+
+                    if (qval > max) {
+                        max = qval;
+                        bestAction.put(e, a);
+                    }
+                }
+
+                utilClone.put(e, max);
+
+                delta = Math.max(delta, Math.abs(utilClone.get(e) - util.get(e)));
             }
+
+            util = utilClone;
         }
-        long finish = System.currentTimeMillis();
-        System.out.println("Finished in " + (finish - start)/1000. + " s");
+        while (delta > epsilon * (1 - gamma) / gamma);
+
         return bestAction;
     }
+}
 

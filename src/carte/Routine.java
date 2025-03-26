@@ -78,6 +78,18 @@ public class Routine {
     }
 
     public Case getCase(int i){
-        return i == -1 ? null : cases.get(i);
+        return i == -1 ? AucuneCase.instance : cases.get(i);
+    }
+
+    public int indexOf(Case c){
+        if(c instanceof AucuneCase){
+            return -1;
+        }
+        for(int i = 0; i < cases.size(); i++){
+            if (c.id == cases.get(i).id){
+                return i;
+            }
+        }
+        return -1;
     }
 }

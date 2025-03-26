@@ -2,9 +2,7 @@ package observable;
 
 import coups.*;
 import carte.*;
-import mdp.Action;
-import mdp.Etat;
-import mdp.IterationValeur;
+import mdp.*;
 import personnages.*;
 
 import java.util.ArrayList;
@@ -31,6 +29,7 @@ public class Environnement extends Observable{
     private final double probaDeplacementEnnemi = 0.7;
     private final double probaSuccesDeplacement;
     private final double probaSuccesTir;
+    private HostageRescueSquad mdp;
 
 
     /**
@@ -56,6 +55,7 @@ public class Environnement extends Observable{
         this.largeur = largeur;
         this.hauteur = hauteur;
         nouvellePartie();
+        mdp = new HostageRescueSquad(this);
     }
 
     public Environnement(Environnement env){
@@ -73,6 +73,7 @@ public class Environnement extends Observable{
         }
         this.probaSuccesDeplacement = env.probaSuccesDeplacement;
         this.probaSuccesTir = env.probaSuccesTir;
+        mdp = env.mdp;
     }
 
     /**
@@ -189,6 +190,9 @@ public class Environnement extends Observable{
     public Case getCase(int x, int y){
         assert x >= 0 && x < largeur : "x doit être 0 <= x < largeur (x = "+ x + ")";
         assert y >= 0 && y < hauteur : "y doit être 0 <= y < hauteur (y = "+ y + ")";
+        if(x == -1 || y == -1){
+            return AucuneCase.instance;
+        }
 
         return cases.get(y * largeur + x);
     }
@@ -390,13 +394,13 @@ public class Environnement extends Observable{
      * Affiche dans le terminal la meilleure action prédite par l'IA
      */
     public void printPrediction(){
-        Action actionPredite = IterationValeur.predict(this);
+        Action actionPredite = IterationValeur.predict(mdp, new EtatNormal(this));
 
         if(actionPredite.coups().get(0).estFinTour()){
             System.out.println("L'ia vous conseille de terminer le tour");
         }
         else{
-            System.out.println("L'ia vous conseille de " + actionPredite.coups().get(0) + " vers la case " + actionPredite.cibles().get(0));
+            System.out.println("L'ia vous conseille de " + actionPredite.coups().get(0) + " vers la case " + actionPredite.directions().get(0));
         }
 
         for (int i = 1; i < actionPredite.coups().size(); i++) {
@@ -404,7 +408,7 @@ public class Environnement extends Observable{
                 System.out.println("puis de terminer le tour");
             }
             else{
-                System.out.println("puis de " + actionPredite.coups().get(i) + " vers la case " + actionPredite.cibles().get(i));
+                System.out.println("puis de " + actionPredite.coups().get(i) + " vers la case " + actionPredite.directions().get(i));
             }
         }
     }
@@ -423,8 +427,20 @@ public class Environnement extends Observable{
      * @param e Le nouvel état
      */
     public void setEtat(Etat e){
-        this.operateur = e.operateur();
-        this.ennemis = new ArrayList<>(e.ennemis());
+        Case caseOp = cases.get(e.indCaseOperateurs[0]);
+        operateur.setX(caseOp.getX());
+        operateur.setY(caseOp.getY());
+
+        operateur.setPossedeObjectif(e.aObjectif[0]);
+
+        Routine routine = ennemis.get(0).getRoutine();
+        for (int indTerr = 0; indTerr < e.indCaseTerroristes.length; indTerr++) {
+            Case caseTerr = routine.getCase(e.indCaseTerroristes[indTerr]);
+            ennemis.get(indTerr).setX(caseTerr.getX());
+            ennemis.get(indTerr).setY(caseTerr.getY());
+        }
+
+        menace = e.menace;
     }
 
     /**

@@ -21,7 +21,7 @@ public interface MDP {
     double valeurTuerEnnemi = 2;
     double valeurDeplacement = -1;
 
-    Action[] getActions();
+    Map<Etat, Action[]> getActions();
 
     Etat[] getEtats();
 

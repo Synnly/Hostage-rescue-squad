@@ -1,31 +1,136 @@
 package mdp;
 
+import carte.AucuneCase;
 import carte.Case;
 import carte.Routine;
 import coups.Coup;
 import observable.Environnement;
-import personnages.Operateur;
-import personnages.Personnage;
-import personnages.Terroriste;
+import personnages.*;
 
 import java.util.*;
 
 public class HostageRescueSquad implements MDP{
     private final Environnement env;
+    private final Environnement envCopy;
     private Etat[] etats = null;
+    private Map<Etat, Map<Action, Map<Etat, Double>>> transitions = null;
+    private Map<Etat, Action[]> actions = null;
 
     public HostageRescueSquad(Environnement env){
         this.env = env;
+        this.envCopy = env.copy();
     }
 
     @Override
-    public Action[] getActions() {
-        return new Action[0];
+    public Map<Etat, Action[]> getActions() {
+        if(actions != null){
+            return actions;
+        }
+
+        Operateur op = env.getOperateurActif();
+        Coup[] listeCoups = {op.getDeplacement(), op.getTir(), op.getFinTour()};
+
+        // Nombre maximum de coups par opérateur
+        int maxNbCoups = 0;
+        for (Coup c : listeCoups) {
+            maxNbCoups = Math.max(maxNbCoups, op.getPointsAction() / c.cout);
+        }
+
+        Set<List<Coup>> suiteCoupsPossibles = getAllSuitesCoupsPossibleOperateur(listeCoups, maxNbCoups, op);
+        Map<Etat, Action[]> actionPossibles = new HashMap<>();
+
+        for(Etat e : getEtats()) {
+            envCopy.setEtat(e);
+            List<Action> actions = new ArrayList<>();
+            for (List<Coup> suiteCoup : suiteCoupsPossibles) {   // Parcours de toutes les suites de coups
+                // Liste des cases des couches. La case i de la couche j correspond à l'etat i de la case j
+                List<List<Case>> casesCouches = new ArrayList<>();
+                casesCouches.add(new ArrayList<>());
+                casesCouches.get(0).add(env.getCase(env.getOperateurActif().getX(), env.getOperateurActif().getY()));
+
+                // Liste des etats des couches. L'etat i de la couche j correspond à la case i de la case j
+                List<List<Etat>> etatsCouches = new ArrayList<>();
+                etatsCouches.add(new ArrayList<>());
+                etatsCouches.get(0).add(new EtatNormal(envCopy));
+
+                while (!casesCouches.isEmpty()) {
+                    while (!casesCouches.isEmpty() && casesCouches.size() < suiteCoup.size() + 1) {     // création des nouvelles couches
+                        int indiceCouche = etatsCouches.size() - 1;
+                        Map<Case, Etat> coucheTemp = getCasesValidesEtEtatsOperateur(etatsCouches.get(indiceCouche).get(0), suiteCoup.get(indiceCouche));
+
+                        // Transformation de la map en listes
+                        List<Case> casesTemp = new ArrayList<>(coucheTemp.size());
+                        List<Etat> etatsTemp = new ArrayList<>(coucheTemp.size());
+                        for (Case c : new ArrayList<>(coucheTemp.keySet())) {
+                            casesTemp.add(c.copy());
+                            etatsTemp.add(coucheTemp.get(c));
+                        }
+                        casesCouches.add(casesTemp);
+                        etatsCouches.add(etatsTemp);
+
+                        // Si la derniere couche est vide ici, alors le coup n'as pas de cases valides, donc il faut
+                        // supprimer le noeud
+                        while (!casesCouches.isEmpty() && casesCouches.get(casesCouches.size() - 1).isEmpty()) {
+                            casesCouches.remove(casesCouches.size() - 1);
+                            etatsCouches.remove(etatsCouches.size() - 1);
+
+                            if (!casesCouches.isEmpty()) {
+                                casesCouches.get(casesCouches.size() - 1).remove(0);
+                                etatsCouches.get(etatsCouches.size() - 1).remove(0);
+                            }
+                        }
+                    }
+                    if (casesCouches.isEmpty()) {
+                        break;
+                    }
+
+                    List<Integer> directions = new ArrayList<>();
+                    for (int indCouche = 1; indCouche < casesCouches.size(); indCouche++) {
+                        Case ancienneCase = casesCouches.get(indCouche-1).get(0);
+                        Case nouvelleCase = casesCouches.get(indCouche).get(0);
+
+                        if(nouvelleCase.x == -1 || nouvelleCase.y == -1){
+                            directions.add(Action.AUCUN);
+                        } else if (nouvelleCase.x > ancienneCase.x) {
+                            directions.add(Action.DROITE);
+                        } else if (nouvelleCase.x < ancienneCase.x) {
+                            directions.add(Action.GAUCHE);
+                        } else if (nouvelleCase.y > ancienneCase.y) {
+                            directions.add(Action.BAS);
+                        } else {
+                            directions.add(Action.HAUT);
+                        }
+                    }
+                    actions.add(new Action(env.getOperateurActif(), suiteCoup, directions));
+
+                    // Suppression de la premiere case de la derniere couche
+                    casesCouches.get(casesCouches.size() - 1).remove(0);
+                    etatsCouches.get(etatsCouches.size() - 1).remove(0);
+
+                    // Suppression des couches vides et des premiers noeuds précédent une couche vide
+                    while (!casesCouches.isEmpty() && casesCouches.get(casesCouches.size() - 1).isEmpty()) {
+                        casesCouches.remove(casesCouches.size() - 1);
+                        etatsCouches.remove(etatsCouches.size() - 1);
+
+                        if (!casesCouches.isEmpty()) {
+                            casesCouches.get(casesCouches.size() - 1).remove(0);
+                            etatsCouches.get(etatsCouches.size() - 1).remove(0);
+                        }
+                    }
+                }
+            }
+            actionPossibles.put(e, actions.toArray(new Action[0]));
+        }
+        return actionPossibles;
     }
 
 
     @Override
     public Etat[] getEtats() {
+        if (etats != null){
+            return etats;
+        }
+
         ArrayList<Etat> listeEtats = new ArrayList<>();
         int nbOps = 1;                                              // A changer quand plusieurs operateurs
         Routine routine = env.getEnnemis().get(0).getRoutine();     // A changer quand plusieurs routines
@@ -70,7 +175,8 @@ public class HostageRescueSquad implements MDP{
                 }
             }
         }
-        return listeEtats.toArray(new Etat[0]);
+        etats = listeEtats.toArray(new Etat[0]);
+        return etats;
     }
 
     /**
@@ -81,6 +187,9 @@ public class HostageRescueSquad implements MDP{
      */
     @Override
     public Map<Etat, Double> transition(Etat etatDepart, Action action){
+        if(transitions != null){
+            return transitions.get(etatDepart).get(action);
+        }
         Map<Etat, Double> etats = new HashMap<>();
         etats.put(etatDepart, 1.);
 
@@ -92,14 +201,14 @@ public class HostageRescueSquad implements MDP{
             for(Etat e : etats.keySet()){
                 if(!e.estTerminal()) {
                     if(action.coups().get(i).probaSucces != 1 && action.coups().get(i).probaSucces != 0) {
-                        Etat etatSucces = simuler(env, e, action.coups().get(i), action.personnage(), action.cibles().get(i), true);
-                        Etat etatEchec = simuler(env, e, action.coups().get(i), action.personnage(), action.cibles().get(i), false);
+                        Etat etatSucces = simuler(e, action.coups().get(i), action.personnage(), action.directions().get(i), true);
+                        Etat etatEchec = simuler(e, action.coups().get(i), action.personnage(), action.directions().get(i), false);
 
                         etatsTemp.put(etatSucces, etats.get(e) * action.coups().get(i).probaSucces);
                         etatsTemp.put(etatEchec, etats.get(e) * (1 - action.coups().get(i).probaSucces));
                     }
                     else{
-                        Etat etat = simuler(env, e, action.coups().get(i), action.personnage(), action.cibles().get(i), action.coups().get(i).probaSucces == 1);
+                        Etat etat = simuler(e, action.coups().get(i), action.personnage(), action.directions().get(i), action.coups().get(i).probaSucces == 1);
                         etatsTemp.put(etat, etats.get(e) * action.coups().get(i).probaSucces);
                     }
                 }
@@ -109,6 +218,7 @@ public class HostageRescueSquad implements MDP{
             }
             etats = etatsTemp;
         }
+        System.out.println(etats);
         return etats;
     }
 
@@ -263,209 +373,53 @@ public class HostageRescueSquad implements MDP{
     }
 
     /**
-     * Calcule toutes les actions possibles pour le joueur en fonction des suites de coups possibles
-     * @param env L'environnement du joueur
-     * @return La liste des actions valides
-     */
-    public Set<Action> getAllActionsPossibleOperateur(Environnement env){
-        Operateur op = env.getOperateurActif();
-        Coup[] listeCoups = {op.getDeplacement(), op.getTir(), op.getFinTour()};
-
-        // Nombre maximum de coups par opérateur
-        int maxNbCoups = 0;
-        for (Coup c : listeCoups) {
-            maxNbCoups = Math.max(maxNbCoups, op.getPointsAction() / c.cout);
-        }
-
-        Set<List<Coup>> suiteCoupsPossibles = getAllSuitesCoupsPossibleOperateur(listeCoups, maxNbCoups, op);
-        Set<Action> actionPossibles = new HashSet<>();
-
-        for(List<Coup> suiteCoup : suiteCoupsPossibles) {   // Parcours de toutes les suites de coups
-            // Liste des cases des couches. La case i de la couche j correspond à l'etat i de la case j
-            List<List<Case>> casesCouches = new ArrayList<>();
-            casesCouches.add(new ArrayList<>());
-            casesCouches.get(0).add(env.getCase(env.getOperateurActif().getX(), env.getOperateurActif().getY()));
-
-            // Liste des etats des couches. L'etat i de la couche j correspond à la case i de la case j
-            List<List<Etat>> etatsCouches = new ArrayList<>();
-            etatsCouches.add(new ArrayList<>());
-            etatsCouches.get(0).add(new Etat(env.copy()));
-
-            while (!casesCouches.isEmpty()) {
-                while (!casesCouches.isEmpty() && casesCouches.size() < suiteCoup.size() + 1){     // création des nouvelles couches
-                    int indiceCouche = etatsCouches.size()-1;
-                    Map<Case, Etat> coucheTemp = getCasesValidesEtEtatsOperateur(env, etatsCouches.get(indiceCouche).get(0), suiteCoup.get(indiceCouche));
-
-                    // Transformation de la map en listes
-                    List<Case> casesTemp = new ArrayList<>(coucheTemp.size());
-                    List<Etat> etatsTemp = new ArrayList<>(coucheTemp.size());
-                    for(Case c : new ArrayList<>(coucheTemp.keySet())){
-                        casesTemp.add(c.copy());
-                        etatsTemp.add(coucheTemp.get(c));
-                    }
-                    casesCouches.add(casesTemp);
-                    etatsCouches.add(etatsTemp);
-
-                    // Si la derniere couche est vide ici, alors le coup n'as pas de cases valides, donc il faut
-                    // supprimer le noeud
-                    while(!casesCouches.isEmpty() && casesCouches.get(casesCouches.size() - 1).isEmpty()){
-                        casesCouches.remove(casesCouches.size() - 1);
-                        etatsCouches.remove(etatsCouches.size() - 1);
-
-                        if(!casesCouches.isEmpty()){
-                            casesCouches.get(casesCouches.size() - 1).remove(0);
-                            etatsCouches.get(etatsCouches.size() - 1).remove(0);
-                        }
-                    }
-                }
-                if(casesCouches.isEmpty()){
-                    break;
-                }
-
-                List<Case> casesCible = new ArrayList<>();
-                for(List<Case> couche : casesCouches){
-                    casesCible.add(couche.get(0));
-                }
-                casesCible.remove(0);   // Retrait de la case de départ
-                actionPossibles.add(new Action(env.getOperateurActif(), suiteCoup, casesCible));
-
-                // Suppression de la premiere case de la derniere couche
-                casesCouches.get(casesCouches.size() - 1).remove(0);
-                etatsCouches.get(etatsCouches.size() - 1).remove(0);
-
-                // Suppression des couches vides et des premiers noeuds précédent une couche vide
-                while(!casesCouches.isEmpty() && casesCouches.get(casesCouches.size() - 1).isEmpty()){
-                    casesCouches.remove(casesCouches.size() - 1);
-                    etatsCouches.remove(etatsCouches.size() - 1);
-
-                    if(!casesCouches.isEmpty()){
-                        casesCouches.get(casesCouches.size() - 1).remove(0);
-                        etatsCouches.get(etatsCouches.size() - 1).remove(0);
-                    }
-                }
-            }
-        }
-        return actionPossibles;
-    }
-
-    /**
      * Calcule toutes les cases et états correspondants d'arrivée apres que l'opérateur ait effectué le coup
-     * @param env L'environnement de l'opérateur
      * @param etat L'etat de départ
      * @param coup Le coup à effectuer
      * @return Le dictionnaire de toutes les cases et états correspondants d'arrivée
      */
-    private Map<Case, Etat> getCasesValidesEtEtatsOperateur(Environnement env, Etat etat, Coup coup){
+    private Map<Case, Etat> getCasesValidesEtEtatsOperateur(Etat etat, Coup coup){
         Map<Case, Etat> caseEtat = new HashMap<>();
         Coup coupCopy = coup.copy();
         coupCopy.probaSucces = 1;
 
-        Environnement envCopy = env.copy();
         envCopy.setEtat(etat);
         Personnage persoCopy = envCopy.getOperateurActif();
         List<Case> casesValides = new ArrayList<>(coup.getCasesValides(envCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY())));
 
         for(Case c : casesValides) {
-            envCopy = env.copy();
             coupCopy.effectuer(envCopy, envCopy.getOperateurActif(), c);
-            caseEtat.put(c, new Etat(envCopy));
+            caseEtat.put(c, new EtatNormal(envCopy));
         }
         return caseEtat;
     }
 
-    /**
-     * Calcule l'utilité de l'état si le tour actuel est celui du joueur
-     * @param env L'environnement
-     * @param etatDepart L'état de départ
-     * @param tour Le numéro du tour
-     * @return La somme des utilités pondéré par leurs probabilités des états accessibles si <code>tour</code> < <code>IterationValeur.maxTour</code>, <code>MDP.valeurEchec</code> sinon
-     */
-    private double utiliteEtatTourJoueur(Environnement env, Etat etatDepart, int tour){
-        // Si mission pas réussie au bout de maxTour alors échec
-        if(tour > maxTour){
-            return 0;
-        }
-
-        Set<Action> actions = getAllActionsPossibleOperateur(env);
-        double sumUtil = 0;
-
-        for(Action action : actions){
-            Map<Etat, Double> probaEtats = MDP.transition(env.copy(), etatDepart, action);
-
-            // Ajout des utilités des états d'arrivée pondéré par proba d'y arriver
-            for(Etat etatArrivee : probaEtats.keySet()){
-                Environnement envCopy = env.copy();
-                envCopy.setEtat(etatArrivee);
-                envCopy = envCopy.copy();
-
-                sumUtil += probaEtats.get(etatArrivee) * (MDP.recompense(etatDepart, action, etatArrivee) + gamma * utiliteEtatTourEnnemi(envCopy, etatArrivee, tour));
-            }
-        }
-        return sumUtil/actions.size();
-    }
-
-    /**
-     * Calcule l'utilité de l'état si le tour actuel est celui du terroriste
-     * @param env L'environnement
-     * @param etatDepart L'état de départ
-     * @param tour Le numéro du tour
-     * @return La somme des utilités pondéré par leurs probabilités des états accessibles si <code>tour</code> < <code>IterationValeur.maxTour</code>, <code>MDP.valeurEchec</code> sinon
-     */
-    private double utiliteEtatTourEnnemi(Environnement env, Etat etatDepart, int tour){
-        // Si mission pas réussie au bout de maxTour alors échec
-        if(tour >= maxTour){
-            return MDP.valeurEchec;
-        }
-        if(env.getEnnemis().isEmpty()){     // Aucun ennemi, donc pas de changement
-            Environnement envCopy = env.copy();
-            envCopy.setEtat(etatDepart);
-            envCopy = envCopy.copy();
-            return utiliteEtatTourJoueur(envCopy, etatDepart, tour + 1);
-        }
-
-        Terroriste terro = env.getEnnemis().get(0);
-        Set<List<Coup>> suitesCoupsPossible = getAllSuitesCoupsPossibleTerroristes(new coups.Coup[]{terro.getDeplacement(), terro.getTir()}, env.getMenace());
-        double sumUtil = 0;
-
-        Map<Etat, Double> probaEtats = new HashMap<>();
-        for(List<Coup> suiteCoups : suitesCoupsPossible) {
-            Environnement envCopy = env.copy();
-            envCopy.setEtat(etatDepart);
-            envCopy = envCopy.copy();
-            envCopy.effectuerCoupsTerroristes(suiteCoups);
-
-            // Proba de la suite de coups ennemi
-            double proba = 1;
-            for(Coup c : suiteCoups){
-                proba *= env.getProbaCoupEnnemi(c);
-            }
-
-            Etat etatTemp = new Etat(envCopy);
-            etatTemp.operateur().resetPointsAction();   // On redonne les PA à l'opérateur
-            probaEtats.put(etatTemp, proba);
-        }
-
-        // Ajout des utilités des états d'arrivée pondéré par proba d'y arriver
-        for(Etat etatArrivee : probaEtats.keySet()){
-            Environnement envCopy = env.copy();
-            envCopy.setEtat(etatArrivee);
-            envCopy = envCopy.copy();
-            sumUtil += probaEtats.get(etatArrivee) * (gamma * utiliteEtatTourJoueur(envCopy, etatArrivee, tour + 1));
-        }
-
-        return sumUtil;
-    }
-
-    private Etat simuler(Environnement env, Etat etatDepart, Coup coup, Personnage perso, Case cible, boolean succes){
+    private Etat simuler(Etat etatDepart, Coup coup, Personnage perso, int direction, boolean succes){
         // Copie profonde de l'environnement dans l'etat de depart
-        Environnement envCopy = env.copy();
         Coup coupCopy = coup.copy();
         envCopy.setEtat(etatDepart);
-        envCopy = envCopy.copy(); // ligne necessaire sinon instance de perso en copie de surface
+        Personnage persoCopy = envCopy.getPersonnage(perso);
         coupCopy.probaSucces = succes ? 1 : 0;
+        switch (direction){
+            case Action.HAUT -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY() - 1));
+            case Action.BAS -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY() + 1));
+            case Action.GAUCHE -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX() - 1, persoCopy.getY()));
+            case Action.DROITE -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX() + 1, persoCopy.getY()));
+            case Action.AUCUN -> coupCopy.effectuer(envCopy, persoCopy, AucuneCase.instance);
+        }
 
-        coupCopy.effectuer(envCopy, envCopy.getPersonnage(perso), envCopy.getCase(cible));
+        return creerEtat(envCopy);
+    }
 
-        return new Etat(envCopy);
+    public Etat creerEtat(Environnement env){
+        if(env.isMissionFinie()){
+            if(env.isEchec()){
+                return new EtatEchec(env);
+            }
+            return new EtatReussite(env);
+        }
+        else{
+            return new EtatNormal(env);
+        }
     }
 }
