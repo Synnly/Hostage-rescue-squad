@@ -179,12 +179,6 @@ public class HostageRescueSquad implements MDP{
         return etats;
     }
 
-    /**
-     * Calcule tous les états accessibles en fonction de si l'action échoue ou non et leur probabilité correspondante
-     * @param etatDepart L'etat de départ
-     * @param action L'action effectuée
-     * @return Le dictionnaire ayant pour clé l'état et en valeur la probabilité d'y arriver
-     */
     @Override
     public Map<Etat, Double> transition(Etat etatDepart, Action action){
         if(transitions != null){
@@ -262,6 +256,11 @@ public class HostageRescueSquad implements MDP{
         return recomp;
     }
 
+    /**
+     * Indique si l'état esy valide et non terminal
+     * @param e L'état
+     * @return Vrai si e est valide et non terminal, faux sinon
+     */
     public boolean etatEstValideEtNonTerminal(Etat e){
         // Terroriste et operateur sur la meme case
         Routine routine = env.getEnnemis().get(0).getRoutine();
@@ -394,6 +393,15 @@ public class HostageRescueSquad implements MDP{
         return caseEtat;
     }
 
+    /**
+     * Calcule l'état après le coup effectué
+     * @param etatDepart L'état de départ
+     * @param coup Le coup à effectuer
+     * @param perso Le personnage effectuant le coup
+     * @param direction La direction dans lequel le coup est effectué
+     * @param succes Vrai si le coup réussi, faux sinon
+     * @return L'état d'arrivée
+     */
     private Etat simuler(Etat etatDepart, Coup coup, Personnage perso, int direction, boolean succes){
         // Copie profonde de l'environnement dans l'etat de depart
         Coup coupCopy = coup.copy();
@@ -411,6 +419,11 @@ public class HostageRescueSquad implements MDP{
         return creerEtat(envCopy);
     }
 
+    /**
+     * Crée l'état correspondant en fonction de si la mission est finie et si elle est une réussite ou non
+     * @param env L'environnement
+     * @return L'état de l'environnement
+     */
     public Etat creerEtat(Environnement env){
         if(env.isMissionFinie()){
             if(env.isEchec()){
