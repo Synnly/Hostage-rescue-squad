@@ -57,10 +57,11 @@ public class IterationValeur {
             for (Etat e : util.keySet()) {
                 double max = Double.NEGATIVE_INFINITY;
 
+                System.out.println(e);
                 for(Action a : actions.get(e)){
                     System.out.println(a);
                 }
-
+                System.out.println("------------");
                 for (Action a : actions.get(e)) {
                     System.out.println(e + "\n\t" + a);
                     double qval = qValeur(mdp, e, a, util);

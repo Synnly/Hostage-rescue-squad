@@ -15,6 +15,7 @@ public class HostageRescueSquad implements MDP{
     private Etat[] etats = null;
     private Map<Etat, Map<Action, Map<Etat, Double>>> transitions = null;
     private Map<Etat, Action[]> actions = null;
+    private Map<Etat, Map<Coup, Map<Case, Etat>>> casesEtatsValides = new HashMap<>();
 
     public HostageRescueSquad(Environnement env){
         this.env = env;
@@ -46,7 +47,7 @@ public class HostageRescueSquad implements MDP{
                 // Liste des cases des couches. La case i de la couche j correspond à l'etat i de la case j
                 List<List<Case>> casesCouches = new ArrayList<>();
                 casesCouches.add(new ArrayList<>());
-                casesCouches.get(0).add(env.getCase(env.getOperateurActif().getX(), env.getOperateurActif().getY()));
+                casesCouches.get(0).add(envCopy.getCase(envCopy.getOperateurActif().getX(), envCopy.getOperateurActif().getY()));
 
                 // Liste des etats des couches. L'etat i de la couche j correspond à la case i de la case j
                 List<List<Etat>> etatsCouches = new ArrayList<>();
@@ -89,6 +90,16 @@ public class HostageRescueSquad implements MDP{
                         Case ancienneCase = casesCouches.get(indCouche-1).get(0);
                         Case nouvelleCase = casesCouches.get(indCouche).get(0);
 
+                        if(e.indCaseOperateurs.length == 1 && e.indCaseOperateurs[0] == 69 &&
+                            e.aObjectif.length == 1 && e.aObjectif[0] == true &&
+                            e.indCaseTerroristes.length == 2 && ((e.indCaseTerroristes[0] == 5 && e.indCaseTerroristes[1] == 14) || (e.indCaseTerroristes[0] == 12 && e.indCaseTerroristes[1] == 13))&&
+                            e.menace == 5){
+                            System.out.println(suiteCoup);
+                            for(List<Case> couche : casesCouches){
+                                System.out.println(couche);
+                            }
+                        }
+
                         if(nouvelleCase.x == -1 || nouvelleCase.y == -1){
                             directions.add(Action.AUCUN);
                         } else if (nouvelleCase.x > ancienneCase.x) {
@@ -100,6 +111,12 @@ public class HostageRescueSquad implements MDP{
                         } else {
                             directions.add(Action.HAUT);
                         }
+                    }
+                    if(e.indCaseOperateurs.length == 1 && e.indCaseOperateurs[0] == 69 &&
+                            e.aObjectif.length == 1 && e.aObjectif[0] == true &&
+                            e.indCaseTerroristes.length == 2 && ((e.indCaseTerroristes[0] == 5 && e.indCaseTerroristes[1] == 14) || (e.indCaseTerroristes[0] == 12 && e.indCaseTerroristes[1] == 13))&&
+                            e.menace == 5){
+                        System.out.println("----------");
                     }
                     actions.add(new Action(env.getOperateurActif(), suiteCoup, directions));
 
@@ -131,7 +148,7 @@ public class HostageRescueSquad implements MDP{
             return etats;
         }
 
-        ArrayList<Etat> listeEtats = new ArrayList<>();
+        Set<Etat> listeEtats = new HashSet<>();
         int nbOps = 1;                                              // A changer quand plusieurs operateurs
         Routine routine = env.getEnnemis().get(0).getRoutine();     // A changer quand plusieurs routines
         int[] indCasesOp = new int[nbOps];
@@ -169,13 +186,19 @@ public class HostageRescueSquad implements MDP{
                         EtatNormal e = new EtatNormal(indCasesOp, aObjectif, indCasesTerr, menace);
 
                         if(etatEstValideEtNonTerminal(e)) {
+//                            System.out.println(e + " " + e.hashCode());
                             listeEtats.add(e);
                         }
                     }
                 }
             }
         }
-        etats = listeEtats.toArray(new Etat[0]);
+        Etat[] etats = new Etat[listeEtats.size()];
+        etats = listeEtats.toArray(etats);
+
+        for(Etat e : etats){
+            System.out.println(e + " " + e.hashCode());
+        }
         return etats;
     }
 
@@ -378,7 +401,12 @@ public class HostageRescueSquad implements MDP{
      * @return Le dictionnaire de toutes les cases et états correspondants d'arrivée
      */
     private Map<Case, Etat> getCasesValidesEtEtatsOperateur(Etat etat, Coup coup){
+        if(casesEtatsValides.get(etat) != null && casesEtatsValides.get(etat).get(coup) != null){
+            return casesEtatsValides.get(etat).get(coup);
+        }
+
         Map<Case, Etat> caseEtat = new HashMap<>();
+        Etat restoreState = new EtatNormal(envCopy);
         Coup coupCopy = coup.copy();
         coupCopy.probaSucces = 1;
 
@@ -386,10 +414,28 @@ public class HostageRescueSquad implements MDP{
         Personnage persoCopy = envCopy.getOperateurActif();
         List<Case> casesValides = new ArrayList<>(coup.getCasesValides(envCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY())));
 
+        System.out.println(etat);
         for(Case c : casesValides) {
+            envCopy.setEtat(etat);
+            Etat prev = new EtatNormal(envCopy);
+
             coupCopy.effectuer(envCopy, envCopy.getOperateurActif(), c);
+
+            Etat next = new EtatNormal(envCopy);
+//            System.out.println(prev.equals(next) + " ");
             caseEtat.put(c, new EtatNormal(envCopy));
         }
+        envCopy.setEtat(restoreState);
+
+        if(casesEtatsValides.get(etat) == null){
+            Map<Coup, Map<Case, Etat>> map = new HashMap<>();
+            map.put(coup, caseEtat);
+            casesEtatsValides.put(etat, map);
+        }
+        else{
+            casesEtatsValides.get(etat).put(coup, caseEtat);
+        }
+        System.out.println(coup + " | " + caseEtat + "\n------------");
         return caseEtat;
     }
 
@@ -405,6 +451,7 @@ public class HostageRescueSquad implements MDP{
     private Etat simuler(Etat etatDepart, Coup coup, Personnage perso, int direction, boolean succes){
         // Copie profonde de l'environnement dans l'etat de depart
         Coup coupCopy = coup.copy();
+        Etat restoreState = new EtatNormal(envCopy);
         envCopy.setEtat(etatDepart);
         Personnage persoCopy = envCopy.getPersonnage(perso);
         coupCopy.probaSucces = succes ? 1 : 0;
@@ -416,6 +463,7 @@ public class HostageRescueSquad implements MDP{
             case Action.AUCUN -> coupCopy.effectuer(envCopy, persoCopy, AucuneCase.instance);
         }
 
+        envCopy.setEtat(restoreState);
         return creerEtat(envCopy);
     }
 

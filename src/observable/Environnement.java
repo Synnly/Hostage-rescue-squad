@@ -188,11 +188,12 @@ public class Environnement extends Observable{
      * @return La case
      */
     public Case getCase(int x, int y){
-        assert x >= 0 && x < largeur : "x doit être 0 <= x < largeur (x = "+ x + ")";
-        assert y >= 0 && y < hauteur : "y doit être 0 <= y < hauteur (y = "+ y + ")";
         if(x == -1 || y == -1){
             return AucuneCase.instance;
         }
+
+        assert x >= 0 && x < largeur : "x doit être 0 <= x < largeur (x = "+ x + ")";
+        assert y >= 0 && y < hauteur : "y doit être 0 <= y < hauteur (y = "+ y + ")";
 
         return cases.get(y * largeur + x);
     }
@@ -346,13 +347,12 @@ public class Environnement extends Observable{
      */
     public void tuerEnnemis(Case arr){
         assert arr != null : "La case ne peut être null";
-        List<Terroriste> aTuer = new ArrayList<>();
         for(Terroriste ennemi : ennemis) {
             if (ennemi.getX() == arr.x && ennemi.getY() == arr.y) {
-                aTuer.add(ennemi);
+                ennemi.setX(-1);
+                ennemi.setY(-1);
             }
         }
-        ennemis.removeAll(aTuer);
     }
 
     /**
@@ -423,13 +423,14 @@ public class Environnement extends Observable{
     }
 
     /**
-     * Modifie l'état de l'environnement
+     * Modifie l'état de l'environnement, ie son état au début du tour joueur. Redonne les PA aux opérateurs
      * @param e Le nouvel état
      */
     public void setEtat(Etat e){
         Case caseOp = cases.get(e.indCaseOperateurs[0]);
         operateur.setX(caseOp.getX());
         operateur.setY(caseOp.getY());
+        operateur.resetPointsAction();
 
         operateur.setPossedeObjectif(e.aObjectif[0]);
 
@@ -542,4 +543,6 @@ public class Environnement extends Observable{
     public int getMaxMenace() {
         return maxMenace;
     }
+
+
 }
