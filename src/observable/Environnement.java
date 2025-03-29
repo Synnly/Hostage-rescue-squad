@@ -433,6 +433,8 @@ public class Environnement extends Observable{
         operateur.resetPointsAction();
 
         operateur.setPossedeObjectif(e.aObjectif[0]);
+        missionFinie = e.estTerminal();
+        echec = !e.estReussite();
 
         Routine routine = ennemis.get(0).getRoutine();
         for (int indTerr = 0; indTerr < e.indCaseTerroristes.length; indTerr++) {

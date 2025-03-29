@@ -28,6 +28,9 @@ public class IterationValeur {
         double util = 0;
         Map<Etat, Double> distribution = mdp.transition(s, a);
         for (Etat sPrime : distribution.keySet()) {
+            mdp.recompense(s, a, sPrime);
+            utils.get(sPrime);
+            distribution.get(sPrime);
             util += distribution.get(sPrime) * (mdp.recompense(s, a, sPrime) + gamma * utils.get(sPrime));
         }
 
@@ -44,7 +47,9 @@ public class IterationValeur {
         Map<Etat, Action> bestAction = new HashMap<>();
         Map<Etat, Action[]> actions = mdp.getActions();
 
-        for (Etat e : mdp.getEtats()) {
+        Etat[] etats = mdp.getEtats();
+
+        for (Etat e : etats) {
             util.put(e, 0.);
             bestAction.put(e, null);
         }
@@ -57,11 +62,6 @@ public class IterationValeur {
             for (Etat e : util.keySet()) {
                 double max = Double.NEGATIVE_INFINITY;
 
-                System.out.println(e);
-                for(Action a : actions.get(e)){
-                    System.out.println(a);
-                }
-                System.out.println("------------");
                 for (Action a : actions.get(e)) {
                     System.out.println(e + "\n\t" + a);
                     double qval = qValeur(mdp, e, a, util);
