@@ -483,37 +483,6 @@ public class Environnement extends Observable{
         return missionFinie;
     }
 
-    /**
-     * Fait effectuer les coups à tous les terroristes
-     * @param coups La liste des coups
-     */
-    public void effectuerCoupsTerroristes(List<Coup> coups){
-        for(Terroriste t : ennemis){
-            for(Coup c : coups) {
-                if(c.estTir()) {
-                    c.effectuer(this, t, getCase(operateur.getX(), operateur.getY()));
-                }
-                else if(c.estDeplacement()) {
-                    c.effectuer(this, t, t.getRoutine().prochaineCase(getCase(t.getX(), t.getY())));
-                }
-            }
-        }
-    }
-
-    /**
-     * Calcule la probabilité que les ennemis effectuent le coup fourni
-     * @param c Le coup
-     * @return La probabilité
-     */
-    public double getProbaCoupEnnemi(Coup c){
-        if(c.estTir()) {
-            return probaTirEnnemi;
-        }
-        else if(c.estDeplacement()) {
-            return probaDeplacementEnnemi;
-        }
-        else return 0;
-    }
 
     /**
      * Renvoie le personnage de l'environnement (généralement copié quand cette fonction est utilisée) qui correspond au

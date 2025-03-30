@@ -13,8 +13,8 @@ public class HostageRescueSquad implements MDP{
     private final Environnement env;
     private final Environnement envCopy;
     private Etat[] etats = null;
-    private Map<Etat, Map<Action, Map<Etat, Double>>> transitions = null;
-    private Map<Etat, Action[]> actions = null;
+    private Map<Etat, Map<Action, Map<Etat, Double>>> transitions = new HashMap<>();
+    private Map<Etat, Action[]> actionsEtat = new HashMap<>();
     private Map<Etat, Map<Coup, Map<Case, Etat>>> casesEtatsValides = new HashMap<>();
 
     public HostageRescueSquad(Environnement env){
@@ -24,8 +24,8 @@ public class HostageRescueSquad implements MDP{
 
     @Override
     public Map<Etat, Action[]> getActions() {
-        if(actions != null){
-            return actions;
+        if(!actionsEtat.isEmpty()){
+            return actionsEtat;
         }
 
         Operateur op = env.getOperateurActif();
@@ -126,6 +126,7 @@ public class HostageRescueSquad implements MDP{
             }
             actionPossibles.put(e, actions.toArray(new Action[0]));
         }
+        actionsEtat = actionPossibles;
         return actionPossibles;
     }
 
@@ -203,8 +204,10 @@ public class HostageRescueSquad implements MDP{
 
     @Override
     public Map<Etat, Double> transition(Etat etatDepart, Action action){
-        if(transitions != null){
-            return transitions.get(etatDepart).get(action);
+        if(transitions.get(etatDepart) != null){
+            if(transitions.get(etatDepart).get(action) != null){
+                return transitions.get(etatDepart).get(action);
+            }
         }
         Map<Etat, Double> etats = new HashMap<>();
         etats.put(etatDepart, 1.);
@@ -246,6 +249,14 @@ public class HostageRescueSquad implements MDP{
             }
             etats = etatsTemp;
         }
+        if(transitions.get(etatDepart) == null){
+            Map<Action, Map<Etat, Double>> actionEtat = new HashMap<>();
+            actionEtat.put(action, etats);
+            transitions.put(etatDepart, actionEtat);
+        } else {
+            transitions.get(etatDepart).put(action, etats);
+        }
+
         return etats;
     }
 
