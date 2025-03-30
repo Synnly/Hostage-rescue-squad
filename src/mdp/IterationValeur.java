@@ -3,7 +3,7 @@ package mdp;
 import java.util.*;
 
 public class IterationValeur {
-    private static double gamma = 0.95;
+    private static double gamma = 0.8;
     private static double epsilon = 0.0001;
     private static Map<Etat, Action> bestActions = new HashMap<>();
 
@@ -14,12 +14,8 @@ public class IterationValeur {
      * @return La meilleure action à effectuer
      */
     public static Action predict(MDP mdp, Etat s) {
-        System.out.println(s);
         if(bestActions.isEmpty()) {
-            iterationValeur(mdp, s);
-//            for(Etat e : bestActions.keySet()){
-//                System.out.println(e + " -> " + bestActions.get(e));
-//            }
+            iterationValeur(mdp);
         }
 
         return bestActions.get(s);
@@ -37,6 +33,12 @@ public class IterationValeur {
         double util = 0;
         Map<Etat, Double> distribution = mdp.transition(s, a);
         for (Etat sPrime : distribution.keySet()) {
+            if(distribution.get(sPrime)==null){
+                System.out.println();
+            }
+            if(utils.get(sPrime) == null){
+                System.out.println();
+            }
             util += distribution.get(sPrime) * (mdp.recompense(s, a, sPrime) + gamma * utils.get(sPrime));
         }
 
@@ -48,17 +50,19 @@ public class IterationValeur {
      * @param mdp Le mdp sur lequel appliquer l'algo
      * @return Le dictionnaire associant à chaque état son utilité
      */
-    public static Map<Etat, Action> iterationValeur(MDP mdp, Etat s) {
+    public static Map<Etat, Action> iterationValeur(MDP mdp) {
         Map<Etat, Double> util = new HashMap<>();
         Map<Etat, Action[]> actions = mdp.getActions();
-        int nbIter = 0;
-
         Etat[] etats = mdp.getEtats();
         System.out.println("Itération valeur sur " + etats.length + " états");
 
         for (Etat e : etats) {
             util.put(e, 0.);
             bestActions.put(e, null);
+        }
+
+        for(Etat e : util.keySet()){
+//            System.out.println(e + " " + e.estTerminal() + " " + e.estReussite());
         }
 
         double delta;
@@ -79,16 +83,11 @@ public class IterationValeur {
                 }
 
                 utilClone.put(e, max);
-                if(e.equals(s)){
-                    System.out.println(max + " " + bestActions.get(e));
-                }
 
                 delta = Math.max(delta, Math.abs(utilClone.get(e) - util.get(e)));
             }
 
             util = utilClone;
-            nbIter ++;
-            System.out.println(nbIter + " " + delta + " " + epsilon * (1 - gamma) / gamma);
         }
         while (delta > epsilon * (1 - gamma) / gamma);
         return bestActions;

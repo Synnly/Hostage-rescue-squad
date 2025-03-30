@@ -55,9 +55,10 @@ public class Environnement extends Observable{
         this.largeur = largeur;
         this.hauteur = hauteur;
         nouvellePartie();
+
         mdp = new HostageRescueSquad(this);
         System.out.println("L'ia se prépare ...");
-        IterationValeur.iterationValeur(mdp, new EtatNormal(this));
+        IterationValeur.iterationValeur(mdp);
         System.out.println("L'ia a fini");
     }
 
@@ -483,6 +484,41 @@ public class Environnement extends Observable{
         return missionFinie;
     }
 
+    /**
+     * Fait effectuer les coups à tous les terroristes
+     * @param coups La liste des coups
+     */
+    public void effectuerCoupsTerroristes(List<Coup> coups){
+        for(Terroriste t : ennemis){
+            if(t.getX() == -1 && t.getY() == -1){
+                continue;
+            }
+
+            for(Coup c : coups) {
+                if(c.estTir()) {
+                    c.effectuer(this, t, getCase(operateur.getX(), operateur.getY()));
+                }
+                else if(c.estDeplacement()) {
+                    c.effectuer(this, t, t.getRoutine().prochaineCase(getCase(t.getX(), t.getY())));
+                }
+            }
+        }
+    }
+
+    /**
+     * Calcule la probabilité que les ennemis effectuent le coup fourni
+     * @param c Le coup
+     * @return La probabilité
+     */
+    public double getProbaCoupEnnemi(Coup c){
+        if(c.estTir()) {
+            return probaTirEnnemi;
+        }
+        else if(c.estDeplacement()) {
+            return probaDeplacementEnnemi;
+        }
+        else return 0;
+    }
 
     /**
      * Renvoie le personnage de l'environnement (généralement copié quand cette fonction est utilisée) qui correspond au
@@ -513,6 +549,10 @@ public class Environnement extends Observable{
     }
 
     public void terminerMission(boolean succes){
+        if(!succes){
+            operateur.setX(-1);
+            operateur.setY(-1);
+        }
         missionFinie = true;
         echec = !succes;
     }
