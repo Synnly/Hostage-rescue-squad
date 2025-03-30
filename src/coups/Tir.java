@@ -90,14 +90,25 @@ public class Tir extends Coup {
                     return;
                 }
             }
-            if(env.aEnnemisSurCase(arr)){
+            if(env.aEnnemisSurCase(arr)) {
                 perso.removePointsAction(cout);
-                if(nombres.get(0) > probaSucces){
+                if (nombres.get(0) > probaSucces) {
 //                    System.out.println("L'action a échoué");
                     return;
                 }
                 env.tuerEnnemis(arr);
-                return;
+                boolean tousTerrsMorts = true;
+                for(Terroriste t : env.getEnnemis()){
+                    if(t.getX() != -1 || t.getY() != -1){
+                        tousTerrsMorts = false;
+                        break;
+                    }
+                }
+                if (tousTerrsMorts) {
+                    env.resetMenace();
+                } else {
+                    env.augmenterMenace();
+                }
             }
         }
         else if (perso.getX() == arr.x) { // Perso et case sur la meme colonne
@@ -115,14 +126,18 @@ public class Tir extends Coup {
                     return;
                 }
                 env.tuerEnnemis(arr);
-                if(env.getEnnemis().isEmpty()) {
-                    env.resetMenace();
+                boolean tousTerrsMorts = true;
+                for(Terroriste t : env.getEnnemis()){
+                    if(t.getX() != -1 || t.getY() != -1){
+                        tousTerrsMorts = false;
+                        break;
+                    }
                 }
-                else{
+                if (tousTerrsMorts) {
+                    env.resetMenace();
+                } else {
                     env.augmenterMenace();
                 }
-
-                return;
             }
         }
 //        System.out.println("Aucun ennemi présent sur cette case");

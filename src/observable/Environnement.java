@@ -56,6 +56,9 @@ public class Environnement extends Observable{
         this.hauteur = hauteur;
         nouvellePartie();
         mdp = new HostageRescueSquad(this);
+        System.out.println("L'ia se prépare ...");
+        IterationValeur.iterationValeur(mdp, new EtatNormal(this));
+        System.out.println("L'ia a fini");
     }
 
     public Environnement(Environnement env){
@@ -95,7 +98,7 @@ public class Environnement extends Observable{
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
         Tir tirOp = new Tir(1, probaSuccesTir);
-        operateur = new Operateur(this, largeur/2, hauteur-1, 2, deplacementOp, tirOp);
+        operateur = new Operateur(this, largeur/2 + 2, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -188,7 +191,7 @@ public class Environnement extends Observable{
      * @return La case
      */
     public Case getCase(int x, int y){
-        if(x == -1 || y == -1){
+        if(x == -1 && y == -1){
             return AucuneCase.instance;
         }
 
@@ -395,22 +398,40 @@ public class Environnement extends Observable{
      */
     public void printPrediction(){
         Action actionPredite = IterationValeur.predict(mdp, new EtatNormal(this));
-
+        StringBuilder sb = new StringBuilder("L'ia vous conseille de ");
         if(actionPredite.coups().get(0).estFinTour()){
-            System.out.println("L'ia vous conseille de terminer le tour");
+            sb.append("terminer le tour");
         }
         else{
-            System.out.println("L'ia vous conseille de " + actionPredite.coups().get(0) + " vers la case " + actionPredite.directions().get(0));
-        }
+            sb.append(actionPredite.coups().get(0));
+            sb.append(" vers ");
+            switch(actionPredite.directions().get(0)){
+                case Action.HAUT -> sb.append("le haut");
+                case Action.BAS -> sb.append("le bas");
+                case Action.GAUCHE -> sb.append("la gauche");
+                case Action.DROITE -> sb.append("la droite");
+                default -> {}
+            }
+       }
 
         for (int i = 1; i < actionPredite.coups().size(); i++) {
+            sb.append("\nPuis de ");
             if(actionPredite.coups().get(i).estFinTour()){
-                System.out.println("puis de terminer le tour");
+                sb.append("terminer le tour");
             }
             else{
-                System.out.println("puis de " + actionPredite.coups().get(i) + " vers la case " + actionPredite.directions().get(i));
+                sb.append(actionPredite.coups().get(i));
+                sb.append(" vers ");
+                switch(actionPredite.directions().get(i)){
+                    case Action.HAUT -> sb.append("le haut");
+                    case Action.BAS -> sb.append("le bas");
+                    case Action.GAUCHE -> sb.append("la gauche");
+                    case Action.DROITE -> sb.append("la droite");
+                    default -> {}
+                }
             }
         }
+        System.out.println(sb);
     }
 
     /**
@@ -427,7 +448,7 @@ public class Environnement extends Observable{
      * @param e Le nouvel état
      */
     public void setEtat(Etat e){
-        Case caseOp = cases.get(e.indCaseOperateurs[0]);
+        Case caseOp = e.indCaseOperateurs[0] == -1 ? AucuneCase.instance : cases.get(e.indCaseOperateurs[0]);
         operateur.setX(caseOp.getX());
         operateur.setY(caseOp.getY());
         operateur.resetPointsAction();

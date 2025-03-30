@@ -54,6 +54,10 @@ public class Routine {
      * @return La prochaine case
      */
     public Case prochaineCase(Case c){
+        if(c instanceof AucuneCase){
+            return c;
+        }
+
         assert c != null : "La case précédente ne peut être null";
         for(int i = 0; i< cases.size(); i++){
             if(cases.get(i).getId() == c.getId()){
