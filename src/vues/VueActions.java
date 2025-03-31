@@ -3,6 +3,7 @@ package vues;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import observable.Environnement;
 import personnages.Operateur;
 
@@ -25,6 +26,9 @@ public class VueActions extends Observer{
      */
     boutonFinTour;
 
+    @FXML
+    public Label probaTir, probaDepl, coutTir, coutDepl;
+
     /**
      * Constructeur de la vue des actions
      *
@@ -39,7 +43,12 @@ public class VueActions extends Observer{
      * Initialise les eléments graphiques
      */
     @FXML
-    public void initialize(){}
+    public void initialize(){
+        probaTir.setText(env.getOperateurActif().getTir().probaSucces * 100 + " %");
+        probaDepl.setText(env.getOperateurActif().getDeplacement().probaSucces * 100 + " %");
+        coutTir.setText(env.getOperateurActif().getTir().cout + " PA");
+        coutDepl.setText(env.getOperateurActif().getDeplacement().cout + " PA");
+    }
 
     @Override
     public void update() {

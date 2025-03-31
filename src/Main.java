@@ -23,14 +23,16 @@ public class Main extends Application {
         VuePlateau vuePlateau = new VuePlateau(env);
         VueActions vueActions = new VueActions(env);
         VueMenu vueMenu = new VueMenu(env);
+        VuePA vuePA = new VuePA(env);
         VueGlobale vueGlobale = new VueGlobale(env);
 
 
         loader.setControllerFactory(iC->{
-            if (iC.equals(VueGlobale.class)) return vueGlobale;
+            if (iC.equals(VuePA.class)) return vuePA;
             else if (iC.equals(VuePlateau.class)) return vuePlateau;
             else if (iC.equals(VueActions.class)) return vueActions;
             else if (iC.equals(VueMenu.class)) return vueMenu;
+            else if (iC.equals(VueGlobale.class)) return vueGlobale;
             else return null;
         });
 

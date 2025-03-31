@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="vueGlobaleVbox" fillWidth="false" minHeight="100.0" minWidth="100.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
-    <fx:include fx:id="vueMenu" source="VueMenu.fxml" />
-    <fx:include fx:id="vuePlateau" source="VuePlateau.fxml" />
-    <fx:include fx:id="vueActions" source="VueActions.fxml" />
-</VBox>
-
-
-
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox fx:id="vueGlobaleVbox" fillWidth="false">
+          <fx:include fx:id="vueMenu" source="VueMenu.fxml" />
+          <fx:include fx:id="vuePlateau" source="VuePlateau.fxml" />
+         <BorderPane.margin>
+            <Insets bottom="-20.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox spacing="30.0" BorderPane.alignment="TOP_CENTER">
+         <children>
+             <fx:include fx:id="vueActions" source="VueActions.fxml" />
+            <fx:include source="VuePA.fxml" />
+         </children>
+      </HBox>
+   </bottom>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" />
+   </padding>
+</BorderPane>

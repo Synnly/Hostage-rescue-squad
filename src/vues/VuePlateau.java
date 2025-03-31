@@ -34,7 +34,7 @@ public class VuePlateau extends Observer {
     /**
      * La taille en largeur et hauteur de chaque case
      */
-    private final int tailleCase = 90;
+    private final int tailleCase = 75;
 
     /**
      * Constructeur de la vue du plateau
@@ -54,6 +54,8 @@ public class VuePlateau extends Observer {
     public void initialize(){
         gridPane.setMinWidth(env.getLargeur() * tailleCase);
         gridPane.setMinHeight(env.getHauteur() * tailleCase);
+        gridPane.setPrefWidth(env.getLargeur() * tailleCase);
+        gridPane.setPrefHeight(env.getHauteur() * tailleCase);
     }
 
     /**
