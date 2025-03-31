@@ -57,9 +57,19 @@ public class VueActions extends Observer{
         else if (button.equals(boutonFinTour)){ // Fin de tour
             env.setFinTourActionActive();
 
+            if(env.isMissionFinie()){
+                if(env.isEchec()){
+                    System.out.println("Vous êtes mort");
+                }
+                else {
+                    System.out.println("Mission réussie");
+                }
+                env.finDePartie();
+            }
         }
         else if (button.equals(boutonTir)){ // Tir
             env.setTirActionActive();
+
         }
     }
 }

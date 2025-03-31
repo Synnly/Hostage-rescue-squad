@@ -1,9 +1,11 @@
 package mdp;
 
+import coups.Deplacement;
+
 import java.util.*;
 
 public class IterationValeur {
-    private static double gamma = 0.8;
+    private static double gamma = 0.9;
     private static double epsilon = 0.0001;
     private static Map<Etat, Action> bestActions = new HashMap<>();
 
@@ -31,17 +33,12 @@ public class IterationValeur {
      */
     public static double qValeur(MDP mdp, Etat s, Action a, Map<Etat, Double> utils) {
         double util = 0;
-        Map<Etat, Double> distribution = mdp.transition(s, a);
-        for (Etat sPrime : distribution.keySet()) {
-            if(distribution.get(sPrime)==null){
-                System.out.println();
+        if(!s.estTerminal()) {
+            Map<Etat, Double> distribution = mdp.transition(s, a);
+            for (Etat sPrime : distribution.keySet()) {
+                util += distribution.get(sPrime) * (mdp.recompense(s, a, sPrime) + gamma * utils.get(sPrime));
             }
-            if(utils.get(sPrime) == null){
-                System.out.println();
-            }
-            util += distribution.get(sPrime) * (mdp.recompense(s, a, sPrime) + gamma * utils.get(sPrime));
         }
-
         return util;
     }
 
@@ -59,10 +56,6 @@ public class IterationValeur {
         for (Etat e : etats) {
             util.put(e, 0.);
             bestActions.put(e, null);
-        }
-
-        for(Etat e : util.keySet()){
-//            System.out.println(e + " " + e.estTerminal() + " " + e.estReussite());
         }
 
         double delta;

@@ -188,14 +188,8 @@ public class HostageRescueSquad implements MDP{
                             // Niveau de menace
                             for (int menace = env.getMinMenace(); menace <= env.getMaxMenace(); menace++) {
                                 Etat e = creerEtat(indCasesOp, aObjectif, indCasesTerr, menace);
-                                if(e.menace == 3) {
-                                    System.out.print(e);
-                                }
                                 if (etatEstValide(e)) {
                                     listeEtats.add(e);
-                                }
-                                if(e.menace == 3) {
-                                    System.out.println();
                                 }
                             }
                         }
@@ -259,7 +253,7 @@ public class HostageRescueSquad implements MDP{
         }
 
         // Tour ennemis
-        etats = transitionEnnemis(etats, env.getMenace());
+        etats = transitionEnnemis(etats);
 
         if(transitions.get(etatDepart) == null){
             Map<Action, Map<Etat, Double>> actionEtat = new HashMap<>();
@@ -324,7 +318,7 @@ public class HostageRescueSquad implements MDP{
             for (int indTerr = 0; indTerr < e.indCaseTerroristes.length; indTerr++) {
                 int indCasePlateauTerr = env.getPlateau().indexOf(routine.getCase(e.indCaseTerroristes[indTerr]));
                 if(e.indCaseOperateurs[indOp] != -1 && e.indCaseOperateurs[indOp] == indCasePlateauTerr){
-                    if(e.menace == 3) {System.out.print(" 1");}
+//                    if(e.menace == 3) {System.out.print(" 1");}
                     return false;
                 }
             }
@@ -338,7 +332,7 @@ public class HostageRescueSquad implements MDP{
                 aObj = true;
             }
             else if(opAObjectif && aObj){
-                if(e.menace == 3) {System.out.print(" 2");}
+//                if(e.menace == 3) {System.out.print(" 2");}
                 return false;
             }
         }
@@ -351,18 +345,18 @@ public class HostageRescueSquad implements MDP{
             }
         }
         if (nbEnnemisMorts == env.getEnnemis().size() && e.menace != env.getMinMenace()){
-            if(e.menace == 3) {System.out.print(" 3");}
+//            if(e.menace == 3) {System.out.print(" 3");}
             return false;
         }
 
         // A enlever quand respawn d'ennemis
         // Niveau de menace != minMenace + nbEnnemisMorts quand tous ennemis pas morts
         if(nbEnnemisMorts != env.getEnnemis().size() && e.menace != nbEnnemisMorts + env.getMinMenace()){
-            if(e.menace == 3) {System.out.print(" 4");}
+//            if(e.menace == 3) {System.out.print(" 4");}
             return false;
         }
 
-        if(e.menace == 3) {System.out.print(" 5");}
+//        if(e.menace == 3) {System.out.print(" 5");}
         return true;
     }
 
@@ -542,7 +536,7 @@ public class HostageRescueSquad implements MDP{
         return new EtatNormal(indCaseOperateurs.clone(), aObjectif.clone(), indCaseTerroristes.clone(), menace);
     }
 
-    private Map<Etat, Double> transitionEnnemis(Map<Etat, Double> distribution, int menace){
+    private Map<Etat, Double> transitionEnnemis(Map<Etat, Double> distribution){
         Map<Etat, Double> distributionEnnemis = new HashMap<>();
         int nbTerrs = env.getEnnemis().size();
         Coup[] listeCoups = {env.getEnnemis().get(0).getDeplacement(), env.getEnnemis().get(0).getTir()};
@@ -554,9 +548,9 @@ public class HostageRescueSquad implements MDP{
             }
             for (int idSuiteCoups = 0; idSuiteCoups < Math.pow(listeCoups.length, nbTerrs); idSuiteCoups++) {
                 // Suite de coups
-                List<Coup> suiteCoup = new ArrayList<>(menace);
+                List<Coup> suiteCoup = new ArrayList<>(e.menace);
                 double proba = 1;
-                for (int i = 0; i < menace; i++) {
+                for (int i = 0; i < e.menace; i++) {
                     Coup c = listeCoups[((int) (idSuiteCoups / Math.pow(listeCoups.length, i))) % listeCoups.length];
                     suiteCoup.add(c);
                     proba *= envCopy.getProbaCoupEnnemi(c);
