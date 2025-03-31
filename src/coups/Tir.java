@@ -80,67 +80,21 @@ public class Tir extends Coup {
      */
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
-        List<Double> nombres = env.getNombresAleatoires(1);
-
-        if (perso.getY() == arr.y){ // Perso et case sur la meme ligne
-            int min = Math.min(perso.getX(), arr.x);
-            int max = Math.max(perso.getX(), arr.x);
-            for(int x = min; x <= max; x++){
-                if(!env.getCase(x, perso.getY()).peutVoir() && x != perso.getX()){
-                    return;
-                }
-            }
-            if(env.aEnnemisSurCase(arr)) {
-                perso.removePointsAction(cout);
-                if (nombres.get(0) > probaSucces) {
-//                    System.out.println("L'action a échoué");
-                    return;
-                }
-                env.tuerEnnemis(arr);
-                boolean tousTerrsMorts = true;
-                for(Terroriste t : env.getEnnemis()){
-                    if(t.getX() != -1 || t.getY() != -1){
-                        tousTerrsMorts = false;
-                        break;
-                    }
-                }
-                if (tousTerrsMorts) {
-                    env.resetMenace();
-                } else {
-                    env.augmenterMenace();
-                }
-            }
+        if(arr.x == -1 && arr.y == -1){
+            return;
         }
-        else if (perso.getX() == arr.x) { // Perso et case sur la meme colonne
-            int min = Math.min(perso.getY(), arr.y);
-            int max = Math.max(perso.getY(), arr.y);
-            for(int y = min; y <= max; y++){
-                if(!env.getCase(perso.getX(), y).peutVoir() && y != perso.getY()){
-                    return;
-                }
-            }
-            if(env.aEnnemisSurCase(arr)){
-                perso.removePointsAction(cout);
-                if(nombres.get(0) > probaSucces){
-//                    System.out.println("L'action a échoué");
-                    return;
-                }
-                env.tuerEnnemis(arr);
-                boolean tousTerrsMorts = true;
-                for(Terroriste t : env.getEnnemis()){
-                    if(t.getX() != -1 || t.getY() != -1){
-                        tousTerrsMorts = false;
-                        break;
-                    }
-                }
-                if (tousTerrsMorts) {
-                    env.resetMenace();
-                } else {
-                    env.augmenterMenace();
-                }
-            }
+        if(perso.getX() > arr.x){ // Gauche
+            effectuerTirHorizontal(env, perso, true);
         }
-//        System.out.println("Aucun ennemi présent sur cette case");
+        else if(perso.getX() < arr.x) { // Droite
+            effectuerTirHorizontal(env, perso, false);
+        }
+        else if(perso.getY() > arr.y){ // Haut
+            effectuerTirVertical(env, perso, true);
+        }
+        else { // Bas
+            effectuerTirVertical(env, perso, false);
+        }
     }
 
     /**
@@ -217,5 +171,84 @@ public class Tir extends Coup {
     @Override
     public boolean estTir(){
         return true;
+    }
+
+    private void tuerEnnemis(Environnement env, Case c){
+        List<Double> nombres = env.getNombresAleatoires(1);
+        if (nombres.get(0) > probaSucces) {
+//          System.out.println("L'action a échoué");
+            return;
+        }
+        env.tuerEnnemis(c);
+        boolean tousTerrsMorts = true;
+        for (Terroriste t : env.getEnnemis()) {
+            if (t.getX() != -1 || t.getY() != -1) {
+                tousTerrsMorts = false;
+                break;
+            }
+        }
+        if (tousTerrsMorts) {
+            env.resetMenace();
+        } else {
+            env.augmenterMenace();
+        }
+    }
+
+    private void effectuerTirVertical(Environnement env, Operateur perso, boolean versHaut){
+        int stopVal = versHaut ? 0 : env.getHauteur()-1;
+        int yCase = perso.getY();
+
+        while(yCase != stopVal){
+            yCase += versHaut ? -1: 1;
+
+            Case c = env.getCase(perso.getX(), yCase);
+
+            int min = Math.min(perso.getY(), yCase);
+            int max = Math.max(perso.getY(), yCase);
+            boolean skipIter = false;
+            for (int y = min; y <= max; y++) {
+                if (!env.getCase(perso.getX(), y).peutVoir() && y != perso.getY()) {
+                    skipIter = true;
+                    break;
+                }
+            }
+            if (skipIter){
+                continue;
+            }
+
+            if (env.aEnnemisSurCase(c)) {
+                perso.removePointsAction(cout);
+                tuerEnnemis(env, c);
+            }
+
+        }
+    }
+
+    private void effectuerTirHorizontal(Environnement env, Operateur perso, boolean versGauche){
+        int stopVal = versGauche ? 0 : env.getLargeur()-1;
+        int xCase = perso.getX();
+
+        while(xCase != stopVal){
+            xCase += versGauche ? -1: 1;
+            Case c = env.getCase(xCase, perso.getY());
+
+            int min = Math.min(perso.getX(), c.x);
+            int max = Math.max(perso.getX(), c.x);
+            boolean skipIter = false;
+            for(int x = min; x <= max; x++){
+                if(!env.getCase(x, perso.getY()).peutVoir() && x != perso.getX()){
+                    skipIter = true;
+                    break;
+                }
+            }
+            if (skipIter){
+                continue;
+            }
+
+            if (env.aEnnemisSurCase(c)) {
+                perso.removePointsAction(cout);
+                tuerEnnemis(env, c);
+            }
+        }
     }
 }
