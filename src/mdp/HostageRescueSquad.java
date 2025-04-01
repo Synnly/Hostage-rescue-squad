@@ -318,7 +318,6 @@ public class HostageRescueSquad implements MDP{
             for (int indTerr = 0; indTerr < e.indCaseTerroristes.length; indTerr++) {
                 int indCasePlateauTerr = env.getPlateau().indexOf(routine.getCase(e.indCaseTerroristes[indTerr]));
                 if(e.indCaseOperateurs[indOp] != -1 && e.indCaseOperateurs[indOp] == indCasePlateauTerr){
-//                    if(e.menace == 3) {System.out.print(" 1");}
                     return false;
                 }
             }
@@ -332,7 +331,6 @@ public class HostageRescueSquad implements MDP{
                 aObj = true;
             }
             else if(opAObjectif && aObj){
-//                if(e.menace == 3) {System.out.print(" 2");}
                 return false;
             }
         }
@@ -345,18 +343,15 @@ public class HostageRescueSquad implements MDP{
             }
         }
         if (nbEnnemisMorts == env.getEnnemis().size() && e.menace != env.getMinMenace()){
-//            if(e.menace == 3) {System.out.print(" 3");}
             return false;
         }
 
         // A enlever quand respawn d'ennemis
         // Niveau de menace != minMenace + nbEnnemisMorts quand tous ennemis pas morts
         if(nbEnnemisMorts != env.getEnnemis().size() && e.menace != nbEnnemisMorts + env.getMinMenace()){
-//            if(e.menace == 3) {System.out.print(" 4");}
             return false;
         }
 
-//        if(e.menace == 3) {System.out.print(" 5");}
         return true;
     }
 
@@ -544,6 +539,7 @@ public class HostageRescueSquad implements MDP{
         Etat restoreState = creerEtat(envCopy);
         for(Etat e : distribution.keySet()) {
             if(e.estTerminal()){
+                distributionEnnemis.put(e, distribution.get(e));
                 continue;
             }
             for (int idSuiteCoups = 0; idSuiteCoups < Math.pow(listeCoups.length, nbTerrs); idSuiteCoups++) {
@@ -559,7 +555,6 @@ public class HostageRescueSquad implements MDP{
                 // Simulation
                 envCopy.setEtat(e);
                 envCopy.effectuerCoupsTerroristes(suiteCoup);
-                //System.out.println(e + " | " + creerEtat(envCopy));
                 distributionEnnemis.put(creerEtat(envCopy), proba * distribution.get(e));
                 envCopy.setEtat(restoreState);
             }

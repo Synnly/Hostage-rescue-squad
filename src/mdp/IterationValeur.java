@@ -21,11 +21,6 @@ public class IterationValeur {
             iterationValeur(mdp);
         }
 
-        for(Action a : mdp.getActions().get(s)){
-            System.out.println(a + " " + qValeur(mdp, s, a, util));
-            System.out.println("==============");
-        }
-
         return bestActions.get(s);
     }
 
@@ -42,8 +37,6 @@ public class IterationValeur {
         if(!s.estTerminal()) {
             Map<Etat, Double> distribution = mdp.transition(s, a);
             for (Etat sPrime : distribution.keySet()) {
-                System.out.println("\t" + distribution.get(sPrime) + " " + mdp.recompense(s, a, sPrime) + " " + gamma * utils.get(sPrime) + " " + sPrime);
-//                System.out.println("\t" + sPrime);
                 util += distribution.get(sPrime) * (mdp.recompense(s, a, sPrime) + gamma * utils.get(sPrime));
             }
         }

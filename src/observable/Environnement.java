@@ -119,6 +119,9 @@ public class Environnement extends Observable{
         ennemis.add(ennemi2);
 
         missionFinie = false;
+        if(mdp != null){
+            printPrediction();
+        }
     }
 
     /**
