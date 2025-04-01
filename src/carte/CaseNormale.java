@@ -19,6 +19,10 @@ public class CaseNormale extends Case{
         super(env, x, y, true);
     }
 
+    /**
+     * Constructeur de copie d'une case normale
+     * @param c La case à copier
+     */
     public CaseNormale(CaseNormale c){
         super(c);
     }

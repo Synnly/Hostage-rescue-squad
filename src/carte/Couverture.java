@@ -14,6 +14,10 @@ public class Couverture extends Case{
         super(env, x, y, false);
     }
 
+    /**
+     * Constructeur de copie d'une couverture
+     * @param c La couverture à copier
+     */
     public Couverture(Couverture c){
         super(c);
     }

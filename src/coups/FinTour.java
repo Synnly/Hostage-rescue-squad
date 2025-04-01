@@ -22,6 +22,10 @@ public class FinTour extends Coup {
         super(ignoredInt, 1);
     }
 
+    /**
+     * Constructeur de copie d'un coup fin de tour
+     * @param f Le coup à copier
+     */
     public FinTour(FinTour f){
         super(f);
     }

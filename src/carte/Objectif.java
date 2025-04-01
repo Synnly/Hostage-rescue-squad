@@ -19,6 +19,10 @@ public class Objectif extends Case{
         this.recompense = 10;
     }
 
+    /**
+     * Constructeur de copie d'un objectif
+     * @param o L'objectif à copier
+     */
     public Objectif(Objectif o) {
         super(o);
         super.estObjectif = true;

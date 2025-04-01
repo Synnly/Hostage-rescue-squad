@@ -21,9 +21,14 @@ public class Deplacement extends Coup {
         super(cout, probaSucces);
     }
 
+    /**
+     * Constructeur de copie d'un coup déplacement
+     * @param d Le coup à copier
+     */
     public Deplacement(Deplacement d){
         super(d);
     }
+
     /**
      * Déplace le personnage vers la case renseignée. Si le cout pour aller vers la case dépasse le nombre de points d'actions du personnage, ne fait rien.
      * @param env L'environnement
@@ -53,6 +58,12 @@ public class Deplacement extends Coup {
         }
     }
 
+    /**
+     * Déplace le terroriste vers la case renseignée. Si le cout pour aller vers la case dépasse le nombre de points d'actions du personnage, ne fait rien.
+     * @param env L'environnement
+     * @param terroriste Le terroriste effectuant le déplacement
+     * @param arr La destination
+     */
     public void effectuer(Environnement env, Terroriste terroriste, Case arr){
         terroriste.setX(arr.x);
         terroriste.setY(arr.y);

@@ -12,6 +12,15 @@ public abstract class Etat{
     public final int[] indCaseTerroristes;
     public final int menace;
 
+    /**
+     * Constructeur d'un état type.
+     * @param indCaseOperateurs La liste des positions des cases où se situent les opérateurs dans la liste des cases du
+     *                          plateau
+     * @param aObjectif La liste des booléens indiquant si le ie opérateur possède un objectif
+     * @param indCaseTerroristes La liste des positions des cases où se situent les terroristes dans la liste des cases
+     *                           de la routine
+     * @param menace Le niveau de menace
+     */
     public Etat(int[] indCaseOperateurs, boolean[] aObjectif, int[] indCaseTerroristes, int menace){
         this.indCaseOperateurs = indCaseOperateurs;
         this.aObjectif = aObjectif;
@@ -19,6 +28,10 @@ public abstract class Etat{
         this.menace = menace;
     }
 
+    /**
+     * Constructeur d'un état à partir d'un environnement. Les champs copiés sont en copie profonde.
+     * @param env L'environnement
+     */
     public Etat(Environnement env){
         this.indCaseOperateurs = new int[]{env.getPlateau().indexOf(env.getCase(env.getOperateurActif().getX(), env.getOperateurActif().getY()))};
         this.aObjectif = new boolean[]{env.getOperateurActif().possedeObjectif()};
@@ -32,8 +45,14 @@ public abstract class Etat{
         this.menace = env.getMenace();
     }
 
+    /**
+     * Indique si cet état est terminal
+     */
     public abstract boolean estTerminal();
 
+    /**
+     * Indique si cet état est une réussite de mission ou non. N'a d'utilité si estTerminal() = true.
+     */
     public abstract boolean estReussite();
 
     @Override

@@ -24,6 +24,10 @@ public class Operateur extends Personnage{
         super(env, x, y, pointsAction, deplacement, tir);
     }
 
+    /**
+     * Constructeur de copie d'un opérateur
+     * @param op L'opérateur à copier
+     */
     public Operateur(Operateur op){
         super(op);
         this.possedeObjectif = op.possedeObjectif;

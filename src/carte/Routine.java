@@ -25,6 +25,10 @@ public class Routine {
         cases.add(c);
     }
 
+    /**
+     * Constructeur de copie d'une routine
+     * @param r La routine à copier
+     */
     public Routine(Routine r){
         this.cases = new ArrayList<>();
         for(Case c: r.cases){
@@ -69,10 +73,18 @@ public class Routine {
         return null; // Inutile vu que si c pas dans la liste, assert se déclenche
     }
 
+    /**
+     * Renvoie la taille en nombre de cases de la routine
+     */
     public int taille(){
         return cases.size();
     }
 
+    /**
+     * Calcule la position dans la liste de la prochaine case dans la routine
+     * @param i La position de la case
+     * @return La position de la prochaine case
+     */
     public int nextIndex(int i){
         if(i == -1){
             return i;
@@ -81,10 +93,20 @@ public class Routine {
         return (i+1) % cases.size();
     }
 
+    /**
+     * Récupère la case à la position i dans la routine
+     * @param i La position de la case dans la routine
+     * @return La case
+     */
     public Case getCase(int i){
         return i == -1 ? AucuneCase.instance : cases.get(i);
     }
 
+    /**
+     * Calcule la position de la case dans la routine
+     * @param c La case
+     * @return Sa position
+     */
     public int indexOf(Case c){
         if(c instanceof AucuneCase){
             return -1;

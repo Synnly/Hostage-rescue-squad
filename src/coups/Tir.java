@@ -23,6 +23,10 @@ public class Tir extends Coup {
         super(cout, probaSucces);
     }
 
+    /**
+     * Constructeur de copie d'un coup tir
+     * @param t Le coup à copier
+     */
     public Tir(Tir t){
         super(t);
     }
@@ -46,6 +50,15 @@ public class Tir extends Coup {
         }
     }
 
+    /**
+     * Fait tirer le terroriste vers la case renseignée.&nbsp;Si le cout pour tirer dépasse le nombre de points d'actions du
+     * personnage, ne fait rien.&nbsp;Si la cible n'est pas visible ou pas dans la ligne de mire (en croix), ne fait rien.
+     * &nbsp;Si la cible est un opérateur, termine la partie.
+     *
+     * @param env L'environnement
+     * @param perso Le personnage effectuant le tir
+     * @param arr La destination
+     */
     public void effectuer(Environnement env, Terroriste terro, Case arr){
         if (terro.getY() == arr.y){ // Ennemi et case sur la meme ligne
             int min = Math.min(terro.getX(), arr.x);
@@ -123,6 +136,7 @@ public class Tir extends Coup {
         return getCasesValides(env, env.getCase(perso.getX(), perso.getY()));
     }
 
+    @Override
     public List<Case> getCasesValides(Environnement env, Case caseDepart){
         List<Case> casesValides = new ArrayList<>();
         Case c;
@@ -173,6 +187,11 @@ public class Tir extends Coup {
         return true;
     }
 
+    /**
+     * Tue les ennemis présents dans la case c. A une chance d'échouer en fonction de la probabilité de succès du coup.
+     * @param env L'environnement
+     * @param c La case cible
+     */
     private void tuerEnnemis(Environnement env, Case c){
         List<Double> nombres = env.getNombresAleatoires(1);
         if (nombres.get(0) > probaSucces) {
@@ -194,6 +213,12 @@ public class Tir extends Coup {
         }
     }
 
+    /**
+     * Effectue le tir dans la colonne où se situe l'opérateur
+     * @param env L'environnement
+     * @param perso L'opérateur effectuant le tir
+     * @param versHaut Vrai si le tir est vers le haut, faux sinon
+     */
     private void effectuerTirVertical(Environnement env, Operateur perso, boolean versHaut){
         int stopVal = versHaut ? 0 : env.getHauteur()-1;
         int yCase = perso.getY();
@@ -224,6 +249,12 @@ public class Tir extends Coup {
         }
     }
 
+    /**
+     * Effectue le tir dans la ligne où se situe l'opérateur
+     * @param env L'environnement
+     * @param perso L'opérateur effectuant le tir
+     * @param versGauche Vrai si le tir est vers la gauche, faux sinon
+     */
     private void effectuerTirHorizontal(Environnement env, Operateur perso, boolean versGauche){
         int stopVal = versGauche ? 0 : env.getLargeur()-1;
         int xCase = perso.getX();

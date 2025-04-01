@@ -28,6 +28,10 @@ public class Terroriste extends Personnage{
         super(env, x, y, 0, deplacement, tir);
     }
 
+    /**
+     * Constructeur de copie d'un terroriste
+     * @param t Le terroriste à copier
+     */
     public Terroriste(Terroriste t){
         super(t);
         this.routine = t.routine;

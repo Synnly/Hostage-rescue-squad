@@ -1,15 +1,11 @@
 package mdp;
 
-import coups.Deplacement;
-
 import java.util.*;
 
 public class IterationValeur {
-    private static double gamma = 0.9;
-    private static double epsilon = 0.0001;
+    private static double gamma = 0.9999999999;
+    private static double epsilon = 0.00001;
     private static Map<Etat, Action> bestActions = new HashMap<>();
-    private static Map<Etat, Double> util;
-
     /**
      * Calcule la meilleure action à faire à partir de l'état de départ
      * @param mdp Le ldp sur lequel appliquer l'algo
@@ -49,7 +45,7 @@ public class IterationValeur {
      * @return Le dictionnaire associant à chaque état son utilité
      */
     public static Map<Etat, Action> iterationValeur(MDP mdp) {
-        util = new HashMap<>();
+        Map<Etat, Double> util = new HashMap<>();
         Map<Etat, Action[]> actions = mdp.getActions();
         Etat[] etats = mdp.getEtats();
         System.out.println("Itération valeur sur " + etats.length + " états");
@@ -59,6 +55,7 @@ public class IterationValeur {
             bestActions.put(e, null);
         }
 
+        int nbIter = 0;
         double delta;
         do {
             delta = 0;
@@ -77,13 +74,15 @@ public class IterationValeur {
                 }
 
                 utilClone.put(e, max);
-
                 delta = Math.max(delta, Math.abs(utilClone.get(e) - util.get(e)));
             }
 
+            System.out.println(delta);
             util = utilClone;
+            nbIter ++;
         }
         while (delta > epsilon * (1 - gamma) / gamma);
+        System.out.println(nbIter + " itérations");
         return bestActions;
     }
 }

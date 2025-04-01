@@ -17,6 +17,10 @@ public class HostageRescueSquad implements MDP{
     private Map<Etat, Action[]> actionsEtat = new HashMap<>();
     private Map<Etat, Map<Coup, Map<Case, Etat>>> casesEtatsValides = new HashMap<>();
 
+    /**
+     * Contructeur du MDP représentant le jeu Hostage Rescue Squad
+     * @param env L'environnement
+     */
     public HostageRescueSquad(Environnement env){
         this.env = env;
         this.envCopy = env.copy();
@@ -24,6 +28,7 @@ public class HostageRescueSquad implements MDP{
 
     @Override
     public Map<Etat, Action[]> getActions() {
+        // Si les actions valides sur cet état déjà calculés
         if(!actionsEtat.isEmpty()){
             return actionsEtat;
         }
@@ -47,7 +52,6 @@ public class HostageRescueSquad implements MDP{
 
                 // Liste des couches de cases. La couche i est composée de toutes les cases accessibles en partant du
                 // premier état de la couche i-1 et en effectuant le ie coup de la suite de coups sur toutes les cases valides.
-
                 List<List<Case>> casesCouches = new ArrayList<>();
                 casesCouches.add(new ArrayList<>());
                 casesCouches.get(0).add(envCopy.getCase(envCopy.getOperateurActif().getX(), envCopy.getOperateurActif().getY()));
@@ -94,6 +98,7 @@ public class HostageRescueSquad implements MDP{
                         Case ancienneCase = casesCouches.get(indCouche-1).get(0);
                         Case nouvelleCase = casesCouches.get(indCouche).get(0);
 
+                        // Ajout de la direction
                         if(nouvelleCase.x == -1 || nouvelleCase.y == -1){
                             directions.add(Action.AUCUN);
                         } else if (nouvelleCase.x > ancienneCase.x) {
@@ -126,6 +131,7 @@ public class HostageRescueSquad implements MDP{
             }
             actionPossibles.put(e, actions.toArray(new Action[0]));
         }
+        // Sauvegarde
         actionsEtat = actionPossibles;
         return actionPossibles;
     }
@@ -133,6 +139,7 @@ public class HostageRescueSquad implements MDP{
 
     @Override
     public Etat[] getEtats() {
+        // Si états déjà calculés
         if (etats != null){
             return etats;
         }
@@ -197,6 +204,7 @@ public class HostageRescueSquad implements MDP{
                 }
             }
         }
+        // Conversion
         etats = new Etat[listeEtats.size()];
         etats = listeEtats.toArray(etats);
         return etats;
@@ -204,14 +212,15 @@ public class HostageRescueSquad implements MDP{
 
     @Override
     public Map<Etat, Double> transition(Etat etatDepart, Action action){
+        // Si transition déjà calculée
         if(transitions.get(etatDepart) != null){
             if(transitions.get(etatDepart).get(action) != null){
                 return transitions.get(etatDepart).get(action);
             }
         }
+
         Map<Etat, Double> etats = new HashMap<>();
         etats.put(etatDepart, 1.);
-
 
         // Tour opérateurs
         // parcours des coups composant l'action
@@ -255,6 +264,7 @@ public class HostageRescueSquad implements MDP{
         // Tour ennemis
         etats = transitionEnnemis(etats);
 
+        // Sauvegarde
         if(transitions.get(etatDepart) == null){
             Map<Action, Map<Etat, Double>> actionEtat = new HashMap<>();
             actionEtat.put(action, etats);
@@ -398,39 +408,18 @@ public class HostageRescueSquad implements MDP{
     }
 
     /**
-     * Calcule tous les arrangements de coups possibles pour les terroristes
-     * @param listeCoups La liste de tous les coups possibles
-     * @param maxNbCoups Le nombre maximal de coups en un tour
-     * @return L'ensemble des suites de coups possibles
-     */
-    private Set<List<Coup>> getAllSuitesCoupsPossibleTerroristes(Coup[] listeCoups, int maxNbCoups){
-        Set<List<Coup>> actionsPossibles = new HashSet<>();
-
-        for (int i = 0; i < Math.pow(listeCoups.length, maxNbCoups); i++) {
-            List<Coup> actionComplete = new ArrayList<>();
-            int idAction = i; // Identifiant de l'action, ie une sequence d'indice de coups
-
-            for (int k = maxNbCoups-1; k >= 0; k--) {
-                int indiceCoup = (int) (idAction / Math.pow(listeCoups.length, k));
-                actionComplete.add(listeCoups[indiceCoup]);
-                idAction = (int) (idAction % Math.pow(listeCoups.length, k));
-            }
-            actionsPossibles.add(actionComplete);
-        }
-        return actionsPossibles;
-    }
-
-    /**
      * Calcule toutes les cases et états correspondants d'arrivée apres que l'opérateur ait effectué le coup
      * @param etat L'etat de départ
      * @param coup Le coup à effectuer
      * @return Le dictionnaire de toutes les cases et états correspondants d'arrivée
      */
     private Map<Case, Etat> getCasesValidesEtEtatsOperateur(Etat etat, Coup coup){
+        // Si cases valides déjà calculés
         if(casesEtatsValides.get(etat) != null && casesEtatsValides.get(etat).get(coup) != null){
             return casesEtatsValides.get(etat).get(coup);
         }
 
+        // Sauvegarde et modification
         Map<Case, Etat> caseEtat = new HashMap<>();
         Etat restoreState = new EtatNormal(envCopy);
         Coup coupCopy = coup.copy();
@@ -440,6 +429,7 @@ public class HostageRescueSquad implements MDP{
         Personnage persoCopy = envCopy.getOperateurActif();
         List<Case> casesValides = new ArrayList<>(coup.getCasesValides(envCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY())));
 
+        // Simulation
         for(Case c : casesValides) {
             envCopy.setEtat(etat);
             coupCopy.effectuer(envCopy, envCopy.getOperateurActif(), c);
@@ -447,6 +437,7 @@ public class HostageRescueSquad implements MDP{
         }
         envCopy.setEtat(restoreState);
 
+        // Sauvegarde
         if(casesEtatsValides.get(etat) == null){
             Map<Coup, Map<Case, Etat>> map = new HashMap<>();
             map.put(coup, caseEtat);
@@ -474,6 +465,8 @@ public class HostageRescueSquad implements MDP{
         envCopy.setEtat(etatDepart);
         Personnage persoCopy = envCopy.getPersonnage(perso);
         coupCopy.probaSucces = succes ? 1 : 0;
+
+        // Simulation
         switch (direction){
             case Action.HAUT -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY() - 1));
             case Action.BAS -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY() + 1));
@@ -505,7 +498,18 @@ public class HostageRescueSquad implements MDP{
         }
     }
 
+    /**
+     * Crée l'état correspondant.
+     * @param indCaseOperateurs La liste des positions des cases où se situent les opérateurs dans la liste des cases du
+     *                          plateau
+     * @param aObjectif La liste des booléens indiquant si le ie opérateur possède un objectif
+     * @param indCaseTerroristes La liste des positions des cases où se situent les terroristes dans la liste des cases
+     *                           de la routine
+     * @param menace Le niveau de menace
+     * @return L'état avec le type correpondant (normal, échec ou réussite)
+     */
     public Etat creerEtat(int[] indCaseOperateurs, boolean[] aObjectif, int[] indCaseTerroristes, int menace){
+        // Un des opérateurs morts ?
         for(int indCase : indCaseOperateurs){
             if(indCase == -1){
                 return new EtatEchec(indCaseOperateurs.clone(), aObjectif.clone(), indCaseTerroristes.clone(), menace);
@@ -520,7 +524,9 @@ public class HostageRescueSquad implements MDP{
             }
         }
 
+        // Tous les objectifs récupérés ?
         if(tousObjRecup) {
+            // ET tous les opérateurs sur la ligne du bas ?
             for (int indCase : indCaseOperateurs) {
                 if (indCase < (env.getHauteur() - 1) * env.getLargeur()) {
                     return new EtatNormal(indCaseOperateurs.clone(), aObjectif.clone(), indCaseTerroristes.clone(), menace);
@@ -531,6 +537,11 @@ public class HostageRescueSquad implements MDP{
         return new EtatNormal(indCaseOperateurs.clone(), aObjectif.clone(), indCaseTerroristes.clone(), menace);
     }
 
+    /**
+     * Calcule les états et leur distribution après que les ennemis ont effectué leurs actions
+     * @param distribution La distribution des états du tour joueur
+     * @return La distribution à la fin du tour ennemi
+     */
     private Map<Etat, Double> transitionEnnemis(Map<Etat, Double> distribution){
         Map<Etat, Double> distributionEnnemis = new HashMap<>();
         int nbTerrs = env.getEnnemis().size();
@@ -538,7 +549,8 @@ public class HostageRescueSquad implements MDP{
 
         Etat restoreState = creerEtat(envCopy);
         for(Etat e : distribution.keySet()) {
-            if(e.estTerminal()){
+
+            if(e.estTerminal()){    // Etat terminal donc rien à faire
                 distributionEnnemis.put(e, distribution.get(e));
                 continue;
             }

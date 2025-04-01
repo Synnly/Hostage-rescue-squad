@@ -52,6 +52,10 @@ public abstract class Case {
         this.estObjectif = false;
     }
 
+    /**
+     * Constructeur de copie d'une case
+     * @param c La case à copier
+     */
     public Case(Case c){
         this.id = c.id;
         this.x = c.x;
@@ -61,6 +65,12 @@ public abstract class Case {
         this.estObjectif = false;
     }
 
+    /**
+     * Constructeur d'une case type. Les paramètres ne sont pas vérifiés. Ne pas utiliser, sauf pour cas particuliers.
+     * @param x Sa coordonnée en largeur
+     * @param y Sa coordonnée en hauteur
+     * @param peutVoir Vrai si on peut voir à travers et dans cette case, faux sinon
+     */
     protected Case(int x, int y, boolean peutVoir){
         this.id = FabriqueIdentifiant.nextIdCase();
         this.x = x;
@@ -70,16 +80,30 @@ public abstract class Case {
         this.estObjectif = false;
     }
 
+    /**
+     * Renvoie la coordonnée en largeur de la case
+     */
     public int getX(){
         return x;
     }
+
+    /**
+     * Renvoie la coordonnée en hauteur de la case
+     */
     public int getY(){
         return y;
     }
+
+    /**
+     * Indique si on peut voir à travers et dans cette case
+     */
     public boolean peutVoir(){
         return this.peutVoir;
     }
 
+    /**
+     * Indique si cette case contient l'objectif
+     */
     public boolean estObjectif() {
         return estObjectif;
     }
@@ -96,6 +120,9 @@ public abstract class Case {
         return "(" + x + ", " + y + ')';
     }
 
+    /**
+     * Renvoie l'identifiant de cette case
+     */
     public int getId() {
         return id;
     }

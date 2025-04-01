@@ -33,6 +33,10 @@ public abstract class Coup {
         this.probaSucces = probaSucces;
     }
 
+    /**
+     * Constructeur de copie d'un coup
+     * @param c Le coup à copier
+     */
     public Coup(Coup c){
         this.cout = c.cout;
         this.probaSucces = c.probaSucces;
@@ -77,18 +81,34 @@ public abstract class Coup {
      */
     public abstract List<Case> getCasesValides(Environnement env, Operateur perso);
 
+    /**
+     * Renvoie la liste des toutes les cases valides pour effectuer l'action, spécifiquement&nbsp;Si aucune case n'est valide, renvoie une liste vide.
+     *
+     * @param env   L'environnement
+     * @param caseDepart La case sur laquelle effectuer le coup
+     * @return La liste des cases valides
+     */
     public abstract List<Case> getCasesValides(Environnement env, Case caseDepart);
 
     public abstract Coup copy();
 
+    /**
+     * Indique si le coup est le déplacement
+     */
     public boolean estDeplacement(){
         return false;
     }
 
+    /**
+     * Indique si le coup est le tir
+     */
     public boolean estTir(){
         return false;
     }
 
+    /**
+     * Indique si le coup est le fin de tour
+     */
     public boolean estFinTour(){
         return false;
     }

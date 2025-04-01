@@ -223,10 +223,16 @@ public abstract class Personnage {
         return "(" + x + ", " + y +") " + pointsAction + " PA";
     }
 
+    /**
+     * Indique si ce personnage est un opérateur
+     */
     public boolean estOperateur(){
         return false;
     }
 
+    /**
+     * Indique si ce personnage est un terroriste
+     */
     public boolean estTerroriste(){
         return false;
     }

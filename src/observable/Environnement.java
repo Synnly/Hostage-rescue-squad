@@ -394,6 +394,9 @@ public class Environnement extends Observable{
         return nombres;
     }
 
+    /**
+     * Renvoie le niveau de menace. Est toujours contenu en minMenace et maxMenace
+     */
     public int getMenace() {
         return menace;
     }
@@ -550,6 +553,11 @@ public class Environnement extends Observable{
         return null;
     }
 
+    /**
+     * Renvoie la case de même identifiant dans le plateau
+     * @param c La case
+     * @return La case ayant le même identifiant
+     */
     public Case getCase(Case c){
         for(Case c1:cases){
             if(c.id == c1.id){
@@ -559,6 +567,10 @@ public class Environnement extends Observable{
         return null;
     }
 
+    /**
+     * Termine la mission
+     * @param succes Vrai si la mission est un succes, faux sinon
+     */
     public void terminerMission(boolean succes){
         if(!succes){
             operateur.setX(-1);
@@ -568,6 +580,9 @@ public class Environnement extends Observable{
         echec = !succes;
     }
 
+    /**
+     * Augmente la menace si la menace < maxMenace, sinon ne fait rien.
+     */
     public void augmenterMenace(){
         menace ++;
         if (menace > maxMenace){
@@ -575,14 +590,23 @@ public class Environnement extends Observable{
         }
     }
 
+    /**
+     * Réinitialise la menace à minMenace
+     */
     public void resetMenace(){
         menace = minMenace;
     }
 
+    /**
+     * Renvoie le niveau de menace minimum
+     */
     public int getMinMenace() {
         return minMenace;
     }
 
+    /**
+     * Renvoie le niveau de menace maximum
+     */
     public int getMaxMenace() {
         return maxMenace;
     }
