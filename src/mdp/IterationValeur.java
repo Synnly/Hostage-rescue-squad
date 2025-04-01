@@ -8,6 +8,7 @@ public class IterationValeur {
     private static double gamma = 0.9;
     private static double epsilon = 0.0001;
     private static Map<Etat, Action> bestActions = new HashMap<>();
+    private static Map<Etat, Double> util;
 
     /**
      * Calcule la meilleure action à faire à partir de l'état de départ
@@ -18,6 +19,11 @@ public class IterationValeur {
     public static Action predict(MDP mdp, Etat s) {
         if(bestActions.isEmpty()) {
             iterationValeur(mdp);
+        }
+
+        for(Action a : mdp.getActions().get(s)){
+            System.out.println(a + " " + qValeur(mdp, s, a, util));
+            System.out.println("==============");
         }
 
         return bestActions.get(s);
@@ -36,6 +42,8 @@ public class IterationValeur {
         if(!s.estTerminal()) {
             Map<Etat, Double> distribution = mdp.transition(s, a);
             for (Etat sPrime : distribution.keySet()) {
+                System.out.println("\t" + distribution.get(sPrime) + " " + mdp.recompense(s, a, sPrime) + " " + gamma * utils.get(sPrime) + " " + sPrime);
+//                System.out.println("\t" + sPrime);
                 util += distribution.get(sPrime) * (mdp.recompense(s, a, sPrime) + gamma * utils.get(sPrime));
             }
         }
@@ -48,7 +56,7 @@ public class IterationValeur {
      * @return Le dictionnaire associant à chaque état son utilité
      */
     public static Map<Etat, Action> iterationValeur(MDP mdp) {
-        Map<Etat, Double> util = new HashMap<>();
+        util = new HashMap<>();
         Map<Etat, Action[]> actions = mdp.getActions();
         Etat[] etats = mdp.getEtats();
         System.out.println("Itération valeur sur " + etats.length + " états");
@@ -63,7 +71,7 @@ public class IterationValeur {
             delta = 0;
             Map<Etat, Double> utilClone = new HashMap<>();
 
-            for (Etat e : util.keySet()) {
+            for (Etat e : etats) {
                 double max = Double.NEGATIVE_INFINITY;
 
                 for (Action a : actions.get(e)) {

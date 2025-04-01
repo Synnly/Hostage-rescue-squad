@@ -94,7 +94,7 @@ public class Deplacement extends Coup {
                 else {
                     perso.setX(arr.getX());
                     perso.setY(arr.getY());
-                    if(arr.estObjectif()){
+                    if(arr.estObjectif() && !perso.possedeObjectif()){
                         env.recupereObjectif((Objectif) arr, perso);
                     }
 

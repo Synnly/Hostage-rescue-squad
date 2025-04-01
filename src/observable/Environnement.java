@@ -60,6 +60,7 @@ public class Environnement extends Observable{
         System.out.println("L'ia se prépare ...");
         IterationValeur.iterationValeur(mdp);
         System.out.println("L'ia a fini");
+        printPrediction();
     }
 
     public Environnement(Environnement env){
@@ -313,7 +314,7 @@ public class Environnement extends Observable{
         }
         assert index != -1: "Objectif non trouvé";
 
-        cases.set(index, new CaseNormale(this, obj.x, obj.y));
+//        cases.get(index).estObjectif = false;
         op.setPossedeObjectif(true);
     }
 
