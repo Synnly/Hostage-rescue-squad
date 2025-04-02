@@ -31,6 +31,8 @@ public class Environnement extends Observable{
     private final double probaSuccesTir;
     private HostageRescueSquad mdp;
 
+    private ArrayList<Case> positionObjectifs = new ArrayList<>();
+
 
     /**
      * Constructeur de l'environnement. Initialise le plateau de taille <code>largeur</code> x <code>hauteur</code>,
@@ -79,6 +81,7 @@ public class Environnement extends Observable{
         this.probaSuccesDeplacement = env.probaSuccesDeplacement;
         this.probaSuccesTir = env.probaSuccesTir;
         mdp = env.mdp;
+        positionObjectifs = env.positionObjectifs;
     }
 
     /**
@@ -245,7 +248,9 @@ public class Environnement extends Observable{
         }
         int x = (largeur/2);
         int y = (hauteur/4);
-        cases.set(y * largeur + x, new Objectif(this, x, y));
+        Case objectif = new Objectif(this, x, y);
+        cases.set(y * largeur + x, objectif);
+        positionObjectifs.add(objectif);
     }
 
     /**
@@ -612,5 +617,8 @@ public class Environnement extends Observable{
         return maxMenace;
     }
 
+    public ArrayList<Case> getPositionObjectifs() {
+        return positionObjectifs;
+    }
 
 }

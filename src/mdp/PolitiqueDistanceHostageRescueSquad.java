@@ -1,6 +1,7 @@
 package mdp;
 
 import observable.Environnement;
+import personnages.Operateur;
 
 import java.util.ArrayList;
 
@@ -36,7 +37,7 @@ public class PolitiqueDistanceHostageRescueSquad implements Politique{
                     bestAction = action;
                 }
             }catch (AssertionError e){
-                System.out.println("L'action n'est pas valide, on la psse");
+                System.out.println("L'action n'est pas valide, on la passe");
             }
         }
         System.out.println("L'action prédite par la politique "+bestAction);
@@ -58,10 +59,29 @@ public class PolitiqueDistanceHostageRescueSquad implements Politique{
 
         }
         score+= (nbNewHostages*500);
+        int distanceObjectif = distanceObjectif(sArrive);
+        score+= distanceObjectif*(-50);
 
         return score;
     }
-    public int distanceObjectif(Etat sDepart,Etat sArrive){
-        return 5;
+    public  int distanceObjectif(Etat sArrive) {
+        /*Il faudra ajouter ici les modifs, lorsqu'il y aura plusieurs hottages
+         */
+
+        Environnement environnementCopy = this.environnement.copy();
+        environnementCopy.setEtat(sArrive);
+        Operateur operateur = environnementCopy.getOperateurActif();
+
+        Boolean hottagesRecup = operateur.getX()==environnementCopy.getPositionObjectifs().get(0).getX() && operateur.getY() == environnementCopy.getPositionObjectifs().get(0).getY();
+        if(hottagesRecup){
+            return Math.abs(operateur.getY()-environnementCopy.getHauteur());
+        }else{
+            return manhattanDistance(operateur.getX(),operateur.getY(),environnementCopy.getPositionObjectifs().get(0).getX(),environnementCopy.getPositionObjectifs().get(0).getY());
+        }
+
+    }
+
+    public  int manhattanDistance(int x1, int y1, int x2, int y2) {
+        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
     }
 }
