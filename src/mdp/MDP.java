@@ -40,4 +40,8 @@ public interface MDP {
      * @return La récompense
      */
     double recompense(Etat s, Action a, Etat sPrime);
+
+    Action getActionGloutonne(Etat s);
+
+    Etat etatSuivant(Etat s, Action a);
 }

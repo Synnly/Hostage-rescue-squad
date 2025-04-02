@@ -316,6 +316,16 @@ public class HostageRescueSquad implements MDP{
         return recomp;
     }
 
+    @Override
+    public Action getActionGloutonne(Etat s) {
+        return null;
+    }
+
+    @Override
+    public Etat etatSuivant(Etat s, Action a) {
+        return null;
+    }
+
     /**
      * Indique si l'état est valide
      * @param e L'état

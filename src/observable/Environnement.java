@@ -196,13 +196,14 @@ public class Environnement extends Observable{
      * @return La case
      */
     public Case getCase(int x, int y){
+
+
         if(x == -1 && y == -1){
             return AucuneCase.instance;
         }
 
         assert x >= 0 && x < largeur : "x doit être 0 <= x < largeur (x = "+ x + ")";
         assert y >= 0 && y < hauteur : "y doit être 0 <= y < hauteur (y = "+ y + ")";
-
         return cases.get(y * largeur + x);
     }
 
@@ -405,7 +406,7 @@ public class Environnement extends Observable{
      * Affiche dans le terminal la meilleure action prédite par l'IA
      */
     public void printPrediction(){
-        Action actionPredite = IterationValeur.predict(mdp, new EtatNormal(this));
+        Action actionPredite = RTDP.predict(mdp, new EtatNormal(this));
         if(actionPredite != null) {
             StringBuilder sb = new StringBuilder("L'ia vous conseille de ");
             if (actionPredite.coups().get(0).estFinTour()) {
