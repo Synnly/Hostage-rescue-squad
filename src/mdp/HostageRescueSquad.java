@@ -7,6 +7,7 @@ import coups.Coup;
 import observable.Environnement;
 import personnages.*;
 
+import java.sql.Array;
 import java.util.*;
 
 public class HostageRescueSquad implements MDP{
@@ -16,6 +17,7 @@ public class HostageRescueSquad implements MDP{
     private Map<Etat, Map<Action, Map<Etat, Double>>> transitions = new HashMap<>();
     private Map<Etat, Action[]> actionsEtat = new HashMap<>();
     private Map<Etat, Map<Coup, Map<Case, Etat>>> casesEtatsValides = new HashMap<>();
+    private PolitiqueDistanceHostageRescueSquad politique = new PolitiqueDistanceHostageRescueSquad();
 
     /**
      * Contructeur du MDP représentant le jeu Hostage Rescue Squad
@@ -316,15 +318,7 @@ public class HostageRescueSquad implements MDP{
         return recomp;
     }
 
-    @Override
-    public Action getActionGloutonne(Etat s) {
-        return null;
-    }
 
-    @Override
-    public Etat etatSuivant(Etat s, Action a) {
-        return null;
-    }
 
     /**
      * Indique si l'état est valide
@@ -583,5 +577,128 @@ public class HostageRescueSquad implements MDP{
         }
 
         return distributionEnnemis;
+    }
+
+
+    /*  Fonctions ajoutée pour RTDP */
+    @Override
+    public List<Action> getActionsEtat(Etat e) {
+        Operateur op = env.getOperateurActif();
+        Coup[] listeCoups = {op.getDeplacement(), op.getTir(), op.getFinTour()};
+
+        // Nombre maximum de coups par opérateur
+        int maxNbCoups = 0;
+        for (Coup c : listeCoups) {
+            maxNbCoups = Math.max(maxNbCoups, op.getPointsAction() / c.cout);
+        }
+
+        Set<List<Coup>> suiteCoupsPossibles = getAllSuitesCoupsPossibleOperateur(listeCoups, maxNbCoups, op);
+        ArrayList<Action> actionPossibles = new ArrayList<>();
+
+        envCopy.setEtat(e);
+        List<Action> actions = new ArrayList<>();
+        for (List<Coup> suiteCoup : suiteCoupsPossibles) {   // Parcours de toutes les suites de coups
+
+            // Liste des couches de cases. La couche i est composée de toutes les cases accessibles en partant du
+            // premier état de la couche i-1 et en effectuant le ie coup de la suite de coups sur toutes les cases valides.
+            List<List<Case>> casesCouches = new ArrayList<>();
+            casesCouches.add(new ArrayList<>());
+            casesCouches.get(0).add(envCopy.getCase(envCopy.getOperateurActif().getX(), envCopy.getOperateurActif().getY()));
+
+            // Liste des couches d'états. La couche i est composée de tous les états accessibles en partant du
+            // premier état de la couche i-1 et en effectuant le ie coup de la suite de coups sur toutes les cases valides.
+            List<List<Etat>> etatsCouches = new ArrayList<>();
+            etatsCouches.add(new ArrayList<>());
+            etatsCouches.get(0).add(new EtatNormal(envCopy));
+
+            while (!casesCouches.isEmpty()) {
+                while (!casesCouches.isEmpty() && casesCouches.size() < suiteCoup.size() + 1) {     // création des nouvelles couches
+                    int indiceCouche = etatsCouches.size() - 1;
+                    Map<Case, Etat> coucheTemp = getCasesValidesEtEtatsOperateur(etatsCouches.get(indiceCouche).get(0), suiteCoup.get(indiceCouche));
+
+                    // Transformation de la map en listes
+                    List<Case> casesTemp = new ArrayList<>(coucheTemp.size());
+                    List<Etat> etatsTemp = new ArrayList<>(coucheTemp.size());
+                    for (Case c : new ArrayList<>(coucheTemp.keySet())) {
+                        casesTemp.add(c.copy());
+                        etatsTemp.add(coucheTemp.get(c));
+                    }
+                    casesCouches.add(casesTemp);
+                    etatsCouches.add(etatsTemp);
+
+                    // Si la derniere couche est vide ici, alors le coup n'as pas de cases valides, donc il faut
+                    // supprimer le noeud
+                    while (!casesCouches.isEmpty() && casesCouches.get(casesCouches.size() - 1).isEmpty()) {
+                        casesCouches.remove(casesCouches.size() - 1);
+                        etatsCouches.remove(etatsCouches.size() - 1);
+
+                        if (!casesCouches.isEmpty()) {
+                            casesCouches.get(casesCouches.size() - 1).remove(0);
+                            etatsCouches.get(etatsCouches.size() - 1).remove(0);
+                        }
+                    }
+                }
+                if (casesCouches.isEmpty()) {
+                    break;
+                }
+
+                List<Integer> directions = new ArrayList<>();
+                for (int indCouche = 1; indCouche < casesCouches.size(); indCouche++) {
+                    Case ancienneCase = casesCouches.get(indCouche - 1).get(0);
+                    Case nouvelleCase = casesCouches.get(indCouche).get(0);
+
+                    // Ajout de la direction
+                    if (nouvelleCase.x == -1 || nouvelleCase.y == -1) {
+                        directions.add(Action.AUCUN);
+                    } else if (nouvelleCase.x > ancienneCase.x) {
+                        directions.add(Action.DROITE);
+                    } else if (nouvelleCase.x < ancienneCase.x) {
+                        directions.add(Action.GAUCHE);
+                    } else if (nouvelleCase.y > ancienneCase.y) {
+                        directions.add(Action.BAS);
+                    } else {
+                        directions.add(Action.HAUT);
+                    }
+                }
+                actions.add(new Action(env.getOperateurActif(), suiteCoup, directions));
+
+                // Suppression de la premiere case de la derniere couche
+                casesCouches.get(casesCouches.size() - 1).remove(0);
+                etatsCouches.get(etatsCouches.size() - 1).remove(0);
+
+                // Suppression des couches vides et des premiers noeuds précédent une couche vide
+                while (!casesCouches.isEmpty() && casesCouches.get(casesCouches.size() - 1).isEmpty()) {
+                    casesCouches.remove(casesCouches.size() - 1);
+                    etatsCouches.remove(etatsCouches.size() - 1);
+
+                    if (!casesCouches.isEmpty()) {
+                        casesCouches.get(casesCouches.size() - 1).remove(0);
+                        etatsCouches.get(etatsCouches.size() - 1).remove(0);
+                    }
+                }
+            }
+        }
+        //actionPossibles.put(e, actions.toArray(new Action[0]));
+
+        // Sauvegarde
+        //actionsEtat = actionPossibles;
+        return actions;
+    }
+
+    /**
+     * Parmis toutes les actions possibles, on choisi celle qui nous rapproche le plus de l'objectif, sans nous tuer
+     * @param e ETAT
+     * @return l'action gloutonne
+     */
+    @Override
+    public Action getActionGloutonne(Etat e) {
+        ArrayList<Action> actions = (ArrayList<Action>) getActionsEtat(e);
+        Action bestAction = politique.P(this,e);
+
+        return bestAction;
+    }
+    @Override
+    public Etat etatSuivant(Etat s, Action a) {
+        return null;
     }
 }

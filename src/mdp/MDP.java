@@ -1,5 +1,6 @@
 package mdp;
 
+import java.util.List;
 import java.util.Map;
 
 public interface MDP {
@@ -41,7 +42,13 @@ public interface MDP {
      */
     double recompense(Etat s, Action a, Etat sPrime);
 
+    /**
+     * Parmis toutes les actions possibles, on choisi celle qui nous rapproche le plus de l'objectif, sans nous tuer
+     * @param s ETAT
+     * @return l'action gloutonne
+     */
     Action getActionGloutonne(Etat s);
 
     Etat etatSuivant(Etat s, Action a);
+     List<Action> getActionsEtat(Etat s);
 }

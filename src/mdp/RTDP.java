@@ -10,7 +10,7 @@ import java.util.Map;
 public class RTDP {
     public static void RTDP(MDP mdp, Etat s){
         Map<Etat, Double> J = new HashMap<>();
-       long startTime =  System.currentTimeMillis();
+       /*long startTime =  System.currentTimeMillis();
        long currentTime =  System.currentTimeMillis();
         System.out.println(startTime);
        while(currentTime - startTime < 10000){  //10 secondes
@@ -19,15 +19,21 @@ public class RTDP {
        }
         System.out.println(currentTime - startTime);
 
+        */
+        ESSAI_RTDP(mdp,s,J);
+
     }
 
 
     public static void ESSAI_RTDP(MDP mdp, Etat s, Map<Etat, Double> J){
-        while( ! s.estReussite()){
+        /* while( ! s.estReussite()){
             Action a = mdp.getActionGloutonne(s);
             J.put(s, qValeur(mdp,s,a,J));
             s = choisirEtatSuivant(mdp,s,a);
-        }
+           }
+         */
+        System.out.println("cECI EST BINE LE PRINT DE TST QUE NOUS VOULONS");
+        Action a = mdp.getActionGloutonne(s);
     }
 
     public static Etat choisirEtatSuivant(MDP mdp, Etat s, Action a) {
@@ -46,7 +52,7 @@ public class RTDP {
     }
 
     public static Action predict(MDP mdp, Etat s){
-
+        RTDP(mdp,s);
         return null;
     }
 
