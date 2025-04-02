@@ -34,4 +34,14 @@ public class EtatEchec extends Etat{
     public boolean estReussite() {
         return false;
     }
+
+    @Override
+    public EtatEchec copy() {
+        return new EtatEchec(this.indCaseOperateurs,this.aObjectif,this.indCaseTerroristes, this.menace);
+    }
+
+    @Override
+    public Boolean estEchec() {
+        return true;
+    }
 }

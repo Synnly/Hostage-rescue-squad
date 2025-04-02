@@ -50,5 +50,4 @@ public interface MDP {
     Action getActionGloutonne(Etat s);
 
     Etat etatSuivant(Etat s, Action a);
-     List<Action> getActionsEtat(Etat s);
 }

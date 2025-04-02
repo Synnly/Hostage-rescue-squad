@@ -76,5 +76,8 @@ public abstract class Etat{
                 ", m=" + menace +
                 '}';
     }
+
+    public abstract Etat copy();
+    public abstract Boolean estEchec();
 }
 

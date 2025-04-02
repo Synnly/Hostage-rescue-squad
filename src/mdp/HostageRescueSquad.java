@@ -17,7 +17,7 @@ public class HostageRescueSquad implements MDP{
     private Map<Etat, Map<Action, Map<Etat, Double>>> transitions = new HashMap<>();
     private Map<Etat, Action[]> actionsEtat = new HashMap<>();
     private Map<Etat, Map<Coup, Map<Case, Etat>>> casesEtatsValides = new HashMap<>();
-    private PolitiqueDistanceHostageRescueSquad politique = new PolitiqueDistanceHostageRescueSquad();
+    private PolitiqueDistanceHostageRescueSquad politique;
 
     /**
      * Contructeur du MDP représentant le jeu Hostage Rescue Squad
@@ -26,6 +26,7 @@ public class HostageRescueSquad implements MDP{
     public HostageRescueSquad(Environnement env){
         this.env = env;
         this.envCopy = env.copy();
+        politique = new PolitiqueDistanceHostageRescueSquad(this,this.envCopy);
     }
 
     @Override
@@ -277,6 +278,9 @@ public class HostageRescueSquad implements MDP{
 
         return etats;
     }
+
+
+
 
     @Override
     public double recompense(Etat s, Action a, Etat sPrime){
@@ -581,7 +585,6 @@ public class HostageRescueSquad implements MDP{
 
 
     /*  Fonctions ajoutée pour RTDP */
-    @Override
     public List<Action> getActionsEtat(Etat e) {
         Operateur op = env.getOperateurActif();
         Coup[] listeCoups = {op.getDeplacement(), op.getTir(), op.getFinTour()};
@@ -700,5 +703,19 @@ public class HostageRescueSquad implements MDP{
     @Override
     public Etat etatSuivant(Etat s, Action a) {
         return null;
+    }
+
+    /**
+     * Retourne l'état d'arrivé à partir d'une action et d'un état de départ en simulant l'action
+     * @param action Action
+     * @param etatDepart Etat
+     * @return Etat d'arrivé
+     */
+    public Etat simulerAction(Action action,Etat etatDepart){
+        Etat etatArrivee = etatDepart;
+        for(int i = 0; i < action.coups().size(); i++){
+            etatArrivee = simuler(etatArrivee, action.coups().get(i), action.personnage(), action.directions().get(i), action.coups().get(i).probaSucces == 1);
+        }
+        return etatArrivee;
     }
 }

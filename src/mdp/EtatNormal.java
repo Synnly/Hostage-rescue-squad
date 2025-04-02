@@ -34,4 +34,14 @@ public class EtatNormal extends Etat{
     public boolean estReussite() {
         return false;
     }
+
+    @Override
+    public EtatNormal copy() {
+        return new EtatNormal(this.indCaseOperateurs,this.aObjectif,this.indCaseTerroristes, this.menace);
+    }
+
+    @Override
+    public Boolean estEchec() {
+        return false;
+    }
 }
