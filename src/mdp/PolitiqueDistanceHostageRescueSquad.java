@@ -61,9 +61,7 @@ public class PolitiqueDistanceHostageRescueSquad implements Politique{
             }catch (AssertionError e){
                 System.out.println("L'action n'est pas valide, on la passe");
             }
-        //System.out.println("L'action prédite par la politique "+bestAction);
         return new Pair(bestAction, bestScore);
-        //return bestAction;
     }
     public Double score(Etat sDepart,Etat sArrive){
         Double score = -1000.;
@@ -74,6 +72,8 @@ public class PolitiqueDistanceHostageRescueSquad implements Politique{
         if(sArrive.estReussite()){
             score+=1000;
         }
+
+        */
         int nbNewHostages = 0;
         for(int i =0;i< sArrive.aObjectif.length;i++){
             if( !sDepart.aObjectif[i] &&  sArrive.aObjectif[i]){
@@ -81,15 +81,15 @@ public class PolitiqueDistanceHostageRescueSquad implements Politique{
             }
 
         }
-        score+= (nbNewHostages*500);
-        */
-        int distanceObjectif = distanceObjectif(sDepart) - distanceObjectif(sArrive)+1;
+        score+= (nbNewHostages*50000);
+
+        int distanceObjectif = distanceObjectif(sDepart) - distanceObjectif(sArrive);
         if(distanceObjectif == 0){
             score-=1000;
         }
 
 
-        score+= distanceObjectif*(-1000);
+        score+= distanceObjectif*(10000);
         /*
         score+= Math.max(((sDepart.menace - sArrive.menace)*50),0);
         int diffNbTerro = nbEnnemis(sDepart) - nbEnnemis(sArrive);
