@@ -1,5 +1,6 @@
 package mdp;
 
+import javafx.util.Pair;
 import observable.Environnement;
 import personnages.Operateur;
 
@@ -27,7 +28,7 @@ public class PolitiqueDistanceHostageRescueSquad implements Politique{
         Double bestScore = Double.NEGATIVE_INFINITY;
         System.out.println("Affiche des actions possibles à partir de l'état "+s);
         for (Action action : actions) {
-            System.out.println(action);
+           // System.out.println(action);
             Etat sPrime = s.copy();
             try{
                 Etat sArrivee = hrs.simulerAction(action,sPrime);
@@ -43,8 +44,30 @@ public class PolitiqueDistanceHostageRescueSquad implements Politique{
         System.out.println("L'action prédite par la politique "+bestAction);
         return bestAction;
     }
+
+    public Pair P(MDP mdp, Etat s,Etat sArrivee, Action action) {
+        Action bestAction = null;
+        Double bestScore = Double.NEGATIVE_INFINITY;
+        //System.out.println("Affiche des actions possibles à partir de l'état "+s);
+            //System.out.println(action);
+            Etat sDepartCopy = s.copy();
+            Etat sArriveeCopy = sArrivee.copy();
+            try{
+                Double score = score(sDepartCopy,sArriveeCopy);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestAction = action;
+                }
+            }catch (AssertionError e){
+                System.out.println("L'action n'est pas valide, on la passe");
+            }
+        //System.out.println("L'action prédite par la politique "+bestAction);
+        return new Pair(bestAction, bestScore);
+        //return bestAction;
+    }
     public Double score(Etat sDepart,Etat sArrive){
-        Double score = 0.0;
+        Double score = -1000.;
+       /*
         if(sArrive.estEchec()){
             return Double.NEGATIVE_INFINITY;
         }
@@ -59,10 +82,31 @@ public class PolitiqueDistanceHostageRescueSquad implements Politique{
 
         }
         score+= (nbNewHostages*500);
-        int distanceObjectif = distanceObjectif(sArrive);
-        score+= distanceObjectif*(-50);
+        */
+        int distanceObjectif = distanceObjectif(sDepart) - distanceObjectif(sArrive)+1;
+        if(distanceObjectif == 0){
+            score-=1000;
+        }
+
+
+        score+= distanceObjectif*(-1000);
+        /*
+        score+= Math.max(((sDepart.menace - sArrive.menace)*50),0);
+        int diffNbTerro = nbEnnemis(sDepart) - nbEnnemis(sArrive);
+        score+= ((diffNbTerro)*(100));
+         */
 
         return score;
+    }
+    public int nbEnnemis(Etat etat){
+        int nbEnnemis = 0;
+        for(int i =0;i< etat.indCaseTerroristes.length;i++){
+            if(etat.indCaseTerroristes[i] != -1){
+                nbEnnemis++;
+            }
+        }
+        return nbEnnemis;
+
     }
     public  int distanceObjectif(Etat sArrive) {
         /*Il faudra ajouter ici les modifs, lorsqu'il y aura plusieurs hottages

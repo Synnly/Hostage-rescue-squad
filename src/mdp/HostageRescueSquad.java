@@ -4,6 +4,7 @@ import carte.AucuneCase;
 import carte.Case;
 import carte.Routine;
 import coups.Coup;
+import javafx.util.Pair;
 import observable.Environnement;
 import personnages.*;
 
@@ -585,6 +586,7 @@ public class HostageRescueSquad implements MDP{
 
 
     /*  Fonctions ajoutée pour RTDP */
+    @Override
     public List<Action> getActionsEtat(Etat e) {
         Operateur op = env.getOperateurActif();
         Coup[] listeCoups = {op.getDeplacement(), op.getTir(), op.getFinTour()};
@@ -688,6 +690,13 @@ public class HostageRescueSquad implements MDP{
         return actions;
     }
 
+    @Override
+    public Double recompenseRTDP(Etat s, Action a, Etat sPrime) {
+        Pair actionEtat = this.politique.P(this,s,sPrime,a);
+        //System.out.println("Clé: " + actionEtat.getKey() + ", Valeur: " + actionEtat.getValue());
+        return (double) actionEtat.getValue();
+    }
+
     /**
      * Parmis toutes les actions possibles, on choisi celle qui nous rapproche le plus de l'objectif, sans nous tuer
      * @param e ETAT
@@ -702,7 +711,12 @@ public class HostageRescueSquad implements MDP{
     }
     @Override
     public Etat etatSuivant(Etat s, Action a) {
-        return null;
+        Etat suivant = simulerAction(a,s);
+        while(suivant.estEchec()){
+            suivant = simulerAction(a,suivant);
+        }
+        System.out.println(a+" : "+s+" et "+suivant);
+        return suivant;
     }
 
     /**
@@ -718,4 +732,5 @@ public class HostageRescueSquad implements MDP{
         }
         return etatArrivee;
     }
+
 }
