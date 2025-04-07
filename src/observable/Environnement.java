@@ -3,6 +3,7 @@ package observable;
 import coups.*;
 import carte.*;
 import mdp.*;
+import org.javatuples.Pair;
 import personnages.*;
 
 import java.util.ArrayList;
@@ -19,9 +20,9 @@ public class Environnement extends Observable{
     private List<Case> cases;
     private Operateur operateur;
     private List<Terroriste> ennemis;
-    private int menace = 2;
     private final int maxMenace = 7;
     private final int minMenace = 2;
+    private int menace = minMenace;
 
     private boolean echec = false;
     private boolean missionFinie = false;
@@ -58,7 +59,7 @@ public class Environnement extends Observable{
 
         mdp = new HostageRescueSquad(this);
         System.out.println("L'ia se prépare ...");
-        IterationValeur.iterationValeur(mdp);
+        IterationValeur.iterationValeur(mdp, new EtatNormal(this));
         System.out.println("L'ia a fini");
         printPrediction();
     }
@@ -84,7 +85,7 @@ public class Environnement extends Observable{
     /**
      * Réinitialise les paramètres de départ d'une nouc-velle partie
      */
-    public void nouvellePartie( ){
+    public void nouvellePartie(){
         cases = new ArrayList<>();
         initPlateau(largeur, hauteur);
 
@@ -101,6 +102,7 @@ public class Environnement extends Observable{
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
         Tir tirOp = new Tir(1, probaSuccesTir);
         operateur = new Operateur(this, largeur/2 + 2, hauteur-1, 2, deplacementOp, tirOp);
+//        operateur = new Operateur(this, 0, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -139,6 +141,7 @@ public class Environnement extends Observable{
      */
     public Routine creerRoutine(){
         Case pred = getCase(largeur/2, 0);
+//        Case pred = getCase(2, 0);
         Case next;
         Routine routine = new Routine(pred);
 
@@ -162,6 +165,13 @@ public class Environnement extends Observable{
 
         next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next);
 
+//        next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next); pred = next;
+//        next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
+//        next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
+//        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
+//        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
+//        next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
+//        next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
 
         return routine;
     }
@@ -294,6 +304,7 @@ public class Environnement extends Observable{
         if(op.getPointsAction() == 0){
             tourEnnemi();
         }
+        printPrediction();
         notifyObservers();
     }
 
@@ -405,48 +416,24 @@ public class Environnement extends Observable{
      * Affiche dans le terminal la meilleure action prédite par l'IA
      */
     public void printPrediction(){
-        Action actionPredite = IterationValeur.predict(mdp, new EtatNormal(this));
-        if(actionPredite != null) {
-            StringBuilder sb = new StringBuilder("L'ia vous conseille de ");
-            if (actionPredite.coups().get(0).estFinTour()) {
-                sb.append("terminer le tour");
-            } else {
-                sb.append(actionPredite.coups().get(0));
-                sb.append(" vers ");
-                switch (actionPredite.directions().get(0)) {
-                    case Action.HAUT -> sb.append("le haut");
-                    case Action.BAS -> sb.append("le bas");
-                    case Action.GAUCHE -> sb.append("la gauche");
-                    case Action.DROITE -> sb.append("la droite");
-                    default -> {
-                    }
+        Pair<Coup, Integer> coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+
+        StringBuilder sb = new StringBuilder("L'ia vous conseille de ");
+        if (coupPredit.getValue0().estFinTour()) {
+            sb.append("terminer le tour");
+        } else {
+            sb.append(coupPredit.getValue0());
+            sb.append(" vers ");
+            switch (coupPredit.getValue1()) {
+                case Action.HAUT -> sb.append("le haut");
+                case Action.BAS -> sb.append("le bas");
+                case Action.GAUCHE -> sb.append("la gauche");
+                case Action.DROITE -> sb.append("la droite");
+                default -> {
                 }
             }
-
-
-            for (int i = 1; i < actionPredite.coups().size(); i++) {
-                sb.append("\nPuis de ");
-                if (actionPredite.coups().get(i).estFinTour()) {
-                    sb.append("terminer le tour");
-                } else {
-                    sb.append(actionPredite.coups().get(i));
-                    sb.append(" vers ");
-                    switch (actionPredite.directions().get(i)) {
-                        case Action.HAUT -> sb.append("le haut");
-                        case Action.BAS -> sb.append("le bas");
-                        case Action.GAUCHE -> sb.append("la gauche");
-                        case Action.DROITE -> sb.append("la droite");
-                        default -> {
-                        }
-                    }
-                }
-            }
-            System.out.println(sb);
         }
-        else {
-            System.out.println("ATTENTION : ACTION PREDITE NULL\n" + new EtatNormal(this));
-
-        }
+        System.out.println(sb);
     }
 
     /**
@@ -466,7 +453,12 @@ public class Environnement extends Observable{
         Case caseOp = e.indCaseOperateurs[0] == -1 ? AucuneCase.instance : cases.get(e.indCaseOperateurs[0]);
         operateur.setX(caseOp.getX());
         operateur.setY(caseOp.getY());
-        operateur.resetPointsAction();
+        try {
+            operateur.setPointsAction(e.nbPAOperateurs[0]);
+        }
+        catch (Exception ignored){
+            System.out.println();
+        }
 
         operateur.setPossedeObjectif(e.aObjectif[0]);
         missionFinie = e.estTerminal();

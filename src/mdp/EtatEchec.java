@@ -13,8 +13,8 @@ public class EtatEchec extends Etat{
      *                           de la routine
      * @param menace Le niveau de menace
      */
-    public EtatEchec(int[] indCaseOperateurs, boolean[] aObjectif, int[] indCaseTerroristes, int menace) {
-        super(indCaseOperateurs, aObjectif, indCaseTerroristes, menace);
+    public EtatEchec(int[] indCaseOperateurs, int[] nbPAOperateurs, boolean[] aObjectif, int[] indCaseTerroristes, int menace) {
+        super(indCaseOperateurs, nbPAOperateurs, aObjectif, indCaseTerroristes, menace);
     }
 
     /**

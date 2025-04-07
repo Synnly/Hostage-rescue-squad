@@ -1,12 +1,15 @@
 package mdp;
 
+import coups.Coup;
+import org.javatuples.Pair;
+
 import java.util.Map;
 
 public interface MDP {
 
-    double valeurReussite = 500;
-    double valeurObjectif = 50000;
-    double valeurEchec = -9e15;
+    double valeurReussite = 1000;
+    double valeurObjectif = 0;
+    double valeurEchec = -1000;
     double valeurDeltaMenace = 2; // > 0 quand niveau de menace augmente, < 0 sinon
     double valeurTuerEnnemi = 2;
     double valeurDeplacement = -1;
@@ -15,7 +18,7 @@ public interface MDP {
      * Calcule les actions valides pouvant être effectués pour chaque état
      * @return Le dictionnaire qui associe à chaque état la liste des actions valides
      */
-    Map<Etat, Action[]> getActions();
+    Map<Etat, Pair<Coup, Integer>[]> getCoups();
 
     /**
      * Calcule l'ensemble des états possibles
@@ -30,7 +33,7 @@ public interface MDP {
      * @param a L'action à effectuer
      * @return Le dictionnaire qui associe à chaque état la probabilité d'y arriver
      */
-    Map<Etat, Double> transition(Etat s, Action a);
+    Map<Etat, Double> transition(Etat etatDepart, Coup coup, int direction);
 
     /**
      * Calcule la récompense de la transition T(s, a, s')
@@ -39,5 +42,5 @@ public interface MDP {
      * @param sPrime L'état d'arrivée
      * @return La récompense
      */
-    double recompense(Etat s, Action a, Etat sPrime);
+    double recompense(Etat s, Coup c, Etat sPrime);
 }
