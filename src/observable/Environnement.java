@@ -303,8 +303,12 @@ public class Environnement extends Observable{
         // Tour ennemi
         if(op.getPointsAction() == 0){
             tourEnnemi();
+
+            if(missionFinie){
+                nouvellePartie();
+                printPrediction();
+            }
         }
-        printPrediction();
         notifyObservers();
     }
 
