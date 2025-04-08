@@ -9,6 +9,7 @@ public class EtatReussite extends Etat{
      * les objectifs ont été récupérés et tous les opérateurs sont en vie.
      * @param indCaseOperateurs La liste des positions des cases où se situent les opérateurs dans la liste des cases du
      *                          plateau
+     * @param nbPAOperateurs La liste des quantités de points d'action de chaque opérateur
      * @param aObjectif La liste des booléens indiquant si le ie opérateur possède un objectif
      * @param indCaseTerroristes La liste des positions des cases où se situent les terroristes dans la liste des cases
      *                           de la routine

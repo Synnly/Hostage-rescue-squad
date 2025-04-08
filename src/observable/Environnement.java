@@ -59,7 +59,7 @@ public class Environnement extends Observable{
 
         mdp = new HostageRescueSquad(this);
         System.out.println("L'ia se prépare ...");
-        IterationValeur.iterationValeur(mdp, new EtatNormal(this));
+        IterationValeur.iterationValeur(mdp);
         System.out.println("L'ia a fini");
         printPrediction();
     }
@@ -102,7 +102,6 @@ public class Environnement extends Observable{
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
         Tir tirOp = new Tir(1, probaSuccesTir);
         operateur = new Operateur(this, largeur/2 + 2, hauteur-1, 2, deplacementOp, tirOp);
-//        operateur = new Operateur(this, 0, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -121,9 +120,8 @@ public class Environnement extends Observable{
         ennemis.add(ennemi2);
 
         missionFinie = false;
-        if(mdp != null){
-            printPrediction();
-        }
+        menace = minMenace;
+        System.out.println("NOUVELLE PARTIE");
     }
 
     /**
@@ -280,7 +278,6 @@ public class Environnement extends Observable{
 
         if(!isMissionFinie()) {
             operateur.resetPointsAction();
-            printPrediction();
         }
     }
 
@@ -303,12 +300,11 @@ public class Environnement extends Observable{
         // Tour ennemi
         if(op.getPointsAction() == 0){
             tourEnnemi();
-
-            if(missionFinie){
-                nouvellePartie();
-                printPrediction();
-            }
         }
+
+        if(missionFinie) nouvellePartie();
+
+        printPrediction();
         notifyObservers();
     }
 
@@ -358,7 +354,7 @@ public class Environnement extends Observable{
     public void setFinTourActionActive(){
         operateur.setActionActive(operateur.getDeplacement());
         tourEnnemi();
-        operateur.resetPointsAction();
+        printPrediction();
         notifyObservers();
     }
 
@@ -420,7 +416,7 @@ public class Environnement extends Observable{
      * Affiche dans le terminal la meilleure action prédite par l'IA
      */
     public void printPrediction(){
-        Pair<Coup, Integer> coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+        Pair<Coup, Direction> coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
 
         StringBuilder sb = new StringBuilder("L'ia vous conseille de ");
         if (coupPredit.getValue0().estFinTour()) {
@@ -429,10 +425,10 @@ public class Environnement extends Observable{
             sb.append(coupPredit.getValue0());
             sb.append(" vers ");
             switch (coupPredit.getValue1()) {
-                case Action.HAUT -> sb.append("le haut");
-                case Action.BAS -> sb.append("le bas");
-                case Action.GAUCHE -> sb.append("la gauche");
-                case Action.DROITE -> sb.append("la droite");
+                case HAUT -> sb.append("le haut");
+                case BAS -> sb.append("le bas");
+                case GAUCHE -> sb.append("la gauche");
+                case DROITE -> sb.append("la droite");
                 default -> {
                 }
             }
@@ -457,12 +453,7 @@ public class Environnement extends Observable{
         Case caseOp = e.indCaseOperateurs[0] == -1 ? AucuneCase.instance : cases.get(e.indCaseOperateurs[0]);
         operateur.setX(caseOp.getX());
         operateur.setY(caseOp.getY());
-        try {
-            operateur.setPointsAction(e.nbPAOperateurs[0]);
-        }
-        catch (Exception ignored){
-            System.out.println();
-        }
+        operateur.setPointsAction(e.nbPAOperateurs[0]);
 
         operateur.setPossedeObjectif(e.aObjectif[0]);
         missionFinie = e.estTerminal();

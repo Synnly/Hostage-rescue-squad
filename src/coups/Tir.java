@@ -56,7 +56,7 @@ public class Tir extends Coup {
      * &nbsp;Si la cible est un opérateur, termine la partie.
      *
      * @param env L'environnement
-     * @param perso Le personnage effectuant le tir
+     * @param terro Le terroriste effectuant le tir
      * @param arr La destination
      */
     public void effectuer(Environnement env, Terroriste terro, Case arr){

@@ -15,9 +15,8 @@ public class HostageRescueSquad implements MDP{
     private final Environnement envCopy;
     private Etat[] etats = null;
 
-    private Map<Etat, Map<Pair<Coup, Integer>, Map<Etat, Double>>> transitions = new HashMap<>();
-    private Map<Etat, Pair<Coup, Integer>[]> coupsEtat = new HashMap<>();
-    private Map<Etat, Map<Coup, Map<Case, Etat>>> casesEtatsValides = new HashMap<>();
+    private Map<Etat, Map<Pair<Coup, Direction>, Map<Etat, Double>>> transitions = new HashMap<>();
+    private Map<Etat, Pair<Coup, Direction>[]> coupsEtat = new HashMap<>();
 
     /**
      * Contructeur du MDP représentant le jeu Hostage Rescue Squad
@@ -29,14 +28,14 @@ public class HostageRescueSquad implements MDP{
     }
 
     @Override
-    public Map<Etat, Pair<Coup, Integer>[]> getCoups() {
+    public Map<Etat, Pair<Coup, Direction>[]> getCoups() {
         if(!coupsEtat.isEmpty()){
             return coupsEtat;
         }
 
         Operateur op = env.getOperateurActif();
         Coup[] listeCoups = {op.getDeplacement(), op.getTir()};
-        Map<Etat, Pair<Coup, Integer>[]> coups = new HashMap<>();
+        Map<Etat, Pair<Coup, Direction>[]> coups = new HashMap<>();
 
         Etat[] etats = getEtats();
         Etat restoreState = new EtatNormal(envCopy);
@@ -44,23 +43,23 @@ public class HostageRescueSquad implements MDP{
         for(Etat e : etats){
             envCopy.setEtat(e);
             Operateur opCopy = envCopy.getOperateurActif();
-            ArrayList<Pair<Coup, Integer>> listePaires = new ArrayList<>();
-            listePaires.add(new Pair<>(op.getFinTour(), Action.AUCUN));
+            ArrayList<Pair<Coup, Direction>> listePaires = new ArrayList<>();
+            listePaires.add(new Pair<>(op.getFinTour(), Direction.AUCUN));
 
             for(Coup c : listeCoups){
                 for(Case caseValide : c.getCasesValides(envCopy, opCopy)){
 
                     // Ajout de la direction
                     if(opCopy.getX() == -1 || opCopy.getY() == -1){
-                        listePaires.add(new Pair<>(c, Action.AUCUN));
+                        listePaires.add(new Pair<>(c, Direction.AUCUN));
                     } else if (opCopy.getX() > caseValide.x) {
-                        listePaires.add(new Pair<>(c, Action.GAUCHE));
+                        listePaires.add(new Pair<>(c, Direction.GAUCHE));
                     } else if (opCopy.getX() < caseValide.x) {
-                        listePaires.add(new Pair<>(c, Action.DROITE));
+                        listePaires.add(new Pair<>(c, Direction.DROITE));
                     } else if (opCopy.getY() > caseValide.y) {
-                        listePaires.add(new Pair<>(c, Action.HAUT));
+                        listePaires.add(new Pair<>(c, Direction.HAUT));
                     } else {
-                        listePaires.add(new Pair<>(c, Action.BAS));
+                        listePaires.add(new Pair<>(c, Direction.BAS));
                     }
                 }
 
@@ -162,7 +161,7 @@ public class HostageRescueSquad implements MDP{
     }
 
     @Override
-    public Map<Etat, Double> transition(Etat etatDepart, Coup coup, int direction){
+    public Map<Etat, Double> transition(Etat etatDepart, Coup coup, Direction direction){
         // Si transition déjà calculée
         if(transitions.get(etatDepart) != null){
             if(transitions.get(etatDepart).get(new Pair<>(coup, direction)) != null){
@@ -193,7 +192,7 @@ public class HostageRescueSquad implements MDP{
 
         // Sauvegarde
         if(transitions.get(etatDepart) == null){
-            Map<Pair<Coup, Integer>, Map<Etat, Double>> coupEtat = new HashMap<>();
+            Map<Pair<Coup, Direction>, Map<Etat, Double>> coupEtat = new HashMap<>();
             coupEtat.put(new Pair<>(coup, direction), distribution);
             transitions.put(etatDepart, coupEtat);
         } else {
@@ -303,89 +302,6 @@ public class HostageRescueSquad implements MDP{
         return true;
     }
 
-    /**
-     * Calcule tous les arrangements de coups possibles, compte tenu de la limite de points d'actions de l'opérateur et
-     * de la fin de tour
-     * @param listeCoups La liste de tous les coups possibles
-     * @param maxNbCoups Le nombre maximal de coups en un tour
-     * @param op L'opérateur effectuant les coups
-     * @return L'ensemble des suites de coups possibles
-     */
-    private Set<List<Coup>> getAllSuitesCoupsPossibleOperateur(Coup[] listeCoups, int maxNbCoups, Operateur op){
-        Set<List<Coup>> actionsPossibles = new HashSet<>();
-        for (int i = 0; i < Math.pow(listeCoups.length, maxNbCoups); i++) {
-            List<Coup> actionComplete = new ArrayList<>();
-            int idAction = i; // Identifiant de l'action, ie une sequence d'indice de coups
-
-            int k = Math.max(1, (int) (Math.log(i) / Math.log(listeCoups.length)));
-            int sumPA = 0;
-
-            do {
-                // Tour fini, donc pas d'actions en plus possible
-                if(actionComplete.contains(op.getFinTour())){
-                    sumPA = op.getPointsAction();
-                }
-                else {
-                    int indiceCoup = (int) (idAction % Math.pow(listeCoups.length, k));
-                    // si assez de PA pour faire l'action
-                    if(sumPA + listeCoups[indiceCoup].cout <= op.getPointsAction()) {
-                        actionComplete.add(listeCoups[indiceCoup]);
-                        sumPA += listeCoups[indiceCoup].cout;
-                    }
-                    else{
-                        actionComplete.add(op.getFinTour());
-                        sumPA = op.getPointsAction();
-                    }
-                }
-                idAction = idAction / listeCoups.length;
-            } while (sumPA < op.getPointsAction());
-
-            actionsPossibles.add(actionComplete);
-        }
-        return actionsPossibles;
-    }
-
-    /**
-     * Calcule toutes les cases et états correspondants d'arrivée apres que l'opérateur ait effectué le coup
-     * @param etat L'etat de départ
-     * @param coup Le coup à effectuer
-     * @return Le dictionnaire de toutes les cases et états correspondants d'arrivée
-     */
-    private Map<Case, Etat> getCasesValidesEtEtatsOperateur(Etat etat, Coup coup){
-        // Si cases valides déjà calculés
-        if(casesEtatsValides.get(etat) != null && casesEtatsValides.get(etat).get(coup) != null){
-            return casesEtatsValides.get(etat).get(coup);
-        }
-
-        // Sauvegarde et modification
-        Map<Case, Etat> caseEtat = new HashMap<>();
-        Etat restoreState = new EtatNormal(envCopy);
-        Coup coupCopy = coup.copy();
-        coupCopy.probaSucces = 1;
-
-        envCopy.setEtat(etat);
-        Personnage persoCopy = envCopy.getOperateurActif();
-        List<Case> casesValides = new ArrayList<>(coup.getCasesValides(envCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY())));
-
-        // Simulation
-        for(Case c : casesValides) {
-            envCopy.setEtat(etat);
-            coupCopy.effectuer(envCopy, envCopy.getOperateurActif(), c);
-            caseEtat.put(c, new EtatNormal(envCopy));
-        }
-        envCopy.setEtat(restoreState);
-
-        // Sauvegarde
-        if(casesEtatsValides.get(etat) == null){
-            Map<Coup, Map<Case, Etat>> map = new HashMap<>();
-            map.put(coup, caseEtat);
-            casesEtatsValides.put(etat, map);
-        }
-        else{
-            casesEtatsValides.get(etat).put(coup, caseEtat);
-        }
-        return caseEtat;
-    }
 
     /**
      * Calcule l'état après le coup effectué
@@ -396,7 +312,7 @@ public class HostageRescueSquad implements MDP{
      * @param succes Vrai si le coup réussi, faux sinon
      * @return L'état d'arrivée
      */
-    private Etat simuler(Etat etatDepart, Coup coup, Personnage perso, int direction, boolean succes){
+    private Etat simuler(Etat etatDepart, Coup coup, Personnage perso, Direction direction, boolean succes){
         // Copie profonde de l'environnement dans l'etat de depart
         Coup coupCopy = coup.copy();
         Etat restoreState = creerEtat(envCopy);
@@ -406,11 +322,11 @@ public class HostageRescueSquad implements MDP{
 
         // Simulation
         switch (direction){
-            case Action.HAUT -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY() - 1));
-            case Action.BAS -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY() + 1));
-            case Action.GAUCHE -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX() - 1, persoCopy.getY()));
-            case Action.DROITE -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX() + 1, persoCopy.getY()));
-            case Action.AUCUN -> coupCopy.effectuer(envCopy, persoCopy, AucuneCase.instance);
+            case HAUT -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY() - 1));
+            case BAS -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX(), persoCopy.getY() + 1));
+            case GAUCHE -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX() - 1, persoCopy.getY()));
+            case DROITE -> coupCopy.effectuer(envCopy, persoCopy, envCopy.getCase(persoCopy.getX() + 1, persoCopy.getY()));
+            case AUCUN -> coupCopy.effectuer(envCopy, persoCopy, AucuneCase.instance);
         }
 
         Etat etat = creerEtat(envCopy);
@@ -440,6 +356,7 @@ public class HostageRescueSquad implements MDP{
      * Crée l'état correspondant.
      * @param indCaseOperateurs La liste des positions des cases où se situent les opérateurs dans la liste des cases du
      *                          plateau
+     * @param nbPaOps La liste des quantités de points d'action de chaque opérateur
      * @param aObjectif La liste des booléens indiquant si le ie opérateur possède un objectif
      * @param indCaseTerroristes La liste des positions des cases où se situent les terroristes dans la liste des cases
      *                           de la routine
