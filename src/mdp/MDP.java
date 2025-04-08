@@ -7,12 +7,12 @@ import java.util.Map;
 
 public interface MDP {
 
-    double valeurReussite = 100;
-    double valeurObjectif = 0;
-    double valeurEchec = -100000;
-    double valeurDeltaMenace = 2; // > 0 quand niveau de menace augmente, < 0 sinon
-    double valeurTuerEnnemi = 2;
-    double valeurDeplacement = -1;
+    double valeurReussite = 900;
+    double valeurObjectif = 100;
+    double valeurEchec = -1000;
+    double valeurDeltaMenace = 0; // > 0 quand niveau de menace augmente, < 0 sinon
+    double valeurTuerEnnemi = 0;
+    double valeurDeplacement = -40;
 
     /**
      * Calcule les actions valides pouvant être effectués pour chaque état

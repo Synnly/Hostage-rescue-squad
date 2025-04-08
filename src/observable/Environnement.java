@@ -98,10 +98,29 @@ public class Environnement extends Observable{
         cases.set(29, new Couverture(this, 1, 4));
         cases.set(32, new Couverture(this, 4, 4));
 
+        cases.set(15,new Couverture(this,1,2));
+        cases.set(22,new Couverture(this,1,3));
+        cases.set(36,new Couverture(this,1,5));
+        cases.set(43,new Couverture(this,1,6));
+        cases.set(50,new Couverture(this,1,7));
+        cases.set(57,new Couverture(this,1,8));
+        cases.set(64,new Couverture(this,1,9));
+
+        cases.set(26, new Couverture(this, 5, 3));
+        cases.set(33, new Couverture(this, 5, 4));
+        cases.set(40, new Couverture(this, 5, 5));
+        cases.set(47, new Couverture(this, 5, 6));
+        cases.set(54, new Couverture(this, 5, 7));
+        cases.set(61, new Couverture(this, 5, 8));
+        cases.set(68, new Couverture(this, 5, 9));
+
+        cases.set(16, new Couverture(this, 2, 2));
+        cases.set(18, new Couverture(this, 4, 2));
+
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
         Tir tirOp = new Tir(1, probaSuccesTir);
-        operateur = new Operateur(this, largeur/2 + 2, hauteur-1, 2, deplacementOp, tirOp);
+        operateur = new Operateur(this, largeur/2 + 1, hauteur-1, 2, deplacementOp, tirOp);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -162,14 +181,6 @@ public class Environnement extends Observable{
         next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
 
         next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next);
-
-//        next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next); pred = next;
-//        next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
-//        next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
-//        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
-//        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
-//        next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
-//        next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
 
         return routine;
     }
@@ -354,6 +365,9 @@ public class Environnement extends Observable{
     public void setFinTourActionActive(){
         operateur.setActionActive(operateur.getDeplacement());
         tourEnnemi();
+
+        if(missionFinie) nouvellePartie();
+
         printPrediction();
         notifyObservers();
     }

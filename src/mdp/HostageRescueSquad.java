@@ -405,9 +405,7 @@ public class HostageRescueSquad implements MDP{
         Etat restoreState = creerEtat(envCopy);
         for(Etat e : distribution.keySet()) {
             if(e.estTerminal() || Arrays.stream(e.nbPAOperateurs).sum() != 0){    // Etat terminal ou pas le tour de l'ennemi donc rien à faire
-                double proba = distribution.get(e);
-                e.nbPAOperateurs[0] = env.getOperateurActif().getMaxPointsAction(); // Reset PA apres tour ennemi
-                distributionEnnemis.put(e, proba);
+                distributionEnnemis.put(e, distribution.get(e));
                 continue;
             }
             for (int idSuiteCoups = 0; idSuiteCoups < Math.pow(listeCoups.length, nbTerrs); idSuiteCoups++) {

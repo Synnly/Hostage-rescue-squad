@@ -9,6 +9,7 @@ public class IterationValeur {
     private static double gamma = 0.99;
     private static double epsilon = 1e-50;
     private static Map<Etat, Pair<Coup, Direction>> bestCoup = new HashMap<>();
+    private static Map<Etat, Double> utils;
     /**
      * Calcule la meilleure action à faire à partir de l'état de départ
      * @param mdp Le ldp sur lequel appliquer l'algo
@@ -19,6 +20,7 @@ public class IterationValeur {
         if(bestCoup.isEmpty()) {
             iterationValeur(mdp);
         }
+        System.out.println(utils.get(s));
         return bestCoup.get(s);
     }
 
@@ -47,7 +49,7 @@ public class IterationValeur {
      * @return Le dictionnaire associant à chaque état son utilité
      */
     public static Map<Etat, Pair<Coup, Direction>> iterationValeur(MDP mdp) {
-        Map<Etat, Double> utils = new HashMap<>();
+        utils = new HashMap<>();
         Map<Etat, Pair<Coup, Direction>[]> coups = mdp.getCoups();
         Etat[] etats = mdp.getEtats();
         System.out.println("Itération valeur sur " + etats.length + " états");
