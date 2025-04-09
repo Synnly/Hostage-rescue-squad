@@ -31,6 +31,7 @@ public class Environnement extends Observable{
     private final double probaSuccesDeplacement;
     private final double probaSuccesTir;
     private HostageRescueSquad mdp;
+    private Pair<Coup, Direction> coupPredit = null;
 
 
     /**
@@ -430,8 +431,14 @@ public class Environnement extends Observable{
      * Affiche dans le terminal la meilleure action prédite par l'IA
      */
     public void printPrediction(){
-        Pair<Coup, Direction> coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+        coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
 
+
+
+
+        System.out.println(coupPreditToString());
+    }
+    public String coupPreditToString(){
         StringBuilder sb = new StringBuilder("L'ia vous conseille de ");
         if (coupPredit.getValue0().estFinTour()) {
             sb.append("terminer le tour");
@@ -447,7 +454,7 @@ public class Environnement extends Observable{
                 }
             }
         }
-        System.out.println(sb);
+        return sb.toString();
     }
 
     /**
@@ -613,4 +620,7 @@ public class Environnement extends Observable{
     }
 
 
+    public Pair<Coup, Direction> getCoupPredit() {
+        return coupPredit;
+    }
 }

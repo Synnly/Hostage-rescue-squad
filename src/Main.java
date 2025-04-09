@@ -25,6 +25,8 @@ public class Main extends Application {
         VueMenu vueMenu = new VueMenu(env);
         VuePA vuePA = new VuePA(env);
         VueGlobale vueGlobale = new VueGlobale(env);
+        VueActionRecommandee vueActionRecommandee = new VueActionRecommandee(env);
+
 
 
         loader.setControllerFactory(iC->{
@@ -33,6 +35,8 @@ public class Main extends Application {
             else if (iC.equals(VueActions.class)) return vueActions;
             else if (iC.equals(VueMenu.class)) return vueMenu;
             else if (iC.equals(VueGlobale.class)) return vueGlobale;
+            else if (iC.equals(VueActionRecommandee.class)) return vueActionRecommandee;
+
             else return null;
         });
 
