@@ -1,4 +1,4 @@
-package carte;
+package carte.cases;
 
 import observable.Environnement;
 

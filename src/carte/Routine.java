@@ -1,5 +1,8 @@
 package carte;
 
+import carte.cases.AucuneCase;
+import carte.cases.Case;
+
 import java.util.ArrayList;
 import java.util.List;
 

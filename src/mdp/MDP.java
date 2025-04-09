@@ -7,8 +7,8 @@ import java.util.Map;
 
 public interface MDP {
 
-    double valeurReussite = 900;
-    double valeurObjectif = 100;
+    double valeurReussite = 500;
+    double valeurObjectif = 500;
     double valeurEchec = -1000;
     double valeurDeltaMenace = 0; // > 0 quand niveau de menace augmente, < 0 sinon
     double valeurTuerEnnemi = 0;

@@ -1,6 +1,6 @@
 package coups;
 
-import carte.Case;
+import carte.cases.Case;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Personnage;

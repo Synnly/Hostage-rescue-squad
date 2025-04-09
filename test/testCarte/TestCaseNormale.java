@@ -1,6 +1,6 @@
 package testCarte;
 
-import carte.CaseNormale;
+import carte.cases.CaseNormale;
 import observable.Environnement;
 import org.junit.After;
 import org.junit.Before;

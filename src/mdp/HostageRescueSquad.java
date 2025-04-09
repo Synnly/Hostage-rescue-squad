@@ -1,7 +1,7 @@
 package mdp;
 
-import carte.AucuneCase;
-import carte.Case;
+import carte.cases.AucuneCase;
+import carte.cases.Case;
 import carte.Routine;
 import coups.Coup;
 import observable.Environnement;

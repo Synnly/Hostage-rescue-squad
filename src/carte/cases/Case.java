@@ -1,9 +1,7 @@
-package carte;
+package carte.cases;
 
 import observable.Environnement;
 import outils.FabriqueIdentifiant;
-
-import java.util.Objects;
 
 /**
  * Type abstrait représentant une case du plateau.

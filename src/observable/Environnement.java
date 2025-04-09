@@ -1,5 +1,8 @@
 package observable;
 
+import carte.cases.*;
+import carte.separation.Mur;
+import carte.separation.Separation;
 import coups.*;
 import carte.*;
 import mdp.*;
@@ -18,6 +21,7 @@ public class Environnement extends Observable{
     private int largeur;
     private int hauteur;
     private List<Case> cases;
+    private List<Separation> separations;
     private Operateur operateur;
     private List<Terroriste> ennemis;
     private final int maxMenace = 7;
@@ -73,6 +77,10 @@ public class Environnement extends Observable{
         for(Case c:env.cases){
             cases.add(c.copy());
         }
+        this.separations = new ArrayList<>();
+        for(Separation sep : env.separations){
+            separations.add(sep.copy());
+        }
         this.ennemis = new ArrayList<>();
         for(Terroriste t:env.ennemis){
             ennemis.add(t.copy());
@@ -87,35 +95,8 @@ public class Environnement extends Observable{
      */
     public void nouvellePartie(){
         cases = new ArrayList<>();
+        separations = new ArrayList<>();
         initPlateau(largeur, hauteur);
-
-        // Couvertures (temporaire)
-        cases.set(1, new Couverture(this, 1, 0));
-        cases.set(4, new Couverture(this, 4, 0));
-        cases.set(9, new Couverture(this, 2, 1));
-        cases.set(19, new Couverture(this, 5, 2));
-//        cases.set(31, new Couverture(this, 3, 4));
-        cases.set(29, new Couverture(this, 1, 4));
-        cases.set(32, new Couverture(this, 4, 4));
-
-        cases.set(15,new Couverture(this,1,2));
-        cases.set(22,new Couverture(this,1,3));
-        cases.set(36,new Couverture(this,1,5));
-        cases.set(43,new Couverture(this,1,6));
-        cases.set(50,new Couverture(this,1,7));
-        cases.set(57,new Couverture(this,1,8));
-        cases.set(64,new Couverture(this,1,9));
-
-        cases.set(26, new Couverture(this, 5, 3));
-        cases.set(33, new Couverture(this, 5, 4));
-        cases.set(40, new Couverture(this, 5, 5));
-        cases.set(47, new Couverture(this, 5, 6));
-        cases.set(54, new Couverture(this, 5, 7));
-        cases.set(61, new Couverture(this, 5, 8));
-        cases.set(68, new Couverture(this, 5, 9));
-
-        cases.set(16, new Couverture(this, 2, 2));
-        cases.set(18, new Couverture(this, 4, 2));
 
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
@@ -255,6 +236,7 @@ public class Environnement extends Observable{
         assert largeur > 0 : "La largeur doit être > 0 (largeur =" + largeur + ")";
         assert hauteur > 0 : "La hauteur doit être > 0 (hauteur =" + hauteur + ")";
 
+        // Cases
         cases.clear();
         for (int y = 0; y < hauteur; y++) {
             for (int x = 0; x < largeur; x++) {
@@ -264,6 +246,45 @@ public class Environnement extends Observable{
         int x = (largeur/2);
         int y = (hauteur/4);
         cases.set(y * largeur + x, new Objectif(this, x, y));
+
+        // Couvertures (temporaire)
+        cases.set(1, new Couverture(this, 1, 0));
+        cases.set(4, new Couverture(this, 4, 0));
+        cases.set(9, new Couverture(this, 2, 1));
+        cases.set(19, new Couverture(this, 5, 2));
+//        cases.set(31, new Couverture(this, 3, 4));
+        cases.set(29, new Couverture(this, 1, 4));
+        cases.set(32, new Couverture(this, 4, 4));
+
+//        cases.set(15,new Couverture(this,1,2));
+//        cases.set(22,new Couverture(this,1,3));
+//        cases.set(36,new Couverture(this,1,5));
+//        cases.set(43,new Couverture(this,1,6));
+//        cases.set(50,new Couverture(this,1,7));
+//        cases.set(57,new Couverture(this,1,8));
+//        cases.set(64,new Couverture(this,1,9));
+//
+//        cases.set(26, new Couverture(this, 5, 3));
+//        cases.set(33, new Couverture(this, 5, 4));
+//        cases.set(40, new Couverture(this, 5, 5));
+//        cases.set(47, new Couverture(this, 5, 6));
+//        cases.set(54, new Couverture(this, 5, 7));
+//        cases.set(61, new Couverture(this, 5, 8));
+//        cases.set(68, new Couverture(this, 5, 9));
+//
+//        cases.set(16, new Couverture(this, 2, 2));
+//        cases.set(18, new Couverture(this, 4, 2));
+
+        // Murs
+        separations.clear();
+        separations.add(new Mur(getCase(3, 0), getCase(3, 1)));
+        separations.add(new Mur(getCase(4, 0), getCase(4, 1)));
+        separations.add(new Mur(getCase(4, 2), getCase(5, 2)));
+        separations.add(new Mur(getCase(4, 3), getCase(5, 3)));
+        separations.add(new Mur(getCase(2, 3), getCase(2, 4)));
+        separations.add(new Mur(getCase(3, 3), getCase(3, 4)));
+        separations.add(new Mur(getCase(1, 1), getCase(2, 1)));
+        separations.add(new Mur(getCase(1, 2), getCase(2, 2)));
     }
 
     /**
@@ -612,5 +633,7 @@ public class Environnement extends Observable{
         return maxMenace;
     }
 
-
+    public List<Separation> getSeparations(){
+        return separations;
+    }
 }
