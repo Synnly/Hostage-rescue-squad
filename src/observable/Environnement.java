@@ -433,11 +433,13 @@ public class Environnement extends Observable{
     public void printPrediction(){
         coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
 
-
-
-
         System.out.println(coupPreditToString());
     }
+
+    /**
+     * Retourne la chaîne de caractère correspondant au conseil de l'IA
+     * @return le coup prédit (String)
+     */
     public String coupPreditToString(){
         StringBuilder sb = new StringBuilder("L'ia vous conseille de ");
         if (coupPredit.getValue0().estFinTour()) {
@@ -625,9 +627,8 @@ public class Environnement extends Observable{
      * Exécute l'action recomandée par l'IA
      */
     public void executerActionRecommandee(){
-        int x = operateur.getX();
-        int y = operateur.getY();
-         operateur.setActionActive(coupPredit.getValue0());
+
+        operateur.setActionActive(coupPredit.getValue0());
         switch (coupPredit.getValue1()){
             case HAUT -> operateur.getActionActive().effectuer(this, operateur, this.getCase(operateur.getX(), operateur.getY() - 1));
             case BAS -> operateur.getActionActive().effectuer(this, operateur, this.getCase(operateur.getX(), operateur.getY() + 1));

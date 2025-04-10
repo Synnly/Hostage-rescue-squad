@@ -6,6 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import observable.Environnement;
 
+/**
+ * Cette Vue permet d'afficher et exécuter les conseilles de l'IA
+ */
 public class VueActionRecommandee extends Observer{
     private final Environnement environnement;
     @FXML
@@ -26,7 +29,6 @@ public class VueActionRecommandee extends Observer{
 
     @Override
     public void handle(ActionEvent actionEvent) {
-        System.out.println("iuchckeccjeincjerncckjnrkejcnrkjnejkncfer");
         environnement.executerActionRecommandee();
     }
 }
