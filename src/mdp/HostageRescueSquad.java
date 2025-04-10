@@ -213,7 +213,7 @@ public class HostageRescueSquad implements MDP{
         else if (coup.estTir()) {
             recomp += Math.max(1, s.indCaseTerroristes.length- sPrime.indCaseTerroristes.length) * valeurTuerEnnemi;
         }
-        else if (coup.estDeplacement()) {
+        else if (coup.estElimSil()) {
             recomp += Math.max(1, s.indCaseTerroristes.length- sPrime.indCaseTerroristes.length) * valeurTuerEnnemi;
         }
         else if (coup.estFinTour()) {
