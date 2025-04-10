@@ -30,6 +30,7 @@ public class Environnement extends Observable{
     private final double probaDeplacementEnnemi = 0.7;
     private final double probaSuccesDeplacement;
     private final double probaSuccesTir;
+    private final double probaElimSil;
     private HostageRescueSquad mdp;
 
 
@@ -44,7 +45,7 @@ public class Environnement extends Observable{
      * @param probaSuccesTir La probabilité de succès des tirs de l'opérateur. Doit être
      *                       0 &le;&nbsp;proba &le;&nbsp;1
      */
-    public Environnement(int largeur, int hauteur, double probaSuccesDeplacement, double probaSuccesTir){
+    public Environnement(int largeur, int hauteur, double probaSuccesDeplacement, double probaSuccesTir, double probaElimSil) {
         assert largeur > 0 : "La largeur doit être > 0 (largeur =" + largeur + ")";
         assert hauteur > 0 : "La hauteur doit être > 0 (hauteur =" + hauteur + ")";
         assert probaSuccesDeplacement <= 1 && probaSuccesDeplacement >= 0 : "La probabilité de succès des déplacements de l'opérateur doit être 0 <= proba <= 1";
@@ -53,6 +54,7 @@ public class Environnement extends Observable{
 
         this.probaSuccesDeplacement = probaSuccesDeplacement;
         this.probaSuccesTir = probaSuccesTir;
+        this.probaElimSil = probaElimSil;
         this.largeur = largeur;
         this.hauteur = hauteur;
         nouvellePartie();
@@ -79,6 +81,7 @@ public class Environnement extends Observable{
         }
         this.probaSuccesDeplacement = env.probaSuccesDeplacement;
         this.probaSuccesTir = env.probaSuccesTir;
+        this.probaElimSil = env.probaElimSil;
         mdp = env.mdp;
     }
 
@@ -120,7 +123,8 @@ public class Environnement extends Observable{
         // Creation des opérateurs
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
         Tir tirOp = new Tir(1, probaSuccesTir);
-        operateur = new Operateur(this, largeur/2 + 1, hauteur-1, 2, deplacementOp, tirOp);
+        EliminationSilencieuse elimSil = new EliminationSilencieuse(1,probaElimSil);
+        operateur = new Operateur(this, largeur/2 + 1, hauteur-1, 2, deplacementOp, tirOp,elimSil);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -369,6 +373,14 @@ public class Environnement extends Observable{
         if(missionFinie) nouvellePartie();
 
         printPrediction();
+        notifyObservers();
+    }
+
+    /**
+     * Définit l'action d'élimination silencieuse comme active pour l'opérateur actif
+     */
+    public void setElimSilActionActive(){
+        operateur.setActionActive(operateur.getEliminationSilencieuse());
         notifyObservers();
     }
 

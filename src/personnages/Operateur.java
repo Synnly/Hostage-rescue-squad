@@ -1,6 +1,7 @@
 package personnages;
 
 import coups.Deplacement;
+import coups.EliminationSilencieuse;
 import coups.Tir;
 import observable.Environnement;
 
@@ -9,6 +10,7 @@ import observable.Environnement;
  */
 public class Operateur extends Personnage{
     private boolean possedeObjectif = false;
+    private EliminationSilencieuse eliminationSilencieuse;
 
     /**
      * Constructeur d'un opérateur
@@ -19,9 +21,11 @@ public class Operateur extends Personnage{
      * @param pointsAction Son nombre de points d'actions.&nbsp;Doit être &ge;&nbsp;0.
      * @param deplacement  Son action de déplacement.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      * @param tir          Son action de tir.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
+     * @param elimSil      Son action d'élimination silencieuse.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      */
-    public Operateur(Environnement env, int x, int y, int pointsAction, Deplacement deplacement, Tir tir) {
+    public Operateur(Environnement env, int x, int y, int pointsAction, Deplacement deplacement, Tir tir,EliminationSilencieuse elimSil) {
         super(env, x, y, pointsAction, deplacement, tir);
+        this.eliminationSilencieuse = elimSil;
     }
 
     /**
@@ -31,6 +35,7 @@ public class Operateur extends Personnage{
     public Operateur(Operateur op){
         super(op);
         this.possedeObjectif = op.possedeObjectif;
+        this.eliminationSilencieuse = op.eliminationSilencieuse;
     }
 
     /**
@@ -59,4 +64,9 @@ public class Operateur extends Personnage{
     public boolean estOperateur(){
         return true;
     }
+
+    /**
+     * @return L'action d'élimination silencieuse de l'opérateur
+     */
+    public EliminationSilencieuse getEliminationSilencieuse() {return eliminationSilencieuse;}
 }

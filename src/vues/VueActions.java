@@ -24,10 +24,15 @@ public class VueActions extends Observer{
     /**
      * Le bouton de changement d'action active au fin de tour
      */
-    boutonFinTour;
+    boutonFinTour,
+    /**
+     * Le bouton de changement d'action active à l'élimination silencieuse
+     */
+    boutonElimSil;
+    ;
 
     @FXML
-    public Label probaTir, probaDepl, coutTir, coutDepl;
+    public Label probaTir, probaDepl, probaElimSil, coutTir, coutDepl, coutElimSil;
 
     /**
      * Constructeur de la vue des actions
@@ -46,8 +51,10 @@ public class VueActions extends Observer{
     public void initialize(){
         probaTir.setText(env.getOperateurActif().getTir().probaSucces * 100 + " %");
         probaDepl.setText(env.getOperateurActif().getDeplacement().probaSucces * 100 + " %");
+        probaElimSil.setText(env.getOperateurActif().getEliminationSilencieuse().probaSucces * 100 + " %");
         coutTir.setText(env.getOperateurActif().getTir().cout + " PA");
         coutDepl.setText(env.getOperateurActif().getDeplacement().cout + " PA");
+        coutElimSil.setText(env.getOperateurActif().getEliminationSilencieuse().cout + " PA");
     }
 
     @Override
@@ -79,6 +86,9 @@ public class VueActions extends Observer{
         else if (button.equals(boutonTir)){ // Tir
             env.setTirActionActive();
 
+        }
+        else if (button.equals(boutonElimSil)){
+            env.setElimSilActionActive();
         }
     }
 }
