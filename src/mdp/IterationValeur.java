@@ -1,39 +1,43 @@
 package mdp;
 
+import coups.Coup;
+import org.javatuples.Pair;
+
 import java.util.*;
 
 public class IterationValeur {
-    private static double gamma = 0.9999999999;
-    private static double epsilon = 0.00001;
-    private static Map<Etat, Action> bestActions = new HashMap<>();
+    private static double gamma = 0.99;
+    private static double epsilon = 1e-50;
+    private static Map<Etat, Pair<Coup, Direction>> bestCoup = new HashMap<>();
+    private static Map<Etat, Double> utils;
     /**
      * Calcule la meilleure action à faire à partir de l'état de départ
      * @param mdp Le ldp sur lequel appliquer l'algo
      * @param s L'état de départ
      * @return La meilleure action à effectuer
      */
-    public static Action predict(MDP mdp, Etat s) {
-        if(bestActions.isEmpty()) {
+    public static Pair<Coup, Direction> predict(MDP mdp, Etat s) {
+        if(bestCoup.isEmpty()) {
             iterationValeur(mdp);
         }
-
-        return bestActions.get(s);
+        System.out.println(utils.get(s));
+        return bestCoup.get(s);
     }
 
     /**
      * Calcule la Q-valeur de la transition T(s, a)
      * @param mdp Le mdp sur lequel appliquer l'algo
      * @param s L'état de départ
-     * @param a L'action à effectuer
+     * @param c Le coup à effectuer
      * @param utils Le dictionnaire associant à chaque état son utilité
      * @return La Q-valeur
      */
-    public static double qValeur(MDP mdp, Etat s, Action a, Map<Etat, Double> utils) {
+    public static double qValeur(MDP mdp, Etat s, Coup c, Direction direction, Map<Etat, Double> utils) {
         double util = 0;
         if(!s.estTerminal()) {
-            Map<Etat, Double> distribution = mdp.transition(s, a);
+            Map<Etat, Double> distribution = mdp.transition(s, c, direction);
             for (Etat sPrime : distribution.keySet()) {
-                util += distribution.get(sPrime) * (mdp.recompense(s, a, sPrime) + gamma * utils.get(sPrime));
+                util += distribution.get(sPrime) * (mdp.recompense(s, c, sPrime) + gamma * utils.get(sPrime));
             }
         }
         return util;
@@ -44,15 +48,15 @@ public class IterationValeur {
      * @param mdp Le mdp sur lequel appliquer l'algo
      * @return Le dictionnaire associant à chaque état son utilité
      */
-    public static Map<Etat, Action> iterationValeur(MDP mdp) {
-        Map<Etat, Double> util = new HashMap<>();
-        Map<Etat, Action[]> actions = mdp.getActions();
+    public static Map<Etat, Pair<Coup, Direction>> iterationValeur(MDP mdp) {
+        utils = new HashMap<>();
+        Map<Etat, Pair<Coup, Direction>[]> coups = mdp.getCoups();
         Etat[] etats = mdp.getEtats();
         System.out.println("Itération valeur sur " + etats.length + " états");
 
         for (Etat e : etats) {
-            util.put(e, 0.);
-            bestActions.put(e, null);
+            utils.put(e, 0.);
+            bestCoup.put(e, null);
         }
 
         int nbIter = 0;
@@ -64,26 +68,24 @@ public class IterationValeur {
             for (Etat e : etats) {
                 double max = Double.NEGATIVE_INFINITY;
 
-                for (Action a : actions.get(e)) {
-                    double qval = qValeur(mdp, e, a, util);
+                for (Pair<Coup, Direction> c : coups.get(e)) {
+                    double qval = qValeur(mdp, e, c.getValue0(), c.getValue1(), utils);
 
                     if (qval > max) {
                         max = qval;
-                        bestActions.put(e, a);
+                        bestCoup.put(e, c);
                     }
                 }
-
                 utilClone.put(e, max);
-                delta = Math.max(delta, Math.abs(utilClone.get(e) - util.get(e)));
+                delta = Math.max(delta, Math.abs(utilClone.get(e) - utils.get(e)));
             }
 
-            System.out.println(delta);
-            util = utilClone;
+            utils = utilClone;
             nbIter ++;
         }
         while (delta > epsilon * (1 - gamma) / gamma);
         System.out.println(nbIter + " itérations");
-        return bestActions;
+        return bestCoup;
     }
 }
 

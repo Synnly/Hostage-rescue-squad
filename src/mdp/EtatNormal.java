@@ -8,13 +8,14 @@ public class EtatNormal extends Etat{
      * Constructeur d'un état normal, c'est à dire quand la partie est encore en cours.
      * @param indCaseOperateurs La liste des positions des cases où se situent les opérateurs dans la liste des cases du
      *                          plateau
+     * @param nbPAOperateurs La liste des quantités de points d'action de chaque opérateur
      * @param aObjectif La liste des booléens indiquant si le ie opérateur possède un objectif
      * @param indCaseTerroristes La liste des positions des cases où se situent les terroristes dans la liste des cases
      *                           de la routine
      * @param menace Le niveau de menace
      */
-    public EtatNormal(int[] indCaseOperateurs, boolean[] aObjectif, int[] indCaseTerroristes, int menace) {
-        super(indCaseOperateurs, aObjectif, indCaseTerroristes, menace);
+    public EtatNormal(int[] indCaseOperateurs, int[] nbPAOperateurs, boolean[] aObjectif, int[] indCaseTerroristes, int menace) {
+        super(indCaseOperateurs, nbPAOperateurs, aObjectif, indCaseTerroristes, menace);
     }
 
     /**

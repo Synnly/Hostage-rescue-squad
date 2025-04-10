@@ -176,6 +176,14 @@ public abstract class Personnage {
         pointsAction = maxPointsAction;
     }
 
+    /**
+     * Met à jour les PA de l'opérateur
+     * @param pa Le nouveau nombre de PA
+     */
+    public void setPointsAction(int pa){
+        this.pointsAction = pa;
+    }
+
     public int getMaxPointsAction() {
         return maxPointsAction;
     }

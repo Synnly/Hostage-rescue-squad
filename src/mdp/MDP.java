@@ -1,23 +1,26 @@
 package mdp;
 
+import coups.Coup;
+import org.javatuples.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public interface MDP {
 
-    double valeurReussite = 500;
-    double valeurObjectif = 50000;
-    double valeurEchec = -9e15;
-    double valeurDeltaMenace = 2; // > 0 quand niveau de menace augmente, < 0 sinon
-    double valeurTuerEnnemi = 2;
-    double valeurDeplacement = -1;
+    double valeurReussite = 900;
+    double valeurObjectif = 100;
+    double valeurEchec = -1000;
+    double valeurDeltaMenace = 0; // > 0 quand niveau de menace augmente, < 0 sinon
+    double valeurTuerEnnemi = 0;
+    double valeurDeplacement = -40;
 
     /**
      * Calcule les actions valides pouvant être effectués pour chaque état
      * @return Le dictionnaire qui associe à chaque état la liste des actions valides
      */
-    Map<Etat, Action[]> getActions();
+    Map<Etat, Pair<Coup, Direction>[]> getCoups();
 
     /**
      * Calcule l'ensemble des états possibles
@@ -28,19 +31,20 @@ public interface MDP {
     /**
      * Calcule la distribution de probabilité pour tous les états accessibles à partir de l'état de depart et de l'action
      * effectuée
-     * @param s L'état de départ
-     * @param a L'action à effectuer
+     * @param etatDepart L'état de départ
+     * @param coup Le coup à effectuer
      * @return Le dictionnaire qui associe à chaque état la probabilité d'y arriver
      */
-    Map<Etat, Double> transition(Etat s, Action a);
+    Map<Etat, Double> transition(Etat etatDepart, Coup coup, Direction direction);
 
     /**
      * Calcule la récompense de la transition T(s, a, s')
      * @param s L'état de départ
-     * @param a L'action à effectuer
+     * @param c Le coup à effectuer
      * @param sPrime L'état d'arrivée
      * @return La récompense
      */
+    double recompense(Etat s, Coup c, Etat sPrime);
     double recompense(Etat s, Action a, Etat sPrime);
     /**
      * Parmis toutes les actions possibles, on choisi celle qui nous rapproche le plus de l'objectif, sans nous tuer

@@ -73,7 +73,7 @@ public class VuePlateau extends Observer {
                 button.setMinWidth(gridPane.getWidth()/largeur);
                 button.setMinHeight((gridPane.getHeight() - 40)/hauteur);
                 button.setStyle("-fx-background-color: #ffffff; -fx-border-color: gray");
-                button.setText(x + ","+ y);
+                button.setText(y * env.getLargeur() + x + "");
                 button.setOnAction(this);
                 gridPane.add(button, x, y);
                 boutons[x][y] = button;
@@ -147,7 +147,7 @@ public class VuePlateau extends Observer {
                 }
 
                 boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor + "; -fx-text-fill: " + textColor);
-                boutons[x][y].setText(x + ","+ y);
+                boutons[x][y].setText(y * env.getLargeur() + x + "");
             }
         }
     }
