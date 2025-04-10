@@ -17,7 +17,6 @@ public class VueActionRecommandee extends Observer{
         super(sujet);
         this.environnement = sujet;
         environnement.ajouterObserver(this);
-
     }
 
     @Override
@@ -28,6 +27,6 @@ public class VueActionRecommandee extends Observer{
     @Override
     public void handle(ActionEvent actionEvent) {
         System.out.println("iuchckeccjeincjerncckjnrkejcnrkjnejkncfer");
-
+        environnement.executerActionRecommandee();
     }
 }

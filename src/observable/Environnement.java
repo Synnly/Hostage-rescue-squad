@@ -620,7 +620,28 @@ public class Environnement extends Observable{
     }
 
 
-    public Pair<Coup, Direction> getCoupPredit() {
-        return coupPredit;
+
+    /**
+     * Exécute l'action recomandée par l'IA
+     */
+    public void executerActionRecommandee(){
+        int x = operateur.getX();
+        int y = operateur.getY();
+         operateur.setActionActive(coupPredit.getValue0());
+        switch (coupPredit.getValue1()){
+            case HAUT -> operateur.getActionActive().effectuer(this, operateur, this.getCase(operateur.getX(), operateur.getY() - 1));
+            case BAS -> operateur.getActionActive().effectuer(this, operateur, this.getCase(operateur.getX(), operateur.getY() + 1));
+            case GAUCHE -> operateur.getActionActive().effectuer(this, operateur, this.getCase(operateur.getX() - 1, operateur.getY()));
+            case DROITE -> operateur.getActionActive().effectuer(this, operateur, this.getCase(operateur.getX() + 1, operateur.getY()));
+            case AUCUN -> operateur.getActionActive().effectuer(this, operateur, AucuneCase.instance);
+        }
+        if(operateur.getPointsAction() == 0){
+            tourEnnemi();
+        }
+
+        if(missionFinie) nouvellePartie();
+
+        printPrediction();
+        notifyObservers();
     }
 }
