@@ -29,7 +29,7 @@ public class EliminationSilencieuse extends Coup{
     @Override
     public void effectuer(Environnement env, Personnage perso, Case arr) {
         if(perso.estOperateur()){
-            effectuer(env, perso, arr);
+            effectuer(env, (Operateur) perso, arr);
             return;
         }
     }
@@ -43,7 +43,7 @@ public class EliminationSilencieuse extends Coup{
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
         if(perso.getPointsAction() < this.cout){
-            System.out.println("Pas assez de PA pour effectuer l'action");
+            //System.out.println("Pas assez de PA pour effectuer l'action");
         }else{
             if(env.aEnnemisSurCase(arr)){
                 List<Double> nombres = env.getNombresAleatoires(1);
@@ -52,6 +52,9 @@ public class EliminationSilencieuse extends Coup{
                 }
                 else {
                     env.tuerEnnemis(arr);
+                    if (env.tousTerrsMorts()) {
+                        env.resetMenace();
+                    }
                     perso.removePointsAction(cout);
                 }
 

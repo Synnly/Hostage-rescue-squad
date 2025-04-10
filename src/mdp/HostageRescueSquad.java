@@ -34,7 +34,7 @@ public class HostageRescueSquad implements MDP{
         }
 
         Operateur op = env.getOperateurActif();
-        Coup[] listeCoups = {op.getDeplacement(), op.getTir()};
+        Coup[] listeCoups = {op.getDeplacement(), op.getTir(), op.getEliminationSilencieuse()};
         Map<Etat, Pair<Coup, Direction>[]> coups = new HashMap<>();
 
         Etat[] etats = getEtats();
@@ -213,6 +213,9 @@ public class HostageRescueSquad implements MDP{
         else if (coup.estTir()) {
             recomp += Math.max(1, s.indCaseTerroristes.length- sPrime.indCaseTerroristes.length) * valeurTuerEnnemi;
         }
+        else if (coup.estDeplacement()) {
+            recomp += Math.max(1, s.indCaseTerroristes.length- sPrime.indCaseTerroristes.length) * valeurTuerEnnemi;
+        }
         else if (coup.estFinTour()) {
             recomp += valeurDeplacement;
         }
@@ -282,10 +285,16 @@ public class HostageRescueSquad implements MDP{
 
         // A enlever quand respawn d'ennemis
         // Niveau de menace != minMenace + nbEnnemisMorts quand tous ennemis pas morts
-        if(nbEnnemisMorts != env.getEnnemis().size() && e.menace != nbEnnemisMorts + env.getMinMenace()){
+        /*
+        if(e.menace > env.getMinMenace() + env.getEnnemis().size()){
+            if(e.estNormal()){
+                if ( e.equals(new EtatNormal(new int[]{11},new int[]{2},new boolean[]{false},new int[]{1, -1},5))) {
+                    System.out.println("oui");
+                }
+            }
             return false;
         }
-
+        */
         // Nombre de PA cohérent
         int maxPA = env.getOperateurActif().getMaxPointsAction();
         boolean opEnJeu = false;

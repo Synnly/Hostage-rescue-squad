@@ -2,6 +2,8 @@ package mdp;
 
 import observable.Environnement;
 
+import java.util.Arrays;
+
 public class EtatNormal extends Etat{
 
     /**
@@ -35,4 +37,11 @@ public class EtatNormal extends Etat{
     public boolean estReussite() {
         return false;
     }
+
+
+    boolean equals(EtatNormal en){
+        return Arrays.equals(indCaseOperateurs, en.indCaseOperateurs) && Arrays.equals(indCaseTerroristes, en.indCaseTerroristes) && menace == en.menace && Arrays.equals(nbPAOperateurs, en.nbPAOperateurs) && Arrays.equals(aObjectif, en.aObjectif);
+    }
+    @Override
+    public boolean estNormal(){return true;}
 }

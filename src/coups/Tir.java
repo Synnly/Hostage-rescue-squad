@@ -199,14 +199,7 @@ public class Tir extends Coup {
             return;
         }
         env.tuerEnnemis(c);
-        boolean tousTerrsMorts = true;
-        for (Terroriste t : env.getEnnemis()) {
-            if (t.getX() != -1 || t.getY() != -1) {
-                tousTerrsMorts = false;
-                break;
-            }
-        }
-        if (tousTerrsMorts) {
+        if (env.tousTerrsMorts()) {
             env.resetMenace();
         } else {
             env.augmenterMenace();

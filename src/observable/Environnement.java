@@ -624,5 +624,16 @@ public class Environnement extends Observable{
         return maxMenace;
     }
 
+    public boolean tousTerrsMorts() {
+        boolean tousTerrsMorts = true;
+        for (Terroriste t : getEnnemis()) {
+            if (t.getX() != -1 || t.getY() != -1) {
+                tousTerrsMorts = false;
+                break;
+            }
+        }
+        return tousTerrsMorts;
+    }
+
 
 }
