@@ -37,6 +37,7 @@ public class IterationValeur {
         if(!s.estTerminal()) {
             Map<Etat, Double> distribution = mdp.transition(s, c, direction);
             for (Etat sPrime : distribution.keySet()) {
+
                 util += distribution.get(sPrime) * (mdp.recompense(s, c, sPrime) + gamma * utils.get(sPrime));
             }
         }

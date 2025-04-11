@@ -10,8 +10,8 @@ public interface MDP {
     double valeurReussite = 900;
     double valeurObjectif = 100;
     double valeurEchec = -1000;
-    double valeurDeltaMenace = 0; // > 0 quand niveau de menace augmente, < 0 sinon
-    double valeurTuerEnnemi = 0;
+    double valeurDeltaMenace = 100; // > 0 quand niveau de menace augmente, < 0 sinon
+    double valeurTuerEnnemi = 50;
     double valeurDeplacement = -40;
 
     /**

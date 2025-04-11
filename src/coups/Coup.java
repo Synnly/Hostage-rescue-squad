@@ -112,4 +112,9 @@ public abstract class Coup {
     public boolean estFinTour(){
         return false;
     }
+
+    /**
+     * Indique si le coup est une élimination silencieuse
+     */
+    public boolean estElimSil(){return false;}
 }

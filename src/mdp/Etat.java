@@ -81,5 +81,9 @@ public abstract class Etat{
                 ", menace=" + menace +
                 '}';
     }
+
+    public boolean estNormal(){
+        return false;
+    }
 }
 
