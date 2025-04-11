@@ -66,31 +66,7 @@ public class EliminationSilencieuse extends Coup{
 
     @Override
     public List<Case> getCasesValides(Environnement env, Personnage perso) {
-        ArrayList<Case> cases = new ArrayList<>();
-        int persoX = perso.getX();
-        int persoY = perso.getY();
-        boolean skip;
-
-        if(persoX < env.getLargeur() - 1 && env.aEnnemisSurCase(env.getCase(persoX + 1, persoY))) {
-            skip = false;
-            for(Separation sep:env.getSeparations()){
-                if(!sep.estVertical() || sep.getCase1().y != persoY) continue;
-                if((sep.getCase1().x == persoX && sep.getCase2().x == persoX + 1) || (sep.getCase2().x == persoX && sep.getCase1().x == persoX + 1)) skip = true;
-                if(skip) break;
-            }
-            if(!skip) cases.add(env.getCase(persoX + 1, persoY));
-        }
-        if(persoX > 0 && env.aEnnemisSurCase(env.getCase(persoX - 1, persoY))) {
-            cases.add(env.getCase(persoX - 1, persoY));
-        }
-        if(persoY < env.getHauteur() - 1 && env.aEnnemisSurCase(env.getCase(persoX, persoY+1))) {
-            cases.add(env.getCase(persoX, persoY + 1));
-        }
-        if(persoY > 0 && env.aEnnemisSurCase(env.getCase(persoX, persoY-1))) {
-            cases.add(env.getCase(persoX, persoY - 1));
-        }
-
-        return cases;
+        return getCasesValides(env, env.getCase(perso.getX(), perso.getY()));
     }
 
     /**
