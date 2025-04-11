@@ -8,7 +8,7 @@
 <HBox fx:controller="vues.VueActionRecommandee"  maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="36.0" prefWidth="527.0" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Button fx:id="executerAction" mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" text="Exécuter Action" onAction="#handle"/>
-      <TextField fx:id="conseilIA" editable="false" prefHeight="26.0" prefWidth="381.0" />
+      <TextField fx:id="conseilIA" editable="false" prefHeight="26.0" prefWidth="350.0" />
    </children>
    <padding>
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

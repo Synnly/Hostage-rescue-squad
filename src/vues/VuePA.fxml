@@ -11,7 +11,7 @@
       <Label text="PA restants" BorderPane.alignment="CENTER" />
    </top>
    <center>
-      <ProgressBar fx:id="progressbarPA" prefWidth="200.0" progress="0.96" BorderPane.alignment="CENTER">
+      <ProgressBar fx:id="progressbarPA" prefWidth="130.0" progress="0.96" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
