@@ -170,6 +170,14 @@ public class Tir extends Coup {
                         peutVoir = false;
                         break;
                     }
+                    for(Separation sep : env.getSeparations()){
+                        if(!sep.estVertical()) continue;
+                        // Separation uniquement ENTRE terro et op
+                        if(sep.getCase1().y != caseDepart.y) continue;
+                        if(sep.getCase1().x > max || sep.getCase1().x < min) continue;
+                        if(sep.getCase2().x > max || sep.getCase2().x < min) continue;
+                        if(!sep.peutVoir()) peutVoir = false;
+                    }
                 }
             }
             else if (caseDepart.x == c.x) { // Perso et case sur la meme colonne
@@ -180,6 +188,14 @@ public class Tir extends Coup {
                     if (!env.getCase(caseDepart.x, y).peutVoir) {
                         peutVoir = false;
                         break;
+                    }
+                    for(Separation sep : env.getSeparations()){
+                        if(sep.estVertical()) continue;
+                        // Separation uniquement ENTRE terro et op
+                        if(sep.getCase1().x != caseDepart.x) continue;
+                        if(sep.getCase1().y > max || sep.getCase1().y < min) continue;
+                        if(sep.getCase2().y > max || sep.getCase2().y < min) continue;
+                        if(!sep.peutVoir()) peutVoir = false; // Separation valide mais pas visible
                     }
                 }
             }
