@@ -1,10 +1,10 @@
 package observable;
 
-import carte.cases.*;
 import carte.separation.Mur;
 import carte.separation.Separation;
 import coups.*;
-import carte.*;
+import carte.cases.*;
+import carte.Routine;
 import mdp.*;
 import org.javatuples.Pair;
 import personnages.*;
