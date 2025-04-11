@@ -1,16 +1,15 @@
 package vues;
 
-import carte.Case;
+import carte.cases.Case;
+import carte.separation.Separation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuBar;
 import javafx.scene.layout.GridPane;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Terroriste;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -113,7 +112,8 @@ public class VuePlateau extends Observer {
         for (int x = 0; x < env.getLargeur(); x++) {
             for (int y = 0; y < env.getHauteur(); y++) {
                 String bgColor = "white";
-                String bdColor = "gray";
+                String leftBdColor = "gray"; String rightBdColor = "gray"; String botBdColor = "gray"; String topBdColor = "gray";
+                String leftBdWidth = "1px"; String rightBdWidth = "1px"; String botBdWidth = "1px"; String topBdWidth = "1px";
                 String textColor = "black";
 
                 if(!env.getCase(x, y).peutVoir){    // Couverture
@@ -141,12 +141,62 @@ public class VuePlateau extends Observer {
                     }
                 }
 
-                // TOUJOURS LAISSER CETTE LIGNE EN DERNIER
-                if(casesValides.contains(env.getCase(x, y))){   // Cases valides
-                    bdColor = "#ffff00ff";
+                // Cases valides
+                if(casesValides.contains(env.getCase(x, y))){
+                    leftBdColor = "#ffff00ff";
+                    rightBdColor = "#ffff00ff";
+                    botBdColor = "#ffff00ff";
+                    topBdColor = "#ffff00ff";
                 }
 
-                boutons[x][y].setStyle("-fx-background-color:" + bgColor + "; -fx-border-color:" + bdColor + "; -fx-text-fill: " + textColor);
+                // Separations
+                for(Separation sep : env.getSeparations()){
+                    if(sep.getCase1() == env.getCase(x, y)){
+                        if(sep.getCase1().x == sep.getCase2().x){   // Separation horizontale
+                            if(sep.getCase1().y > sep.getCase2().y) {
+                                topBdColor = "black";
+                                topBdWidth = "2px";
+                            }
+                            else {
+                                botBdColor = "black";
+                                botBdWidth = "2px";
+                            }
+                        }
+                        else{   // Separation verticale
+                            if(sep.getCase1().x > sep.getCase2().x) {
+                                leftBdColor = "black";
+                                leftBdWidth = "2px";
+                            }
+                            else {
+                                rightBdColor = "black";
+                                rightBdWidth = "2px";
+                            }
+                        }
+                    } else if (sep.getCase2() == env.getCase(x, y)) {
+                        if(sep.getCase1().x == sep.getCase2().x){   // Separation horizontale
+                            if(sep.getCase1().y < sep.getCase2().y) {
+                                topBdColor = "black";
+                                topBdWidth = "2px";
+                            }
+                            else {
+                                botBdColor = "black";
+                                botBdWidth = "2px";
+                            }
+                        }
+                        else{   // Separation verticale
+                            if(sep.getCase1().x < sep.getCase2().x) {
+                                leftBdColor = "black";
+                                leftBdWidth = "2px";
+                            }
+                            else {
+                                rightBdColor = "black";
+                                rightBdWidth = "2px";
+                            }
+                        }
+                    }
+                }
+                String style = String.format("-fx-background-color: %s; -fx-border-color: %s %s %s %s; -fx-border-width: %s %s %s %s; -fx-text-fill: %s", bgColor, topBdColor, rightBdColor, botBdColor, leftBdColor, topBdWidth, rightBdWidth, botBdWidth, leftBdWidth, textColor);
+                boutons[x][y].setStyle(style);
                 boutons[x][y].setText(y * env.getLargeur() + x + "");
             }
         }

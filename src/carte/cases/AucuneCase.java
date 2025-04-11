@@ -1,4 +1,4 @@
-package carte;
+package carte.cases;
 
 public class AucuneCase extends Case{
     public static final AucuneCase instance = new AucuneCase(-1, -1, true);

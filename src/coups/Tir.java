@@ -1,6 +1,7 @@
 package coups;
 
-import carte.Case;
+import carte.cases.Case;
+import carte.separation.Separation;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Personnage;
@@ -59,13 +60,21 @@ public class Tir extends Coup {
      * @param terro Le terroriste effectuant le tir
      * @param arr La destination
      */
-    public void effectuer(Environnement env, Terroriste terro, Case arr){
+    public void effectuer(Environnement env, Terroriste terro, Case arr){;
         if (terro.getY() == arr.y){ // Ennemi et case sur la meme ligne
             int min = Math.min(terro.getX(), arr.x);
             int max = Math.max(terro.getX(), arr.x);
             for(int x = min; x <= max; x++){    // Verification de la visibilité
                 if(!env.getCase(x, terro.getY()).peutVoir() && x != terro.getX()){
                     return;
+                }
+                for(Separation sep : env.getSeparations()){
+                    if(!sep.estVertical()) continue;
+                    // Separation uniquement ENTRE terro et op
+                    if(sep.getCase1().y != terro.getY()) continue;
+                    if(sep.getCase1().x > max || sep.getCase1().x < min) continue;
+                    if(sep.getCase2().x > max || sep.getCase2().x < min) continue;
+                    if(!sep.peutVoir()) return;
                 }
             }
             env.terminerMission(false);
@@ -78,6 +87,14 @@ public class Tir extends Coup {
                 if(!env.getCase(terro.getX(), y).peutVoir() && y != terro.getY()){
                     return;
                 }
+            }
+            for(Separation sep : env.getSeparations()){
+                if(sep.estVertical()) continue;
+                // Separation uniquement ENTRE terro et op
+                if(sep.getCase1().x != terro.getX()) continue;
+                if(sep.getCase1().y > max || sep.getCase1().y < min) continue;
+                if(sep.getCase2().y > max || sep.getCase2().y < min) continue;
+                if(!sep.peutVoir()) return; // Separation valide mais pas visible
             }
             env.terminerMission(false);
         }
@@ -153,6 +170,14 @@ public class Tir extends Coup {
                         peutVoir = false;
                         break;
                     }
+                    for(Separation sep : env.getSeparations()){
+                        if(!sep.estVertical()) continue;
+                        // Separation uniquement ENTRE terro et op
+                        if(sep.getCase1().y != caseDepart.y) continue;
+                        if(sep.getCase1().x > max || sep.getCase1().x < min) continue;
+                        if(sep.getCase2().x > max || sep.getCase2().x < min) continue;
+                        if(!sep.peutVoir()) peutVoir = false;
+                    }
                 }
             }
             else if (caseDepart.x == c.x) { // Perso et case sur la meme colonne
@@ -163,6 +188,14 @@ public class Tir extends Coup {
                     if (!env.getCase(caseDepart.x, y).peutVoir) {
                         peutVoir = false;
                         break;
+                    }
+                    for(Separation sep : env.getSeparations()){
+                        if(sep.estVertical()) continue;
+                        // Separation uniquement ENTRE terro et op
+                        if(sep.getCase1().x != caseDepart.x) continue;
+                        if(sep.getCase1().y > max || sep.getCase1().y < min) continue;
+                        if(sep.getCase2().y > max || sep.getCase2().y < min) continue;
+                        if(!sep.peutVoir()) peutVoir = false; // Separation valide mais pas visible
                     }
                 }
             }
@@ -223,15 +256,18 @@ public class Tir extends Coup {
 
             int min = Math.min(perso.getY(), yCase);
             int max = Math.max(perso.getY(), yCase);
-            boolean skipIter = false;
             for (int y = min; y <= max; y++) {
                 if (!env.getCase(perso.getX(), y).peutVoir() && y != perso.getY()) {
-                    skipIter = true;
-                    break;
+                    continue;
                 }
-            }
-            if (skipIter){
-                continue;
+                for(Separation sep : env.getSeparations()){
+                    if(sep.estVertical()) continue;
+                    // Separation uniquement ENTRE terro et op
+                    if(sep.getCase1().x != perso.getX()) continue;
+                    if(sep.getCase1().y > max || sep.getCase1().y < min) continue;
+                    if(sep.getCase2().y > max || sep.getCase2().y < min) continue;
+                    if(!sep.peutVoir()) return; // Separation valide mais pas visible
+                }
             }
 
             if (env.aEnnemisSurCase(c)) {
@@ -258,15 +294,18 @@ public class Tir extends Coup {
 
             int min = Math.min(perso.getX(), c.x);
             int max = Math.max(perso.getX(), c.x);
-            boolean skipIter = false;
             for(int x = min; x <= max; x++){
                 if(!env.getCase(x, perso.getY()).peutVoir() && x != perso.getX()){
-                    skipIter = true;
-                    break;
+                    continue;
                 }
-            }
-            if (skipIter){
-                continue;
+                for(Separation sep : env.getSeparations()){
+                    if(!sep.estVertical()) continue;
+                    // Separation uniquement ENTRE terro et op
+                    if(sep.getCase1().y != perso.getY()) continue;
+                    if(sep.getCase1().x > max || sep.getCase1().x < min) continue;
+                    if(sep.getCase2().x > max || sep.getCase2().x < min) continue;
+                    if(!sep.peutVoir()) return;
+                }
             }
 
             if (env.aEnnemisSurCase(c)) {

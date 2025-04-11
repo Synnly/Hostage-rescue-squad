@@ -6,8 +6,8 @@ import org.javatuples.Pair;
 import java.util.*;
 
 public class IterationValeur {
-    private static double gamma = 0.99;
-    private static double epsilon = 1e-50;
+    private static double gamma = 0.9935;
+    private static double epsilon = 0.001;
     private static Map<Etat, Pair<Coup, Direction>> bestCoup = new HashMap<>();
     private static Map<Etat, Double> utils;
     /**
@@ -83,6 +83,7 @@ public class IterationValeur {
 
             utils = utilClone;
             nbIter ++;
+            System.out.println(nbIter + " " + delta + " " + (epsilon * (1 - gamma) / gamma));
         }
         while (delta > epsilon * (1 - gamma) / gamma);
         System.out.println(nbIter + " itérations");

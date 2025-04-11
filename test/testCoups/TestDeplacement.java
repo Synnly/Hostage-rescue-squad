@@ -1,8 +1,8 @@
 package testCoups;
 import coups.Deplacement;
 import coups.Tir;
-import carte.Case;
-import carte.CaseNormale;
+import carte.cases.Case;
+import carte.cases.CaseNormale;
 import observable.Environnement;
 import org.junit.After;
 import org.junit.Before;

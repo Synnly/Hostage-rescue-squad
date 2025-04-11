@@ -1,7 +1,9 @@
 package coups;
 
-import carte.Case;
-import carte.Objectif;
+import carte.cases.AucuneCase;
+import carte.cases.Case;
+import carte.cases.Objectif;
+import carte.separation.Separation;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Personnage;
@@ -87,14 +89,26 @@ public class Deplacement extends Coup {
 //            System.out.println("Pas assez de PA (" + distance + " =/= " + perso.getPointsAction() + ")");
         }
         else {
-            boolean ennemiPresent = false;
+            boolean peutPasser = true;
             for (Terroriste ennemi: env.getEnnemis()) {
                 if(ennemi.getX() == arr.getX() && ennemi.getY() == arr.getY()){
-                    ennemiPresent = true;
+                    peutPasser = false;
                     break;
                 }
             }
-            if (ennemiPresent) {
+
+            if(peutPasser) {
+                for (Separation sep : env.getSeparations()) {
+                    if ((sep.getCase1() == arr && sep.getCase2() == env.getCase(perso.getX(), perso.getY())) ||
+                            (sep.getCase2() == arr && sep.getCase1() == env.getCase(perso.getX(), perso.getY()))) { // Si separation entre perso et case arr
+                        if (!sep.peutPasser()) {
+                            peutPasser = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!peutPasser) {
 //                System.out.println("Un ennemi est présent sur cette case");
             }
             else {
@@ -124,17 +138,53 @@ public class Deplacement extends Coup {
         int persoX = perso.getX();
         int persoY = perso.getY();
 
-        if(persoX < env.getLargeur() - 1) {
-            cases.add(env.getCase(persoX + 1, persoY));
+        if(persoX < env.getLargeur() - 1) { // Droite
+            boolean skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(!sep.estVertical()) continue;
+                if((sep.getCase1().x == persoX && sep.getCase2().x == persoX + 1) || (sep.getCase2().x == persoX && sep.getCase1().x == persoX + 1)){
+                    skip = true;
+                }
+                if(skip) break;
+            }
+            System.out.println("droite " + skip);
+            if(!skip) cases.add(env.getCase(persoX + 1, persoY));
         }
-        if(persoX > 0) {
-            cases.add(env.getCase(persoX - 1, persoY));
+        if(persoX > 0) {    // Gauche
+            boolean skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(!sep.estVertical()) continue;
+                if((sep.getCase1().x == persoX && sep.getCase2().x == persoX - 1) || (sep.getCase2().x == persoX && sep.getCase1().x == persoX - 1)){
+                    skip = true;
+                }
+                if(skip) break;
+            }
+            System.out.println("gauche " + skip);
+            if(!skip) cases.add(env.getCase(persoX - 1, persoY));
         }
-        if(persoY < env.getHauteur() - 1) {
-            cases.add(env.getCase(persoX, persoY + 1));
+        if(persoY < env.getHauteur() - 1) { // Bas
+            boolean skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(sep.estVertical()) continue;
+                if((sep.getCase1().y == persoY && sep.getCase2().y == persoY + 1) || (sep.getCase2().y == persoY && sep.getCase1().y == persoY + 1)){
+                    skip = true;
+                }
+                if(skip) break;
+            }
+            System.out.println("bas " + skip);
+            if(!skip) cases.add(env.getCase(persoX, persoY + 1));
         }
-        if(persoY > 0) {
-            cases.add(env.getCase(persoX, persoY - 1));
+        if(persoY > 0) {    // Haut
+            boolean skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(sep.estVertical()) continue;
+                if((sep.getCase1().y == persoY && sep.getCase2().y == persoY - 1) || (sep.getCase2().y == persoY && sep.getCase1().y == persoY - 1)){
+                    skip = true;
+                }
+                if(skip) break;
+            }
+            System.out.println("haut " + skip);
+            if(!skip) cases.add(env.getCase(persoX, persoY - 1));
         }
 
         return cases;
@@ -163,20 +213,69 @@ public class Deplacement extends Coup {
         int caseX = caseDepart.x;
         int caseY = caseDepart.y;
         List<Terroriste> ennemis = env.getEnnemis();
+        boolean skip;
 
-        for (Case c: env.getPlateau()) {
-            if(Math.abs(caseX - c.getX()) + Math.abs(caseY - c.getY()) <= 1 && (caseDepart.x != c.x || caseDepart.y != c.y)){ // Distance suffisamment proche
-                boolean aEnnemi = false;
-                for(Terroriste ennemi : ennemis){   // Ennemi présent sur la case ?
-                    if(ennemi.getX() == c.getX() && ennemi.getY() == c.getY()){
-                        aEnnemi = true;
-                        break;
-                    }
-                }
-                if (!aEnnemi) {
-                    cases.add(c);
+        if(caseDepart == AucuneCase.instance) return cases;
+
+        if(caseX < env.getLargeur() - 1) { // Droite
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(!sep.estVertical() || sep.getCase1().y != caseY) continue;
+                if((sep.getCase1().x == caseX && sep.getCase2().x == caseX + 1) || (sep.getCase2().x == caseX && sep.getCase1().x == caseX + 1)) skip = true;
+                if(skip) break;
+            }
+            for(Terroriste t : ennemis){
+                if (t.getX() == caseX + 1 && t.getY() == caseY) {
+                    skip = true;
+                    break;
                 }
             }
+            if(!skip) cases.add(env.getCase(caseX + 1, caseY));
+        }
+        if(caseX > 0) {    // Gauche
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(!sep.estVertical() || sep.getCase1().y != caseY) continue;
+                if((sep.getCase1().x == caseX && sep.getCase2().x == caseX - 1) || (sep.getCase2().x == caseX && sep.getCase1().x == caseX - 1)) skip = true;
+                if(skip) break;
+            }
+            for(Terroriste t : ennemis){
+                if (t.getX() == caseX - 1 && t.getY() == caseY) {
+                    skip = true;
+                    break;
+                }
+            }
+            if(!skip) cases.add(env.getCase(caseX - 1, caseY));
+        }
+        if(caseY < env.getHauteur() - 1) { // Bas
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(sep.estVertical() || sep.getCase1().x != caseX) continue;
+                if((sep.getCase1().y == caseY && sep.getCase2().y == caseY + 1) || (sep.getCase2().y == caseY && sep.getCase1().y == caseY + 1)) skip = true;
+                if(skip) break;
+            }
+            for(Terroriste t : ennemis){
+                if (t.getX() == caseX && t.getY() == caseY + 1) {
+                    skip = true;
+                    break;
+                }
+            }
+            if(!skip) cases.add(env.getCase(caseX, caseY + 1));
+        }
+        if(caseY > 0) {    // Haut
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(sep.estVertical() || sep.getCase1().x != caseX) continue;
+                if((sep.getCase1().y == caseY && sep.getCase2().y == caseY - 1) || (sep.getCase2().y == caseY && sep.getCase1().y == caseY - 1)) skip = true;
+                if(skip) break;
+            }
+            for(Terroriste t : ennemis){
+                if (t.getX() == caseX && t.getY() == caseY - 1) {
+                    skip = true;
+                    break;
+                }
+            }
+            if(!skip) cases.add(env.getCase(caseX, caseY - 1));
         }
         return cases;
     }
