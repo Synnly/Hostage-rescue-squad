@@ -1,7 +1,9 @@
 package coups;
 
+import carte.cases.AucuneCase;
 import carte.cases.Case;
 import carte.cases.Objectif;
+import carte.separation.Separation;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Personnage;
@@ -67,9 +69,16 @@ public class EliminationSilencieuse extends Coup{
         ArrayList<Case> cases = new ArrayList<>();
         int persoX = perso.getX();
         int persoY = perso.getY();
+        boolean skip;
 
         if(persoX < env.getLargeur() - 1 && env.aEnnemisSurCase(env.getCase(persoX + 1, persoY))) {
-            cases.add(env.getCase(persoX + 1, persoY));
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(!sep.estVertical() || sep.getCase1().y != persoY) continue;
+                if((sep.getCase1().x == persoX && sep.getCase2().x == persoX + 1) || (sep.getCase2().x == persoX && sep.getCase1().x == persoX + 1)) skip = true;
+                if(skip) break;
+            }
+            if(!skip) cases.add(env.getCase(persoX + 1, persoY));
         }
         if(persoX > 0 && env.aEnnemisSurCase(env.getCase(persoX - 1, persoY))) {
             cases.add(env.getCase(persoX - 1, persoY));
@@ -107,15 +116,45 @@ public class EliminationSilencieuse extends Coup{
         int caseX = caseDepart.x;
         int caseY = caseDepart.y;
         List<Terroriste> ennemis = env.getEnnemis();
+        boolean skip;
 
-        for (Case c: env.getPlateau()) {
-            if(Math.abs(caseX - c.getX()) + Math.abs(caseY - c.getY()) <= 1 && (caseDepart.x != c.x || caseDepart.y != c.y)){ // Distance suffisamment proche
-                for(Terroriste ennemi : ennemis){   // Ennemi présent sur la case ?
-                    if(ennemi.getX() == c.getX() && ennemi.getY() == c.getY()){
-                        cases.add(c);
-                    }
-                }
+        if(caseDepart == AucuneCase.instance) return cases;
+
+        if(caseX < env.getLargeur() - 1) { // Droite
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(!sep.estVertical() || sep.getCase1().y != caseY) continue;
+                if((sep.getCase1().x == caseX && sep.getCase2().x == caseX + 1) || (sep.getCase2().x == caseX && sep.getCase1().x == caseX + 1)) skip = true;
+                if(skip) break;
             }
+            if(!skip && env.aEnnemisSurCase(env.getCase(caseX + 1, caseY))) cases.add(env.getCase(caseX + 1, caseY));
+        }
+        if(caseX > 0) {    // Gauche
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(!sep.estVertical() || sep.getCase1().y != caseY) continue;
+                if((sep.getCase1().x == caseX && sep.getCase2().x == caseX - 1) || (sep.getCase2().x == caseX && sep.getCase1().x == caseX - 1)) skip = true;
+                if(skip) break;
+            }
+            if(!skip && env.aEnnemisSurCase(env.getCase(caseX - 1, caseY))) cases.add(env.getCase(caseX - 1, caseY));
+        }
+        if(caseY < env.getHauteur() - 1) { // Bas
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(sep.estVertical() || sep.getCase1().x != caseX) continue;
+                if((sep.getCase1().y == caseY && sep.getCase2().y == caseY + 1) || (sep.getCase2().y == caseY && sep.getCase1().y == caseY + 1)) skip = true;
+                if(skip) break;
+            }
+            if(!skip && env.aEnnemisSurCase(env.getCase(caseX, caseY + 1))) cases.add(env.getCase(caseX, caseY + 1));
+        }
+        if(caseY > 0) {    // Haut
+            skip = false;
+            for(Separation sep:env.getSeparations()){
+                if(sep.estVertical() || sep.getCase1().x != caseX) continue;
+                if((sep.getCase1().y == caseY && sep.getCase2().y == caseY - 1) || (sep.getCase2().y == caseY && sep.getCase1().y == caseY - 1)) skip = true;
+                if(skip) break;
+            }
+            if(!skip && env.aEnnemisSurCase(env.getCase(caseX, caseY - 1))) cases.add(env.getCase(caseX, caseY - 1));
         }
         return cases;
     }

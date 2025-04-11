@@ -126,6 +126,7 @@ public class Environnement extends Observable{
 
         missionFinie = false;
         menace = minMenace;
+        if(mdp != null) coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
         System.out.println("NOUVELLE PARTIE");
     }
 
