@@ -18,12 +18,12 @@ public class ExplorationProba {
         double nbEchecs = 0;
         Direction direction;
         Environnement envCopy = new Environnement(env);
-        if(etatDepart.indCaseOperateurs[0] == 31){
-            System.out.println();
-        }
 
         for (int i = 0; i < nbIters; i++) {
-            Map<Etat, Double> distributionDepart = mdp.transition(etatDepart, coup, dir);
+
+            Coup premierCoup = coup.copy();
+            premierCoup.probaSucces = 1;
+            Map<Etat, Double> distributionDepart = mdp.transition(etatDepart, premierCoup, dir);
             Etat etat = tirerEtat(distributionDepart);
             int nbCoups = 1;
 

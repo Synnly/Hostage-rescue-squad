@@ -46,7 +46,7 @@ public class Tir extends Coup {
         if(perso.estOperateur()){
             effectuer(env, (Operateur) perso, arr);
         }
-        else if(perso.estOperateur()){
+        else if(perso.estTerroriste()){
             effectuer(env, (Terroriste) perso, arr);
         }
     }

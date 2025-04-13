@@ -362,10 +362,9 @@ public class Environnement extends Observable{
                 else dir = Direction.HAUT;
 
                 double probaEchec = ExplorationProba.probaEchec(this, mdp, new EtatNormal(this), coup, dir, nbCoupsMax, nbIters, listeCoups);
-//                if(probaEchec >= seuilAvertissement){
-//
-//                }
-                System.out.println("ATTENTION : fin de partie dans " + (probaEchec * 100.) + " % des cas après " + coup + " vers " + dir + " en moins de " + nbCoupsMax + " coups");
+                if(probaEchec >= seuilAvertissement) {
+                    System.out.println("ATTENTION : fin de partie dans " + (probaEchec * 100.) + " % des cas après " + coup + " vers " + dir + " en moins de " + nbCoupsMax + " coups");
+                }
             }
         }
 

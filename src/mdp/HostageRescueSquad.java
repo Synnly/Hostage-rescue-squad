@@ -192,7 +192,12 @@ public class HostageRescueSquad implements MDP{
         envCopy.setEtat(restoreState);
 
         // Transition des ennemis
-        distribution = transitionEnnemis(distribution);
+        if(etatDepart.indCaseOperateurs[0] == 31 && etatDepart.nbPAOperateurs[0] == 2 && etatDepart.indCaseTerroristes[0] == 7 && etatDepart.menace == 2) {
+            distribution = transitionEnnemis(distribution);
+        }
+        else{
+            distribution = transitionEnnemis(distribution);
+        }
 
         // Sauvegarde
         if(transitions.get(etatDepart) == null){
