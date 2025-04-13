@@ -13,46 +13,26 @@ import java.util.Random;
 
 public class ExplorationProba {
 
+    private static int nbThreads = 1;
+
     public static double probaEchec(Environnement env, MDP mdp, Etat etatDepart, Coup coup, Direction dir, int nbCoupsMax, int nbIters, Coup[] listeCoups){
+        ExplorationThread[] threads = new ExplorationThread[nbThreads];
+        double sommeEchecs = 0;
+        double sommeIters = 0;
 
-        double nbEchecs = 0;
-        Direction direction;
-        Environnement envCopy = new Environnement(env);
-
-        for (int i = 0; i < nbIters; i++) {
-
-            Coup premierCoup = coup.copy();
-            premierCoup.probaSucces = 1;
-            Map<Etat, Double> distributionDepart = mdp.transition(etatDepart, premierCoup, dir);
-            Etat etat = tirerEtat(distributionDepart);
-            int nbCoups = 1;
-
-            while(nbCoups < nbCoupsMax && !(etat.estTerminal() && !etat.estReussite())){
-
-                envCopy.setEtat(etat);
-
-                ArrayList<Coup> coupsValides = new ArrayList<>(List.of(listeCoups));
-
-                // Tirage d'un coup ayant des cases valides
-                Coup coupAFaire = tirerCoup(coupsValides);
-                while(coupAFaire.getCasesValides(envCopy, envCopy.getOperateurActif()).isEmpty()){
-                    coupsValides.remove(coupAFaire);
-                    coupAFaire = tirerCoup(coupsValides);
-                }
-
-                // Tirage de la direction
-                direction = tirerDirection(env, etat, coupAFaire);
-
-                // Tirage de l'etat
-                etat = tirerEtat(mdp.transition(etat, coupAFaire, direction));
-
-                nbCoups ++;
-            }
-
-            if(etat.estTerminal() && !etat.estReussite()) nbEchecs ++;
+        for (int i = 0; i < nbThreads; i++) {
+            threads[i] = new ExplorationThread(env, mdp, etatDepart, coup, dir, nbCoupsMax, nbIters, listeCoups);
+            threads[i].run();
         }
 
-        return nbEchecs / nbIters;
+        for (int i = 0; i < nbThreads; i++) {
+            try {
+                threads[i].join();
+                sommeIters += nbIters;
+                sommeEchecs += threads[i].getNbEchecs();
+            } catch (InterruptedException ignored){}
+        }
+        return sommeEchecs / sommeIters;
     }
 
     private static Etat tirerEtat(Map<Etat, Double> distribution){
@@ -88,6 +68,73 @@ public class ExplorationProba {
         if(caseTiree.x < casePerso.x) return Direction.GAUCHE;
         if(caseTiree.y > casePerso.y) return Direction.BAS;
         return Direction.HAUT;
+    }
+
+    private static class ExplorationThread extends Thread{
+        private int nbEchecs;
+        private final int nbIters;
+        private final Environnement env;
+        private final MDP mdp;
+        private final Etat etatDepart;
+        private final Direction dir;
+        private final int nbCoupsMax;
+        private final Coup[] listeCoups;
+        private final Coup coup;
+
+        public ExplorationThread(Environnement env, MDP mdp, Etat etatDepart, Coup coup, Direction dir, int nbCoupsMax, int nbIters, Coup[] listeCoups){
+            this.nbIters = nbIters;
+            this.env = new Environnement(env);
+            this.mdp = mdp;
+            this.etatDepart = etatDepart;
+            this.dir = dir;
+            this.nbCoupsMax = nbCoupsMax;
+            this.listeCoups = listeCoups;
+            this.coup = coup;
+            this.nbEchecs = 0;
+        }
+
+        public void run(){
+            this.nbEchecs = 0;
+            Direction direction;
+            Environnement envCopy = new Environnement(env);
+
+            for (int i = 0; i < nbIters; i++) {
+
+                Coup premierCoup = coup.copy();
+                premierCoup.probaSucces = 1;
+                Map<Etat, Double> distributionDepart = mdp.transition(etatDepart, premierCoup, dir);
+                Etat etat = tirerEtat(distributionDepart);
+                int nbCoups = 1;
+
+                while(nbCoups < nbCoupsMax && !(etat.estTerminal() && !etat.estReussite())){
+
+                    envCopy.setEtat(etat);
+
+                    ArrayList<Coup> coupsValides = new ArrayList<>(List.of(listeCoups));
+
+                    // Tirage d'un coup ayant des cases valides
+                    Coup coupAFaire = tirerCoup(coupsValides);
+                    while(coupAFaire.getCasesValides(envCopy, envCopy.getOperateurActif()).isEmpty()){
+                        coupsValides.remove(coupAFaire);
+                        coupAFaire = tirerCoup(coupsValides);
+                    }
+
+                    // Tirage de la direction
+                    direction = tirerDirection(env, etat, coupAFaire);
+
+                    // Tirage de l'etat
+                    etat = tirerEtat(mdp.transition(etat, coupAFaire, direction));
+
+                    nbCoups ++;
+                }
+
+                if(etat.estTerminal() && !etat.estReussite()) nbEchecs ++;
+            }
+        }
+
+        public int getNbEchecs(){
+            return nbEchecs;
+        }
     }
 
 }
