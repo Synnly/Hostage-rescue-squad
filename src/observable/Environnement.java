@@ -291,6 +291,7 @@ public class Environnement extends Observable{
         separations.add(new Mur(getCase(3, 3), getCase(3, 4)));
         separations.add(new Mur(getCase(1, 1), getCase(2, 1)));
         separations.add(new Mur(getCase(1, 2), getCase(2, 2)));
+        separations.add(new Mur(getCase(4, 3), getCase(4, 4)));
     }
 
     /**

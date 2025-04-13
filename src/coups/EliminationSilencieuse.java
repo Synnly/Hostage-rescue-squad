@@ -47,7 +47,7 @@ public class EliminationSilencieuse extends Coup{
         if(perso.getPointsAction() < this.cout){
             //System.out.println("Pas assez de PA pour effectuer l'action");
         }else{
-            if(env.aEnnemisSurCase(arr)){
+            if(env.aEnnemisSurCase(arr) && arr.peutVoir()){
                 List<Double> nombres = env.getNombresAleatoires(1);
                 if(nombres.get(0) > probaSucces){
                     //System.out.println("L'action a échoué");
@@ -98,6 +98,7 @@ public class EliminationSilencieuse extends Coup{
 
         if(caseX < env.getLargeur() - 1) { // Droite
             skip = false;
+            if(!env.getCase(caseX + 1, caseY).peutVoir()) skip = true;
             for(Separation sep:env.getSeparations()){
                 if(!sep.estVertical() || sep.getCase1().y != caseY) continue;
                 if((sep.getCase1().x == caseX && sep.getCase2().x == caseX + 1) || (sep.getCase2().x == caseX && sep.getCase1().x == caseX + 1)) skip = true;
@@ -107,6 +108,7 @@ public class EliminationSilencieuse extends Coup{
         }
         if(caseX > 0) {    // Gauche
             skip = false;
+            if(!env.getCase(caseX - 1, caseY).peutVoir()) skip = true;
             for(Separation sep:env.getSeparations()){
                 if(!sep.estVertical() || sep.getCase1().y != caseY) continue;
                 if((sep.getCase1().x == caseX && sep.getCase2().x == caseX - 1) || (sep.getCase2().x == caseX && sep.getCase1().x == caseX - 1)) skip = true;
@@ -116,6 +118,7 @@ public class EliminationSilencieuse extends Coup{
         }
         if(caseY < env.getHauteur() - 1) { // Bas
             skip = false;
+            if(!env.getCase(caseX, caseY + 1).peutVoir()) skip = true;
             for(Separation sep:env.getSeparations()){
                 if(sep.estVertical() || sep.getCase1().x != caseX) continue;
                 if((sep.getCase1().y == caseY && sep.getCase2().y == caseY + 1) || (sep.getCase2().y == caseY && sep.getCase1().y == caseY + 1)) skip = true;
@@ -125,6 +128,7 @@ public class EliminationSilencieuse extends Coup{
         }
         if(caseY > 0) {    // Haut
             skip = false;
+            if(!env.getCase(caseX, caseY - 1).peutVoir()) skip = true;
             for(Separation sep:env.getSeparations()){
                 if(sep.estVertical() || sep.getCase1().x != caseX) continue;
                 if((sep.getCase1().y == caseY && sep.getCase2().y == caseY - 1) || (sep.getCase2().y == caseY && sep.getCase1().y == caseY - 1)) skip = true;
