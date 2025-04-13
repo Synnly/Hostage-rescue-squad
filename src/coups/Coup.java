@@ -6,6 +6,7 @@ import personnages.Operateur;
 import personnages.Personnage;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Type abstrait représentant une action pouvant être effectuée par le joueur comme un déplacement ou un tir.
@@ -117,4 +118,16 @@ public abstract class Coup {
      * Indique si le coup est une élimination silencieuse
      */
     public boolean estElimSil(){return false;}
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Coup coup = (Coup) o;
+        return cout == coup.cout && Double.compare(probaSucces, coup.probaSucces) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cout, probaSucces);
+    }
 }

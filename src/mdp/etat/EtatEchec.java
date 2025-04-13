@@ -1,8 +1,8 @@
-package mdp;
+package mdp.etat;
 
 import observable.Environnement;
 
-public class EtatEchec extends Etat{
+public class EtatEchec extends Etat {
 
     /**
      * Constructeur d'un état échec, c'est à dire quand un des opérateurs meurt.

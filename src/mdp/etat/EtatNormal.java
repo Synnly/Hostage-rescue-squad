@@ -1,10 +1,10 @@
-package mdp;
+package mdp.etat;
 
 import observable.Environnement;
 
 import java.util.Arrays;
 
-public class EtatNormal extends Etat{
+public class EtatNormal extends Etat {
 
     /**
      * Constructeur d'un état normal, c'est à dire quand la partie est encore en cours.

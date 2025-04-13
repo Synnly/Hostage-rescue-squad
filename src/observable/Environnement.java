@@ -6,6 +6,8 @@ import coups.*;
 import carte.cases.*;
 import carte.Routine;
 import mdp.*;
+import mdp.etat.Etat;
+import mdp.etat.EtatNormal;
 import org.javatuples.Pair;
 import personnages.*;
 
@@ -37,6 +39,12 @@ public class Environnement extends Observable{
     private final double probaElimSil;
     private HostageRescueSquad mdp;
     private Pair<Coup, Direction> coupPredit = null;
+    // Nombre de coups max calculés pour l'agent d'avertissement
+    private final int nbCoupsMax = 10;
+    // Nombre d'itérations max effectuées par l'agent d'avertissement
+    private final int nbIters = 1000;
+    // Proba d'échec à partir de laquelle on considère qu'un coup est dangereuse
+    private double seuilAvertissement = 0.6;
 
 
     /**
@@ -343,6 +351,24 @@ public class Environnement extends Observable{
 
         if(missionFinie) nouvellePartie();
 
+        Coup[] listeCoups = new Coup[]{op.getDeplacement(), op.getTir(), op.getFinTour(), op.getEliminationSilencieuse()};
+        for(Coup coup : listeCoups){
+            for(Case caseValide : coup.getCasesValides(this, op)){
+                Direction dir;
+                if(caseValide.x == -1 || caseValide.y == -1) dir = Direction.AUCUN;
+                else if(caseValide.x > c.x) dir = Direction.DROITE;
+                else if(caseValide.x < c.x) dir = Direction.GAUCHE;
+                else if(caseValide.y > c.y) dir = Direction.BAS;
+                else dir = Direction.HAUT;
+
+                double probaEchec = ExplorationProba.probaEchec(this, mdp, new EtatNormal(this), coup, dir, nbCoupsMax, nbIters, listeCoups);
+//                if(probaEchec >= seuilAvertissement){
+//
+//                }
+                System.out.println("ATTENTION : fin de partie dans " + (probaEchec * 100.) + " % des cas après " + coup + " vers " + dir + " en moins de " + nbCoupsMax + " coups");
+            }
+        }
+
         printPrediction();
         notifyObservers();
     }
@@ -554,10 +580,9 @@ public class Environnement extends Observable{
             }
 
             for(Coup c : coups) {
-                if(c.estTir()) {
+                if (c.estTir()) {
                     c.effectuer(this, t, getCase(operateur.getX(), operateur.getY()));
-                }
-                else if(c.estDeplacement()) {
+                } else if (c.estDeplacement()) {
                     c.effectuer(this, t, t.getRoutine().prochaineCase(getCase(t.getX(), t.getY())));
                 }
             }

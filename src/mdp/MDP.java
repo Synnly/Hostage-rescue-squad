@@ -1,6 +1,7 @@
 package mdp;
 
 import coups.Coup;
+import mdp.etat.Etat;
 import org.javatuples.Pair;
 
 import java.util.Map;

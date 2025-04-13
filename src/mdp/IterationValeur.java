@@ -1,6 +1,7 @@
 package mdp;
 
 import coups.Coup;
+import mdp.etat.Etat;
 import org.javatuples.Pair;
 
 import java.util.*;
@@ -20,7 +21,6 @@ public class IterationValeur {
         if(bestCoup.isEmpty()) {
             iterationValeur(mdp);
         }
-        System.out.println(utils.get(s));
         return bestCoup.get(s);
     }
 
@@ -37,7 +37,6 @@ public class IterationValeur {
         if(!s.estTerminal()) {
             Map<Etat, Double> distribution = mdp.transition(s, c, direction);
             for (Etat sPrime : distribution.keySet()) {
-
                 util += distribution.get(sPrime) * (mdp.recompense(s, c, sPrime) + gamma * utils.get(sPrime));
             }
         }

@@ -4,6 +4,10 @@ import carte.cases.AucuneCase;
 import carte.cases.Case;
 import carte.Routine;
 import coups.Coup;
+import mdp.etat.Etat;
+import mdp.etat.EtatEchec;
+import mdp.etat.EtatNormal;
+import mdp.etat.EtatReussite;
 import observable.Environnement;
 import org.javatuples.Pair;
 import personnages.*;
@@ -437,7 +441,12 @@ public class HostageRescueSquad implements MDP{
 
                 Etat etatSimu = creerEtat(envCopy);
                 etatSimu.nbPAOperateurs[0] = env.getOperateurActif().getMaxPointsAction();
-                distributionEnnemis.put(etatSimu, proba * distribution.get(e));
+                if(distributionEnnemis.containsKey(etatSimu)){
+                    distributionEnnemis.put(etatSimu, distributionEnnemis.get(etatSimu) + proba * distribution.get(e));
+                }
+                else {
+                    distributionEnnemis.put(etatSimu, proba * distribution.get(e));
+                }
                 envCopy.setEtat(restoreState);
             }
         }

@@ -60,7 +60,7 @@ public class Tir extends Coup {
      * @param terro Le terroriste effectuant le tir
      * @param arr La destination
      */
-    public void effectuer(Environnement env, Terroriste terro, Case arr){;
+    public void effectuer(Environnement env, Terroriste terro, Case arr){
         if (terro.getY() == arr.y){ // Ennemi et case sur la meme ligne
             int min = Math.min(terro.getX(), arr.x);
             int max = Math.max(terro.getX(), arr.x);

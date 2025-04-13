@@ -1,4 +1,4 @@
-package mdp;
+package mdp.etat;
 
 import carte.Routine;
 import observable.Environnement;
