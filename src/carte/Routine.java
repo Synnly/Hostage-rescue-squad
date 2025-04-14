@@ -2,6 +2,7 @@ package carte;
 
 import carte.cases.AucuneCase;
 import carte.cases.Case;
+import carte.cases.CaseReapparitionEnnemis;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ public class Routine {
      * La liste des cases de cette routine
      */
     private List<Case> cases;
+    private List<CaseReapparitionEnnemis> reapparitionEnnemis;
+
 
     /**
      * Constructeur d'une routine
@@ -26,6 +29,7 @@ public class Routine {
         assert c != null : "La case ne peut être null";
         cases = new ArrayList<>();
         cases.add(c);
+        reapparitionEnnemis = new ArrayList<>();
     }
 
     /**
@@ -52,6 +56,15 @@ public class Routine {
         assert !cases.contains(c) : "La case c existe déjà dans la routine";
         assert cases.contains(pred) : "La case pred n'existe pas dans la routine";
         cases.add(cases.indexOf(pred) + 1, c);
+    }
+    public void ajouterReapparitionEnnemis(Case pred, CaseReapparitionEnnemis c){
+        assert pred != null : "La case précédente ne peut être null";
+        assert c != null : "La case à ajouter ne peut être null";
+        assert !cases.contains(c) : "La case c existe déjà dans la routine";
+        assert cases.contains(pred) : "La case pred n'existe pas dans la routine";
+        cases.add(cases.indexOf(pred) + 1, c);
+        reapparitionEnnemis.add(c);
+
     }
 
     /**
@@ -120,5 +133,9 @@ public class Routine {
             }
         }
         return -1;
+    }
+
+    public List<CaseReapparitionEnnemis> getReapparitionEnnemis() {
+        return reapparitionEnnemis;
     }
 }

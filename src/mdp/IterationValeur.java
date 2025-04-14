@@ -37,7 +37,14 @@ public class IterationValeur {
         if(!s.estTerminal()) {
             Map<Etat, Double> distribution = mdp.transition(s, c, direction);
             for (Etat sPrime : distribution.keySet()) {
-                util += distribution.get(sPrime) * (mdp.recompense(s, c, sPrime) + gamma * utils.get(sPrime));
+                try{
+                    util += distribution.get(sPrime) * (mdp.recompense(s, c, sPrime) + gamma * utils.get(sPrime));
+                }catch(Exception e){
+                    System.out.println();
+                }
+            }
+            if(distribution.values().stream().mapToDouble(Double::doubleValue).sum() > 1) {
+                System.out.println(distribution.values().stream().mapToDouble(Double::doubleValue).sum());
             }
         }
         return util;
@@ -82,7 +89,7 @@ public class IterationValeur {
 
             utils = utilClone;
             nbIter ++;
-            System.out.println(nbIter + " " + delta + " " + (epsilon * (1 - gamma) / gamma));
+            System.out.println(nbIter + " " + delta + " " + (epsilon * (1 - gamma) / gamma)+" , valeur = "+utils.values().stream().mapToDouble(Double::doubleValue).max());
         }
         while (delta > epsilon * (1 - gamma) / gamma);
         System.out.println(nbIter + " itérations");

@@ -98,6 +98,7 @@ public class Environnement extends Observable{
         for(Terroriste t:env.ennemis){
             ennemis.add(t.copy());
         }
+        System.out.println("taille ennemis = "+ennemis.size());
         this.probaSuccesDeplacement = env.probaSuccesDeplacement;
         this.probaSuccesTir = env.probaSuccesTir;
         this.probaElimSil = env.probaElimSil;
@@ -128,14 +129,32 @@ public class Environnement extends Observable{
         // Création des ennemis
         Deplacement deplacementTer = new Deplacement(0, 1);
         Tir tirTer = new Tir(0, 1);
-        ennemis = new ArrayList<>(1);
+        ennemis = new ArrayList<>(3);
 
-        Terroriste ennemi = new Terroriste(this, largeur/2+1, 0, 0, deplacementTer, tirTer);
-        Terroriste ennemi2 = new Terroriste(this, largeur/2, 4, 0, deplacementTer, tirTer);
+        List<CaseReapparitionEnnemis> reapparitions = routine.getReapparitionEnnemis();
+        Terroriste ennemi = new Terroriste(this, reapparitions.get(0).getX(), reapparitions.get(0).getY(), 0, deplacementTer, tirTer);
+        Terroriste ennemi2 = new Terroriste(this,reapparitions.get(1).getX(), reapparitions.get(1).getY(), 0, deplacementTer, tirTer);
+
         ennemi.setRoutine(routine);
         ennemi2.setRoutine(routine);
         ennemis.add(ennemi);
         ennemis.add(ennemi2);
+
+        for(int i = 0; i<3; i++){
+            Terroriste terr = new Terroriste(this, -1, -1, 0, deplacementTer, tirTer );
+            terr.setRoutine(routine);
+            System.out.println("new terr = "+terr.getId());
+            ennemis.add(terr);
+
+        }
+
+
+
+
+
+
+
+
 
         missionFinie = false;
         menace = minMenace;
@@ -157,12 +176,12 @@ public class Environnement extends Observable{
      * @return La routine
      */
     public Routine creerRoutine(){
-        Case pred = getCase(largeur/2, 0);
+        Case pred = (getCase(largeur/2, 0));
 //        Case pred = getCase(2, 0);
         Case next;
         Routine routine = new Routine(pred);
 
-        next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next); pred = next;
+        next = new CaseReapparitionEnnemis(getCase(pred.x+1, pred.y)); routine.ajouterReapparitionEnnemis(pred, (CaseReapparitionEnnemis) next); pred = next;
         next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next); pred = next;
 
         next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
@@ -171,7 +190,7 @@ public class Environnement extends Observable{
         next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
 
         next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
-        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
+        next = new CaseReapparitionEnnemis(getCase(pred.x-1, pred.y)); routine.ajouterReapparitionEnnemis(pred, (CaseReapparitionEnnemis)next); pred = next;
         next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
         next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
 

@@ -130,4 +130,7 @@ public abstract class Coup {
     public int hashCode() {
         return Objects.hash(cout, probaSucces);
     }
+    public boolean estCalmer(){
+        return false;
+    }
 }

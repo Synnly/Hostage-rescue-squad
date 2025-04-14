@@ -3,6 +3,7 @@ package mdp;
 import carte.cases.AucuneCase;
 import carte.cases.Case;
 import carte.Routine;
+import coups.Calmer;
 import coups.Coup;
 import mdp.etat.Etat;
 import mdp.etat.EtatEchec;
@@ -49,11 +50,13 @@ public class HostageRescueSquad implements MDP{
             Operateur opCopy = envCopy.getOperateurActif();
             ArrayList<Pair<Coup, Direction>> listePaires = new ArrayList<>();
             listePaires.add(new Pair<>(op.getFinTour(), Direction.AUCUN));
-            listePaires.add(new Pair<>(op.getCalmer(), Direction.AUCUN));
+
+            if((opCopy.getPointsAction() >= opCopy.getCalmer().cout) && (envCopy.getMenace() > envCopy.getMinMenace())){
+                listePaires.add(new Pair<>(opCopy.getCalmer(), Direction.AUCUN));
+            }
 
             for(Coup c : listeCoups){
                 for(Case caseValide : c.getCasesValides(envCopy, opCopy)){
-
                     // Ajout de la direction
                     if(opCopy.getX() == -1 || opCopy.getY() == -1){
                         listePaires.add(new Pair<>(c, Direction.AUCUN));
@@ -193,12 +196,8 @@ public class HostageRescueSquad implements MDP{
         envCopy.setEtat(restoreState);
 
         // Transition des ennemis
-        if(etatDepart.indCaseOperateurs[0] == 31 && etatDepart.nbPAOperateurs[0] == 2 && etatDepart.indCaseTerroristes[0] == 7 && etatDepart.menace == 2) {
-            distribution = transitionEnnemis(distribution);
-        }
-        else{
-            distribution = transitionEnnemis(distribution);
-        }
+        distribution = transitionEnnemis(distribution);
+
 
         // Sauvegarde
         if(transitions.get(etatDepart) == null){
@@ -237,6 +236,7 @@ public class HostageRescueSquad implements MDP{
 
         // changement de niveau de menace
         recomp += (s.menace - sPrime.menace) * valeurDeltaMenace;
+        //recomp += Math.min(0,(s.indCaseTerroristes.length - sPrime.indCaseTerroristes.length)) * valeurReapparitionEnnemis;
 
         // recuperation de l'objectif
         for (int i = 0; i < s.aObjectif.length; i++) {
@@ -294,18 +294,6 @@ public class HostageRescueSquad implements MDP{
             return false;
         }
         if (nbEnnemisMorts == env.getEnnemis().size() && e.menace != env.getMinMenace()){
-            return false;
-        }
-
-        // A enlever quand respawn d'ennemis
-        // Niveau de menace != minMenace + nbEnnemisMorts quand tous ennemis pas morts
-
-        if(e.menace > env.getMinMenace() + env.getEnnemis().size()){
-            if(e.estNormal()){
-                if ( e.equals(new EtatNormal(new int[]{11},new int[]{2},new boolean[]{false},new int[]{1, -1},5))) {
-                    //System.out.println("oui");
-                }
-            }
             return false;
         }
 
@@ -422,11 +410,14 @@ public class HostageRescueSquad implements MDP{
      */
     private Map<Etat, Double> transitionEnnemis(Map<Etat, Double> distribution){
         Map<Etat, Double> distributionEnnemis = new HashMap<>();
-        int nbTerrs = env.getEnnemis().size();
         Coup[] listeCoups = {env.getEnnemis().get(0).getDeplacement(), env.getEnnemis().get(0).getTir()};
 
         Etat restoreState = creerEtat(envCopy);
         for(Etat e : distribution.keySet()) {
+            int nbTerrs = 0;
+            for(int i : e.indCaseTerroristes){
+                if(i!=-1) nbTerrs++;
+            }
             if(e.estTerminal() || Arrays.stream(e.nbPAOperateurs).sum() != 0){    // Etat terminal ou pas le tour de l'ennemi donc rien à faire
                 distributionEnnemis.put(e, distribution.get(e));
                 continue;

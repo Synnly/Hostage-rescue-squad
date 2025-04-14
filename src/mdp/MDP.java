@@ -8,13 +8,15 @@ import java.util.Map;
 
 public interface MDP {
 
-    double multiplicateur = 10000;
+    double multiplicateur = 1000000;
     double valeurReussite = 500 * multiplicateur;
     double valeurObjectif = 500 * multiplicateur;
     double valeurEchec = -(valeurReussite + valeurObjectif);
     double valeurTuerEnnemi = 30 * multiplicateur;
     double valeurDeltaMenace = 2*valeurTuerEnnemi * multiplicateur; // > 0 quand niveau de menace augmente, < 0 sinon
     double valeurDeplacement = -40 * multiplicateur;
+    double valeurReapparitionEnnemis = 100 * multiplicateur;
+
 
     /**
      * Calcule les actions valides pouvant être effectués pour chaque état

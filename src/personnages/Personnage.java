@@ -68,8 +68,8 @@ public abstract class Personnage {
      * @param tir          Son action de tir.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      */
     public Personnage(Environnement env, int x, int y, int pointsAction, Deplacement deplacement, Tir tir){
-        assert x >= 0 && x < env.getLargeur() : "x doit être 0 <= x < " + env.getLargeur() + "(x = " + x + ")";
-        assert y >= 0 && y < env.getHauteur() : "y doit être 0 <= y < " + env.getHauteur() + "(y = " + y + ")";
+        assert x >= -1 && x < env.getLargeur() : "x doit être 0 <= x < " + env.getLargeur() + "(x = " + x + ")";
+        assert y >= -1 && y < env.getHauteur() : "y doit être 0 <= y < " + env.getHauteur() + "(y = " + y + ")";
         assert pointsAction >= 0 : "Nombre de points d'action doit être <= 0 (PA = " + pointsAction + ")";
         assert deplacement != null : "Action déplacement null";
         assert tir != null : "Action tir null";

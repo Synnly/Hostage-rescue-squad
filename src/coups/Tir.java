@@ -258,7 +258,7 @@ public class Tir extends Coup {
             int max = Math.max(perso.getY(), yCase);
             for (int y = min; y <= max; y++) {
                 if (!env.getCase(perso.getX(), y).peutVoir() && y != perso.getY()) {
-                    continue;
+                    return;
                 }
                 for(Separation sep : env.getSeparations()){
                     if(sep.estVertical()) continue;
@@ -296,7 +296,7 @@ public class Tir extends Coup {
             int max = Math.max(perso.getX(), c.x);
             for(int x = min; x <= max; x++){
                 if(!env.getCase(x, perso.getY()).peutVoir() && x != perso.getX()){
-                    continue;
+                    return;
                 }
                 for(Separation sep : env.getSeparations()){
                     if(!sep.estVertical()) continue;

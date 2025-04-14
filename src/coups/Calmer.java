@@ -32,19 +32,22 @@ public class Calmer extends Coup{
                 //System.out.println("L'action a échoué");
             }else{
                 env.diminuerMenace();
-                perso.removePointsAction(cout);
             }
+            perso.removePointsAction(cout);
         }
     }
 
     @Override
     public List<Case> getCasesValides(Environnement env, Personnage perso) {
-        return List.of(AucuneCase.instance);
+        if(perso.estOperateur()){
+            return getCasesValides(env, (Operateur) perso);
+        }
+        return List.of();
     }
 
     @Override
     public List<Case> getCasesValides(Environnement env, Operateur perso) {
-        if(perso.getPointsAction() >= cout && env.getMenace() > env.getMinMenace()){
+        if((perso.getPointsAction() >= cout) && (env.getMenace() > env.getMinMenace())){
             return List.of(AucuneCase.instance);
         }
         return List.of();
@@ -64,6 +67,9 @@ public class Calmer extends Coup{
     @Override
     public String toString() {
         return "Se Calmer";
+    }
+    public boolean estCalmer(){
+        return true;
     }
 
 }
