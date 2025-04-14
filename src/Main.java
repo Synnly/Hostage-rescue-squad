@@ -26,6 +26,7 @@ public class Main extends Application {
         VuePA vuePA = new VuePA(env);
         VueGlobale vueGlobale = new VueGlobale(env);
         VueActionRecommandee vueActionRecommandee = new VueActionRecommandee(env);
+        VueMenace vueMenace = new VueMenace(env);
 
 
 
@@ -36,6 +37,8 @@ public class Main extends Application {
             else if (iC.equals(VueMenu.class)) return vueMenu;
             else if (iC.equals(VueGlobale.class)) return vueGlobale;
             else if (iC.equals(VueActionRecommandee.class)) return vueActionRecommandee;
+            else if (iC.equals(VueMenace.class)) return vueMenace;
+
 
             else return null;
         });

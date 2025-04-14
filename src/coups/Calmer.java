@@ -26,11 +26,14 @@ public class Calmer extends Coup{
 
     @Override
     public void effectuer(Environnement env, Operateur perso, Case arr) {
-        List<Double> nombres = env.getNombresAleatoires(1);
-        if(nombres.get(0) > probaSucces){
-            //System.out.println("L'action a échoué");
-        }else{
-            env.diminuerMenace();
+        if(perso.getPointsAction() >= cout && env.getMenace() > env.getMinMenace()){
+            List<Double> nombres = env.getNombresAleatoires(1);
+            if(nombres.get(0) > probaSucces){
+                //System.out.println("L'action a échoué");
+            }else{
+                env.diminuerMenace();
+                perso.removePointsAction(cout);
+            }
         }
     }
 
@@ -41,12 +44,17 @@ public class Calmer extends Coup{
 
     @Override
     public List<Case> getCasesValides(Environnement env, Operateur perso) {
-        return List.of(AucuneCase.instance);
+        if(perso.getPointsAction() >= cout && env.getMenace() > env.getMinMenace()){
+            return List.of(AucuneCase.instance);
+        }
+        return List.of();
+
+
     }
 
     @Override
     public List<Case> getCasesValides(Environnement env, Case caseDepart) {
-        return List.of(AucuneCase.instance);
+        return List.of();
     }
 
     @Override

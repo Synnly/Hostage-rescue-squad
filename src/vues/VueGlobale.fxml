@@ -22,9 +22,12 @@
             <HBox spacing="30.0" BorderPane.alignment="TOP_CENTER">
                <children>
                    <fx:include fx:id="vueActions" source="VueActions.fxml" />
-
+                  <VBox spacing="10.0">
+                     <children>
                         <fx:include source="VuePA.fxml" />
-
+                        <fx:include source="VueMenace.fxml" />
+                     </children>
+                  </VBox>
                </children>
             </HBox>
          </children>
