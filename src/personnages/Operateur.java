@@ -1,14 +1,13 @@
 package personnages;
 
-import coups.Deplacement;
-import coups.EliminationSilencieuse;
-import coups.Tir;
+import coups.*;
 import observable.Environnement;
 
 /**
  * Personnage représentant les personnages controlés par le joueur
  */
 public class Operateur extends Personnage{
+    private final Calmer calmer;
     private boolean possedeObjectif = false;
     private EliminationSilencieuse eliminationSilencieuse;
 
@@ -23,17 +22,19 @@ public class Operateur extends Personnage{
      * @param tir          Son action de tir.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      * @param elimSil      Son action d'élimination silencieuse.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      */
-    public Operateur(Environnement env, int x, int y, int pointsAction, Deplacement deplacement, Tir tir,EliminationSilencieuse elimSil) {
+    public Operateur(Environnement env, int x, int y, int pointsAction, Deplacement deplacement, Tir tir,EliminationSilencieuse elimSil, Calmer calmer) {
         super(env, x, y, pointsAction, deplacement, tir);
         this.eliminationSilencieuse = elimSil;
+        this.calmer = calmer;
     }
 
     /**
      * Constructeur de copie d'un opérateur
      * @param op L'opérateur à copier
      */
-    public Operateur(Operateur op){
+    public Operateur( Operateur op){
         super(op);
+        this.calmer = op.calmer;
         this.possedeObjectif = op.possedeObjectif;
         this.eliminationSilencieuse = op.eliminationSilencieuse;
     }
@@ -69,4 +70,8 @@ public class Operateur extends Personnage{
      * @return L'action d'élimination silencieuse de l'opérateur
      */
     public EliminationSilencieuse getEliminationSilencieuse() {return eliminationSilencieuse;}
+
+    public Calmer getCalmer() {
+        return calmer;
+    }
 }

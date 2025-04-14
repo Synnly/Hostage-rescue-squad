@@ -11,7 +11,7 @@ import vues.*;
  */
 public class Main extends Application {
 
-    private final Environnement env = new Environnement(7, 10, 0.95, 0.85,0.80);
+    private final Environnement env = new Environnement(7, 10, 0.95, 0.85,0.80,0.3);
 
     @Override
     public void start(Stage primaryStage) throws Exception{

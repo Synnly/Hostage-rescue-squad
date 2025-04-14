@@ -20,6 +20,7 @@ import java.util.Random;
  */
 public class Environnement extends Observable{
 
+    private double probaCalmer;
     private int largeur;
     private int hauteur;
     private List<Case> cases;
@@ -58,7 +59,7 @@ public class Environnement extends Observable{
      * @param probaSuccesTir La probabilité de succès des tirs de l'opérateur. Doit être
      *                       0 &le;&nbsp;proba &le;&nbsp;1
      */
-    public Environnement(int largeur, int hauteur, double probaSuccesDeplacement, double probaSuccesTir, double probaElimSil) {
+    public Environnement(int largeur, int hauteur, double probaSuccesDeplacement, double probaSuccesTir, double probaElimSil, double probaCalmer) {
         assert largeur > 0 : "La largeur doit être > 0 (largeur =" + largeur + ")";
         assert hauteur > 0 : "La hauteur doit être > 0 (hauteur =" + hauteur + ")";
         assert probaSuccesDeplacement <= 1 && probaSuccesDeplacement >= 0 : "La probabilité de succès des déplacements de l'opérateur doit être 0 <= proba <= 1";
@@ -70,6 +71,7 @@ public class Environnement extends Observable{
         this.probaElimSil = probaElimSil;
         this.largeur = largeur;
         this.hauteur = hauteur;
+        this.probaCalmer = probaCalmer;
         nouvellePartie();
 
         mdp = new HostageRescueSquad(this);
@@ -99,8 +101,10 @@ public class Environnement extends Observable{
         this.probaSuccesDeplacement = env.probaSuccesDeplacement;
         this.probaSuccesTir = env.probaSuccesTir;
         this.probaElimSil = env.probaElimSil;
+        this.probaCalmer = env.probaCalmer;
         mdp = env.mdp;
     }
+
 
     /**
      * Réinitialise les paramètres de départ d'une nouc-velle partie
@@ -114,7 +118,8 @@ public class Environnement extends Observable{
         Deplacement deplacementOp = new Deplacement(1, probaSuccesDeplacement);
         Tir tirOp = new Tir(1, probaSuccesTir);
         EliminationSilencieuse elimSil = new EliminationSilencieuse(1,probaElimSil);
-        operateur = new Operateur(this, largeur/2 + 1, hauteur-1, 2, deplacementOp, tirOp,elimSil);
+        Calmer calmer = new Calmer(2,probaCalmer);
+        operateur = new Operateur(this, largeur/2 + 1, hauteur-1, 2, deplacementOp, tirOp,elimSil,calmer);
         operateur.setActionActive(deplacementOp);
 
         // Création de la routine
@@ -335,8 +340,8 @@ public class Environnement extends Observable{
      * @param y La coordonnée en hauteur de la case cible. Doit être 0 &le;&nbsp;<code>y</code>&lt;&nbsp;<code>hauteur</code>
      */
     public void choisirCase(int x, int y){
-        assert x >= 0 && x < largeur : "x doit être 0 <= x < " + largeur + "(x = " + x + ")";
-        assert y >= 0 && y < hauteur : "y doit être 0 <= y < " + hauteur + "(y = " + y + ")";
+        assert x >= -1 && x < largeur : "x doit être 0 <= x < " + largeur + "(x = " + x + ")";
+        assert y >= -1 && y < hauteur : "y doit être 0 <= y < " + hauteur + "(y = " + y + ")";
 
         Case c = getCase(x, y);
 
@@ -356,9 +361,9 @@ public class Environnement extends Observable{
             for(Case caseValide : coup.getCasesValides(this, op)){
                 Direction dir;
                 if(caseValide.x == -1 || caseValide.y == -1) dir = Direction.AUCUN;
-                else if(caseValide.x > c.x) dir = Direction.DROITE;
-                else if(caseValide.x < c.x) dir = Direction.GAUCHE;
-                else if(caseValide.y > c.y) dir = Direction.BAS;
+                else if(caseValide.x > op.getX()) dir = Direction.DROITE;
+                else if(caseValide.x < op.getX()) dir = Direction.GAUCHE;
+                else if(caseValide.y > op.getY()) dir = Direction.BAS;
                 else dir = Direction.HAUT;
 
                 double probaEchec = ExplorationProba.probaEchec(this, mdp, new EtatNormal(this), coup, dir, nbCoupsMax, nbIters, listeCoups);
@@ -506,7 +511,10 @@ public class Environnement extends Observable{
             sb.append("terminer le tour");
         } else {
             sb.append(coupPredit.getValue0());
-            sb.append(" vers ");
+            if(coupPredit.getValue1() != Direction.AUCUN){
+                sb.append(" vers ");
+
+            }
             switch (coupPredit.getValue1()) {
                 case HAUT -> sb.append("le haut");
                 case BAS -> sb.append("le bas");
@@ -658,6 +666,15 @@ public class Environnement extends Observable{
             menace = maxMenace;
         }
     }
+    /**
+     * Diminue la menace si la menace > minMenace, sinon ne fait rien.
+     */
+    public void diminuerMenace(){
+        menace --;
+        if (menace < minMenace){
+            menace = minMenace;
+        }
+    }
 
     /**
      * Réinitialise la menace à minMenace
@@ -717,5 +734,10 @@ public class Environnement extends Observable{
 
         printPrediction();
         notifyObservers();
+    }
+
+    public void setCalmerActionActive() {
+        operateur.setActionActive(operateur.getCalmer());
+        choisirCase(-1,-1);
     }
 }

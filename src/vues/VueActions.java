@@ -28,11 +28,16 @@ public class VueActions extends Observer{
     /**
      * Le bouton de changement d'action active à l'élimination silencieuse
      */
-    boutonElimSil;
+    boutonElimSil,
+
+    /**
+     * Le bouton de changement d'action active à se calmer
+     */
+    boutonCalm;
     ;
 
     @FXML
-    public Label probaTir, probaDepl, probaElimSil, coutTir, coutDepl, coutElimSil;
+    public Label probaTir, probaDepl, probaElimSil, probaCalm, coutTir, coutDepl, coutElimSil, coutCalm;
 
     /**
      * Constructeur de la vue des actions
@@ -52,9 +57,13 @@ public class VueActions extends Observer{
         probaTir.setText(env.getOperateurActif().getTir().probaSucces * 100 + " %");
         probaDepl.setText(env.getOperateurActif().getDeplacement().probaSucces * 100 + " %");
         probaElimSil.setText(env.getOperateurActif().getEliminationSilencieuse().probaSucces * 100 + " %");
+        probaCalm.setText(env.getOperateurActif().getCalmer().probaSucces * 100 + " %");
+
         coutTir.setText(env.getOperateurActif().getTir().cout + " PA");
         coutDepl.setText(env.getOperateurActif().getDeplacement().cout + " PA");
         coutElimSil.setText(env.getOperateurActif().getEliminationSilencieuse().cout + " PA");
+        coutCalm.setText(env.getOperateurActif().getCalmer().cout + " PA");
+
     }
 
     @Override
@@ -89,6 +98,9 @@ public class VueActions extends Observer{
         }
         else if (button.equals(boutonElimSil)){
             env.setElimSilActionActive();
+        }
+        else if (button.equals(boutonCalm)){
+            env.setCalmerActionActive();
         }
     }
 }

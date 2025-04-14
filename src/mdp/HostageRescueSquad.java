@@ -49,6 +49,7 @@ public class HostageRescueSquad implements MDP{
             Operateur opCopy = envCopy.getOperateurActif();
             ArrayList<Pair<Coup, Direction>> listePaires = new ArrayList<>();
             listePaires.add(new Pair<>(op.getFinTour(), Direction.AUCUN));
+            listePaires.add(new Pair<>(op.getCalmer(), Direction.AUCUN));
 
             for(Coup c : listeCoups){
                 for(Case caseValide : c.getCasesValides(envCopy, opCopy)){
