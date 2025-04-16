@@ -4,6 +4,7 @@ import coups.Coup;
 import mdp.etat.Etat;
 import org.javatuples.Pair;
 
+import java.util.List;
 import java.util.Map;
 
 public interface MDP {
@@ -45,4 +46,8 @@ public interface MDP {
      * @return La récompense
      */
     double recompense(Etat s, Coup c, Etat sPrime);
+
+    Etat etatSuivant(Etat s, Pair<Coup, Direction> c);
+
+    List<Pair<Coup, Direction>> getCoupsEtat(Etat e);
 }

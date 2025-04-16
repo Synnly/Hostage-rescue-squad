@@ -33,8 +33,8 @@ public class Environnement extends Observable{
 
     private boolean echec = false;
     private boolean missionFinie = false;
-    private final double probaTirEnnemi = 0.3;
-    private final double probaDeplacementEnnemi = 0.7;
+    public final double probaTirEnnemi = 0.3;
+    public final double probaDeplacementEnnemi = 0.7;
     private final double probaSuccesDeplacement;
     private final double probaSuccesTir;
     private final double probaElimSil;
@@ -76,7 +76,8 @@ public class Environnement extends Observable{
 
         mdp = new HostageRescueSquad(this);
         System.out.println("L'ia se prépare ...");
-        IterationValeur.iterationValeur(mdp);
+        //IterationValeur.iterationValeur(mdp);
+        coupPredit = RTDP.predict(mdp,new EtatNormal(this));
         System.out.println("L'ia a fini");
         printPrediction();
     }
@@ -139,7 +140,8 @@ public class Environnement extends Observable{
 
         missionFinie = false;
         menace = minMenace;
-        if(mdp != null) coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+        //if(mdp != null) coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+        if(mdp != null) coupPredit = RTDP.predict(mdp, new EtatNormal(this));
         System.out.println("NOUVELLE PARTIE");
     }
 
@@ -496,7 +498,8 @@ public class Environnement extends Observable{
      * Affiche dans le terminal la meilleure action prédite par l'IA
      */
     public void printPrediction(){
-        coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+        //coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+        coupPredit = RTDP.predict(mdp, new EtatNormal(this));
 
         System.out.println(coupPreditToString());
     }

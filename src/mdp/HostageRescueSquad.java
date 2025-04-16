@@ -80,7 +80,6 @@ public class HostageRescueSquad implements MDP{
         return coupsEtat;
     }
 
-
     @Override
     public Etat[] getEtats() {
         // Si états déjà calculés
@@ -415,6 +414,8 @@ public class HostageRescueSquad implements MDP{
         return new EtatNormal(indCaseOperateurs.clone(), nbPaOps.clone(), aObjectif.clone(), indCaseTerroristes.clone(), menace);
     }
 
+
+
     /**
      * Calcule les états et leur distribution après que les ennemis ont effectué leurs actions
      * @param distribution La distribution des états du tour joueur
@@ -459,4 +460,130 @@ public class HostageRescueSquad implements MDP{
 
         return distributionEnnemis;
     }
+
+    /*À partir d'ici, toute les fonctions rajoutées pour RTDP*/
+    @Override
+    public Etat etatSuivant(Etat s,Pair<Coup, Direction> c) {
+        Etat restoreState = creerEtat(envCopy);
+        envCopy.setEtat(s);
+        Etat suivant = simulerAction(c,s);
+        if(suivant.nbPAOperateurs[0] == 0){
+            suivant = tourEnnemi();
+            envCopy.setEtat(suivant);
+            envCopy.getOperateurActif().resetPointsAction();
+            suivant = creerEtat(envCopy);
+        }
+        /*
+        while(suivant.estTerminal() && !suivant.estReussite()){ // est echec
+            suivant = simulerAction(c,s);
+            if(suivant.nbPAOperateurs[0] == 0){
+                suivant = tourEnnemi();
+                envCopy.setEtat(suivant);
+                envCopy.getOperateurActif().resetPointsAction();
+                suivant = creerEtat(envCopy);
+                System.out.println("sortir d'ici : "+suivant);
+            }
+
+        }
+         */
+
+
+        //System.out.println(c+" : "+s+" et "+suivant);
+        envCopy.setEtat(restoreState);
+        return suivant;
+    }
+
+    public Etat tourEnnemi(){
+        Etat restoreState = creerEtat(envCopy);
+        List<Double> nombres = envCopy.getNombresAleatoires(envCopy.getMenace());
+        for(int i = 0; i < envCopy.getMenace(); i++) {
+            if(nombres.get(i) < envCopy.probaTirEnnemi){   // Tir
+                for (Terroriste ennemi : envCopy.getEnnemis()) {
+                    ennemi.getTir().effectuer(envCopy, ennemi, envCopy.getCase(envCopy.getOperateurActif().getX(), envCopy.getOperateurActif().getY()));
+                }
+            }
+            else {
+                for (Terroriste ennemi : envCopy.getEnnemis()) {     // Deplacement
+                    Case posEnnemi = envCopy.getCase(ennemi.getX(), ennemi.getY());
+                    ennemi.getDeplacement().effectuer(envCopy, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+                }
+            }
+        }
+
+        envCopy.getOperateurActif().setActionActive(envCopy.getOperateurActif().getDeplacement());
+
+        if(!envCopy.isMissionFinie()) {
+            envCopy.getOperateurActif().resetPointsAction();
+        }
+        Etat etatArrive = creerEtat(envCopy);
+        envCopy.setEtat(restoreState);
+        return etatArrive;
+
+    }
+
+    /**
+     * Retourne l'état d'arrivé à partir d'une action et d'un état de départ en simulant l'action
+     * @param coup Pair (Coup,Direction)
+     * @param etatDepart
+     * @return
+     */
+    public Etat simulerAction(Pair<Coup, Direction> coup,Etat etatDepart){
+        Etat restoreState = creerEtat(envCopy);
+        envCopy.setEtat(etatDepart);
+
+        double proba = new Random().nextDouble();
+        boolean success = (proba <= coup.getValue0().probaSucces);
+        Etat etatArrivee = simuler(etatDepart, coup.getValue0(), envCopy.getOperateurActif(), coup.getValue1(),success);
+
+        envCopy.setEtat(restoreState);
+        return etatArrivee;
+    }
+
+
+    /**
+     * Génère tout les coups possibles à partir d'un état donné en paramètre
+     *
+     * @param e Etat de départ
+     * @return suite de Pair(Coup, Direction)
+     */
+    public List<Pair<Coup, Direction>> getCoupsEtat(Etat e) {
+
+        Operateur op = env.getOperateurActif();
+        Coup[] listeCoups = {op.getDeplacement(), op.getTir(), op.getEliminationSilencieuse()};
+        List<Pair<Coup, Direction>> coups = new ArrayList<>();
+
+
+        Etat restoreState = new EtatNormal(envCopy);
+
+        envCopy.setEtat(e);
+        Operateur opCopy = envCopy.getOperateurActif();
+        ArrayList<Pair<Coup, Direction>> listePaires = new ArrayList<>();
+        listePaires.add(new Pair<>(op.getFinTour(), Direction.AUCUN));
+        listePaires.add(new Pair<>(op.getCalmer(), Direction.AUCUN));
+
+        for(Coup c : listeCoups){
+            for(Case caseValide : c.getCasesValides(envCopy, opCopy)){
+
+                // Ajout de la direction
+                if(opCopy.getX() == -1 || opCopy.getY() == -1){
+                    coups.add(new Pair<>(c, Direction.AUCUN));
+                } else if (opCopy.getX() > caseValide.x) {
+                    coups.add(new Pair<>(c, Direction.GAUCHE));
+                } else if (opCopy.getX() < caseValide.x) {
+                    coups.add(new Pair<>(c, Direction.DROITE));
+                } else if (opCopy.getY() > caseValide.y) {
+                    coups.add(new Pair<>(c, Direction.HAUT));
+                } else {
+                    coups.add(new Pair<>(c, Direction.BAS));
+                }
+            }
+        }
+
+
+        envCopy.setEtat(restoreState);
+
+        return coups;
+    }
+
+
 }
