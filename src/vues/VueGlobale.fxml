@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox fx:id="vueGlobaleVbox" fillWidth="false">
           <fx:include fx:id="vuePlateau" source="VuePlateau.fxml" />
@@ -27,10 +29,16 @@
                   <fx:include source="VueMenace.fxml" />
                </children>
                <VBox.margin>
-                  <Insets bottom="30.0" />
+                  <Insets bottom="15.0" />
                </VBox.margin>
             </VBox>
+            <Separator prefWidth="200.0" />
             <fx:include source="VueActionRecommandee.fxml" />
+            <fx:include source="VueAvertissement.fxml" />
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets bottom="-10.0" />
+               </VBox.margin></Separator>
              <fx:include fx:id="vueActions" source="VueActions.fxml" />
          </children>
          <BorderPane.margin>

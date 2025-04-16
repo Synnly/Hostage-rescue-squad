@@ -7,7 +7,7 @@ import org.javatuples.Pair;
 import java.util.*;
 
 public class IterationValeur {
-    private static double gamma = 0.1;
+    private static double gamma = 0.9935;
     private static double epsilon = 0.001;
     private static Map<Etat, Pair<Coup, Direction>> bestCoup = new HashMap<>();
     private static Map<Etat, Double> utils;

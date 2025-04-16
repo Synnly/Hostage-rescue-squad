@@ -11,9 +11,7 @@ import mdp.etat.EtatNormal;
 import org.javatuples.Pair;
 import personnages.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * L'environnement d'une mission.
@@ -355,23 +353,6 @@ public class Environnement extends Observable{
         }
 
         if(missionFinie) nouvellePartie();
-
-        Coup[] listeCoups = new Coup[]{op.getDeplacement(), op.getTir(), op.getFinTour(), op.getEliminationSilencieuse()};
-        for(Coup coup : listeCoups){
-            for(Case caseValide : coup.getCasesValides(this, op)){
-                Direction dir;
-                if(caseValide.x == -1 || caseValide.y == -1) dir = Direction.AUCUN;
-                else if(caseValide.x > op.getX()) dir = Direction.DROITE;
-                else if(caseValide.x < op.getX()) dir = Direction.GAUCHE;
-                else if(caseValide.y > op.getY()) dir = Direction.BAS;
-                else dir = Direction.HAUT;
-
-                double probaEchec = ExplorationProba.probaEchec(this, mdp, new EtatNormal(this), coup, dir, nbCoupsMax, nbIters, listeCoups);
-                if(probaEchec >= seuilAvertissement) {
-                    System.out.println("ATTENTION : fin de partie dans " + (probaEchec * 100.) + " % des cas après " + coup + " vers " + dir + " en moins de " + nbCoupsMax + " coups");
-                }
-            }
-        }
 
         printPrediction();
         notifyObservers();
@@ -739,5 +720,28 @@ public class Environnement extends Observable{
     public void setCalmerActionActive() {
         operateur.setActionActive(operateur.getCalmer());
         choisirCase(-1,-1);
+    }
+
+    public Map<Pair<Coup, Direction>, Double> predireDanger(){
+        Operateur op = operateur;
+        Coup[] listeCoups = new Coup[]{op.getDeplacement(), op.getTir(), op.getFinTour(), op.getEliminationSilencieuse()};
+        Map<Pair<Coup, Direction>, Double> danger = new HashMap<>();
+
+        for(Coup coup : listeCoups){
+            for(Case caseValide : coup.getCasesValides(this, op)){
+                Direction dir;
+                if(caseValide.x == -1 || caseValide.y == -1) dir = Direction.AUCUN;
+                else if(caseValide.x > op.getX()) dir = Direction.DROITE;
+                else if(caseValide.x < op.getX()) dir = Direction.GAUCHE;
+                else if(caseValide.y > op.getY()) dir = Direction.BAS;
+                else dir = Direction.HAUT;
+
+                double probaEchec = ExplorationProba.probaEchec(this, mdp, new EtatNormal(this), coup, dir, nbCoupsMax, nbIters, listeCoups);
+                if(probaEchec >= seuilAvertissement) {
+                    danger.put(new Pair<>(coup, dir), probaEchec);
+                }
+            }
+        }
+        return danger;
     }
 }

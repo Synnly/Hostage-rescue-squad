@@ -27,6 +27,7 @@ public class Main extends Application {
         VueGlobale vueGlobale = new VueGlobale(env);
         VueActionRecommandee vueActionRecommandee = new VueActionRecommandee(env);
         VueMenace vueMenace = new VueMenace(env);
+        VueAvertissement vueAvertissement = new VueAvertissement(env);
 
 
 
@@ -38,6 +39,7 @@ public class Main extends Application {
             else if (iC.equals(VueGlobale.class)) return vueGlobale;
             else if (iC.equals(VueActionRecommandee.class)) return vueActionRecommandee;
             else if (iC.equals(VueMenace.class)) return vueMenace;
+            else if (iC.equals(VueAvertissement.class)) return vueAvertissement;
 
 
             else return null;
