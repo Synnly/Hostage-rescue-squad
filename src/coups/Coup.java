@@ -119,6 +119,11 @@ public abstract class Coup {
      */
     public boolean estElimSil(){return false;}
 
+    /**
+     * Indique si le coup est un appel de renfort
+     */
+    public boolean estRenfort(){return false;}
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

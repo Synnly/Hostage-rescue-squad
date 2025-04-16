@@ -19,4 +19,7 @@ public class CaseReapparitionEnnemis extends Case {
     public Case copy() {
         return new CaseReapparitionEnnemis(this);
     }
+
+    @Override
+    public boolean estReapparition() {return true;}
 }

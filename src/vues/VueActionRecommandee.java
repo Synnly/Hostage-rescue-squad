@@ -24,7 +24,7 @@ public class VueActionRecommandee extends Observer{
 
     @Override
     public void update() {
-        conseilIA.setText(environnement.coupPreditToString());
+        //conseilIA.setText(environnement.coupPreditToString());
     }
 
     @Override

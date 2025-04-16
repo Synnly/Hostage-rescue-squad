@@ -1,6 +1,7 @@
 package vues;
 
 import carte.cases.Case;
+import carte.cases.CaseReapparitionEnnemis;
 import carte.separation.Separation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -116,7 +117,14 @@ public class VuePlateau extends Observer {
                 String leftBdWidth = "1px"; String rightBdWidth = "1px"; String botBdWidth = "1px"; String topBdWidth = "1px";
                 String textColor = "black";
 
-                if(!env.getCase(x, y).peutVoir){    // Couverture
+                for (CaseReapparitionEnnemis c : env.getEnnemis().getFirst().getRoutine().getReapparitionEnnemis()){        // Point de reapparition
+                    if (c.x == x && c.y == y) {
+                        bgColor = "orange";
+                        break;
+                    }
+                }
+
+                if(!env.getCase(x, y).peutVoir){                // Couverture
                     bgColor = "lightgray";
                 }
 
@@ -127,7 +135,7 @@ public class VuePlateau extends Observer {
                     }
                 }
 
-                if(env.getCase(x, y).estObjectif){      // Objectif
+                if(env.getCase(x, y).estObjectif){              // Objectif
                     bgColor = "green";
                 }
 

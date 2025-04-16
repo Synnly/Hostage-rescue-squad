@@ -34,7 +34,8 @@ public class Environnement extends Observable{
     private boolean echec = false;
     private boolean missionFinie = false;
     private final double probaTirEnnemi = 0.3;
-    private final double probaDeplacementEnnemi = 0.7;
+    private final double probaDeplacementEnnemi = 0.6;
+    private final double probaAppelRenfortEnnemi = 0.1;
     private final double probaSuccesDeplacement;
     private final double probaSuccesTir;
     private final double probaElimSil;
@@ -98,7 +99,6 @@ public class Environnement extends Observable{
         for(Terroriste t:env.ennemis){
             ennemis.add(t.copy());
         }
-        System.out.println("taille ennemis = "+ennemis.size());
         this.probaSuccesDeplacement = env.probaSuccesDeplacement;
         this.probaSuccesTir = env.probaSuccesTir;
         this.probaElimSil = env.probaElimSil;
@@ -129,32 +129,24 @@ public class Environnement extends Observable{
         // Création des ennemis
         Deplacement deplacementTer = new Deplacement(0, 1);
         Tir tirTer = new Tir(0, 1);
+        AppelRenfort renfort = new AppelRenfort(0,1);
         ennemis = new ArrayList<>(3);
 
         List<CaseReapparitionEnnemis> reapparitions = routine.getReapparitionEnnemis();
-        Terroriste ennemi = new Terroriste(this, reapparitions.get(0).getX(), reapparitions.get(0).getY(), 0, deplacementTer, tirTer);
-        Terroriste ennemi2 = new Terroriste(this,reapparitions.get(1).getX(), reapparitions.get(1).getY(), 0, deplacementTer, tirTer);
+        Terroriste ennemi = new Terroriste(this, reapparitions.get(0).getX(), reapparitions.get(0).getY(), 0, deplacementTer, tirTer,renfort);
+        Terroriste ennemi2 = new Terroriste(this,reapparitions.get(1).getX(), reapparitions.get(1).getY(), 0, deplacementTer, tirTer,renfort);
 
         ennemi.setRoutine(routine);
         ennemi2.setRoutine(routine);
         ennemis.add(ennemi);
         ennemis.add(ennemi2);
-
+        /*
         for(int i = 0; i<3; i++){
-            Terroriste terr = new Terroriste(this, -1, -1, 0, deplacementTer, tirTer );
+            Terroriste terr = new Terroriste(this, -1, -1, 0, deplacementTer, tirTer,renfort);
             terr.setRoutine(routine);
-            System.out.println("new terr = "+terr.getId());
             ennemis.add(terr);
 
-        }
-
-
-
-
-
-
-
-
+        }*/
 
         missionFinie = false;
         menace = minMenace;
@@ -181,17 +173,18 @@ public class Environnement extends Observable{
         Case next;
         Routine routine = new Routine(pred);
 
-        next = new CaseReapparitionEnnemis(getCase(pred.x+1, pred.y)); routine.ajouterReapparitionEnnemis(pred, (CaseReapparitionEnnemis) next); pred = next;
+
         next = getCase(pred.x+1, pred.y); routine.ajouterCase(pred, next); pred = next;
+        next = new CaseReapparitionEnnemis(getCase(pred.x+1, pred.y)); routine.ajouterReapparitionEnnemis(pred, (CaseReapparitionEnnemis) next); pred = next;
 
         next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
         next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
         next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
         next = getCase(pred.x, pred.y+1); routine.ajouterCase(pred, next); pred = next;
 
+        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
         next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
         next = new CaseReapparitionEnnemis(getCase(pred.x-1, pred.y)); routine.ajouterReapparitionEnnemis(pred, (CaseReapparitionEnnemis)next); pred = next;
-        next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
         next = getCase(pred.x-1, pred.y); routine.ajouterCase(pred, next); pred = next;
 
         next = getCase(pred.x, pred.y-1); routine.ajouterCase(pred, next); pred = next;
@@ -336,6 +329,9 @@ public class Environnement extends Observable{
                 for (Terroriste ennemi : ennemis) {
                     ennemi.getTir().effectuer(this, ennemi, getCase(operateur.getX(), operateur.getY()));
                 }
+            }
+            else if(nombres.get(i) < probaAppelRenfortEnnemi + probaTirEnnemi){     // Renfort ennemis
+                ennemis.getFirst().getAppelRenfort().effectuer(this, ennemis.getFirst(), AucuneCase.instance);
             }
             else {
                 for (Terroriste ennemi : ennemis) {     // Deplacement
@@ -600,16 +596,19 @@ public class Environnement extends Observable{
      * @param coups La liste des coups
      */
     public void effectuerCoupsTerroristes(List<Coup> coups){
-        for(Terroriste t : ennemis){
-            if(t.getX() == -1 && t.getY() == -1){
-                continue;
-            }
-
-            for(Coup c : coups) {
-                if (c.estTir()) {
+        for(Coup c : coups) {
+            boolean respawnEffectue = false;
+            for(Terroriste t : ennemis){
+                if(t.getX() == -1 && t.getY() == -1){
+                    continue;
+                }
+                if (c.estTir()) {                   // Tir
                     c.effectuer(this, t, getCase(operateur.getX(), operateur.getY()));
-                } else if (c.estDeplacement()) {
+                } else if (c.estDeplacement()) {    // Deplacement
                     c.effectuer(this, t, t.getRoutine().prochaineCase(getCase(t.getX(), t.getY())));
+                } else if (c.estRenfort() && !respawnEffectue){     // Renfort
+                    c.effectuer(this, t, t.getRoutine().prochaineCase(getCase(t.getX(), t.getY())));
+                    respawnEffectue = true;
                 }
             }
         }
@@ -719,6 +718,7 @@ public class Environnement extends Observable{
     public List<Separation> getSeparations(){
         return separations;
     }
+
     public boolean tousTerrsMorts() {
         boolean tousTerrsMorts = true;
         for (Terroriste t : getEnnemis()) {
@@ -730,7 +730,15 @@ public class Environnement extends Observable{
         return tousTerrsMorts;
     }
 
-
+    public int getEnnemisEnVie(){
+        int nb = 0;
+        for (Terroriste t : getEnnemis()) {
+            if (t.getX() != -1 || t.getY() != -1) {
+                nb++;
+            }
+        }
+        return nb;
+    }
 
     /**
      * Exécute l'action recomandée par l'IA
@@ -758,5 +766,20 @@ public class Environnement extends Observable{
     public void setCalmerActionActive() {
         operateur.setActionActive(operateur.getCalmer());
         choisirCase(-1,-1);
+    }
+
+    /**
+     * Fonction qui fait réapparaitre le premier ennemi mort de la liste
+     */
+    public void reapparitionEnnemi(){
+        for(Terroriste t:ennemis){
+            if(t.getX() == -1 || t.getY() == -1){
+                List<CaseReapparitionEnnemis> lc = t.getRoutine().getReapparitionEnnemis();
+                CaseReapparitionEnnemis c = lc.get(new Random().nextInt(lc.size()));
+                t.setX(c.getX());
+                t.setY(c.getY());
+                return;
+            }
+        }
     }
 }

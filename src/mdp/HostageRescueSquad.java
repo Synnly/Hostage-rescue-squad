@@ -90,10 +90,11 @@ public class HostageRescueSquad implements MDP{
         if (etats != null){
             return etats;
         }
+        int nb = 0;
 
         Set<Etat> listeEtats = new HashSet<>();
         int nbOps = 1;                                              // A changer quand plusieurs operateurs
-        Routine routine = env.getEnnemis().get(0).getRoutine();     // A changer quand plusieurs routines
+        Routine routine = env.getEnnemis().getFirst().getRoutine();     // A changer quand plusieurs routines
         int[] indCasesOp = new int[nbOps];
         int nbCases = env.getLargeur() * env.getHauteur();
         int nbTerr = env.getEnnemis().size();
@@ -113,48 +114,35 @@ public class HostageRescueSquad implements MDP{
                     }
                 }
 
-                // Quels terr en vie
-                for (int idCombTerrVie = 0; idCombTerrVie < Math.pow(2, nbTerr); idCombTerrVie++) {
-
-                    // Initialisation positions terroristes si en vie
-                    int[] indCasesTerr = new int[nbTerr];
-                    for (int indTerr = 0; indTerr < env.getEnnemis().size(); indTerr++) {
-                        if (((int) (idCombTerrVie / Math.pow(2, indTerr))) % 2 == 0) {    // Si terr mort, pos = -1
-                            indCasesTerr[indTerr] = -1;
-                        } else {
-                            Case caseTerr = env.getCase(env.getEnnemis().get(indTerr).getX(), env.getEnnemis().get(indTerr).getY());
-                            indCasesTerr[indTerr] = routine.indexOf(caseTerr);
-                        }
+                // Initialisation positions terroristes
+                int[] indCasesTerr = new int[nbTerr];
+                for (int indCaseTerr = 0; indCaseTerr < Math.pow(routine.taille() + 1, nbTerr); indCaseTerr++) {
+                    
+                    for(int indTerr = 0; indTerr < nbTerr; indTerr ++) {
+                        indCasesTerr[indTerr] = ((int) (indCaseTerr / Math.pow(routine.taille() + 1, indTerr)) % (routine.taille() + 1)) - 1;
                     }
 
-                    // Positions terroristes
-                    for (int indCaseRoutine = -1; indCaseRoutine < routine.taille()-1; indCaseRoutine++) {
-                        for (int indTerr = 0; indTerr < env.getEnnemis().size(); indTerr++) {
-                            indCasesTerr[indTerr] = routine.nextIndex(indCasesTerr[indTerr]);
+                    // Quels operateurs ont l'objectif
+                    boolean[] aObjectif = new boolean[nbOps];
+                    for (int i = 0; i < Math.pow(2, nbOps); i++) {
+                        for (int j = 0; j < nbOps; j++) {
+                            aObjectif[j] = ((int) (i / Math.pow(2, j))) == 1;
                         }
 
-                        // Quels operateurs ont l'objectif
-                        boolean[] aObjectif = new boolean[nbOps];
-                        for (int i = 0; i < Math.pow(2, nbOps); i++) {
-                            for (int j = 0; j < nbOps; j++) {
-                                aObjectif[j] = ((int) (i / Math.pow(2, j))) == 1;
-                            }
+                        // Niveau de menace
+                        for (int menace = env.getMinMenace(); menace <= env.getMaxMenace(); menace++) {
 
-                            // Niveau de menace
-                            for (int menace = env.getMinMenace(); menace <= env.getMaxMenace(); menace++) {
+                            // Nombre de PA
+                            for(int idNbPa = 0; idNbPa < Math.pow(maxPA+1, nbOps); idNbPa ++){
 
-                                // Nombre de PA
-                                for(int idNbPa = 0; idNbPa < Math.pow(maxPA+1, nbOps); idNbPa ++){
+                                int[] listePaOps = new int[nbOps];
+                                for (int j = 0; j < nbOps; j++) {
+                                    listePaOps[j] = ((int) (idNbPa / Math.pow(maxPA, j)));
+                                }
 
-                                    int[] listePaOps = new int[nbOps];
-                                    for (int j = 0; j < nbOps; j++) {
-                                        listePaOps[j] = ((int) (idNbPa / Math.pow(maxPA, j)));
-                                    }
-
-                                    Etat e = creerEtat(indCasesOp, listePaOps, aObjectif, indCasesTerr, menace);
-                                    if (etatEstValide(e)) {
-                                        listeEtats.add(e);
-                                    }
+                                Etat e = creerEtat(indCasesOp, listePaOps, aObjectif, indCasesTerr, menace);
+                                if (etatEstValide(e)) {
+                                    listeEtats.add(e);
                                 }
                             }
                         }
@@ -265,6 +253,9 @@ public class HostageRescueSquad implements MDP{
             for (int indTerr = 0; indTerr < e.indCaseTerroristes.length; indTerr++) {
                 int indCasePlateauTerr = env.getPlateau().indexOf(routine.getCase(e.indCaseTerroristes[indTerr]));
                 if(e.indCaseOperateurs[indOp] != -1 && e.indCaseOperateurs[indOp] == indCasePlateauTerr){
+                    if(e.toString() == "Etat{indCaseOperateurs=[-1], nbPAOperateurs=[2], aObjectif=[false], indCaseTerroristes=[1,15], menace=7}"){
+                        System.out.println();
+                    }
                     return false;
                 }
             }
@@ -278,6 +269,9 @@ public class HostageRescueSquad implements MDP{
                 aObj = true;
             }
             else if(opAObjectif && aObj){
+                if(e.toString() == "Etat{indCaseOperateurs=[-1], nbPAOperateurs=[2], aObjectif=[false], indCaseTerroristes=[1,15], menace=7}"){
+                    System.out.println();
+                }
                 return false;
             }
         }
@@ -289,11 +283,11 @@ public class HostageRescueSquad implements MDP{
                 nbEnnemisMorts --;
             }
         }
-        // Si aucun ennemis n'est mort la menace ne peut pas augmenter (pour l'instant)
-        if(nbEnnemisMorts == 0 && e.menace != env.getMinMenace()){
-            return false;
-        }
+
         if (nbEnnemisMorts == env.getEnnemis().size() && e.menace != env.getMinMenace()){
+            if(e.toString() == "Etat{indCaseOperateurs=[-1], nbPAOperateurs=[2], aObjectif=[false], indCaseTerroristes=[1,15], menace=7}"){
+                System.out.println();
+            }
             return false;
         }
 
@@ -304,12 +298,18 @@ public class HostageRescueSquad implements MDP{
         for(int nbPa : e.nbPAOperateurs){
             if (nbPa != 0 || nbPa != maxPA){
                 if(opEnJeu){
+                    if(e.toString() == "Etat{indCaseOperateurs=[9], nbPAOperateurs=[2], aObjectif=[false], indCaseTerroristes=[13, 4, 9, -1, -1], menace=2}"){
+                        System.out.println();
+                    }
                     return false;
                 }
                 opEnJeu = true;
             }
         }
 
+        if(e.toString() == "Etat{indCaseOperateurs=[-1], nbPAOperateurs=[2], aObjectif=[false], indCaseTerroristes=[1,15], menace=7}"){
+            System.out.println("C'est good");
+        }
         return true;
     }
 
@@ -410,7 +410,7 @@ public class HostageRescueSquad implements MDP{
      */
     private Map<Etat, Double> transitionEnnemis(Map<Etat, Double> distribution){
         Map<Etat, Double> distributionEnnemis = new HashMap<>();
-        Coup[] listeCoups = {env.getEnnemis().get(0).getDeplacement(), env.getEnnemis().get(0).getTir()};
+        Coup[] listeCoups = {env.getEnnemis().get(0).getDeplacement(), env.getEnnemis().get(0).getTir(), env.getEnnemis().get(0).getAppelRenfort() };
 
         Etat restoreState = creerEtat(envCopy);
         for(Etat e : distribution.keySet()) {

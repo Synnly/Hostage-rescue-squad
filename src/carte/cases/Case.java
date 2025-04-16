@@ -124,4 +124,9 @@ public abstract class Case {
     public int getId() {
         return id;
     }
+
+    /**
+     * @return true s'il s'agit d'une case de réapparition d'ennemis, false sinon
+     */
+    public boolean estReapparition(){return false;}
 }

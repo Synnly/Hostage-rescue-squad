@@ -1,5 +1,6 @@
 package personnages;
 
+import coups.AppelRenfort;
 import coups.Deplacement;
 import coups.Tir;
 import carte.Routine;
@@ -14,6 +15,7 @@ public class Terroriste extends Personnage{
      * Paterne de déplacement sur le plateau
      */
     private Routine routine;
+    private AppelRenfort appelRenfort;
 
     /**
      * Constructeur d'un terroriste
@@ -24,8 +26,9 @@ public class Terroriste extends Personnage{
      * @param deplacement  Son action de déplacement.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      * @param tir          Son action de tir.&nbsp;Ne change jamais.&nbsp;Ne peut être <code>null</code>.
      */
-    public Terroriste(Environnement env, int x, int y, int ignored, Deplacement deplacement, Tir tir) {
+    public Terroriste(Environnement env, int x, int y, int ignored, Deplacement deplacement, Tir tir, AppelRenfort appelRenfort) {
         super(env, x, y, 0, deplacement, tir);
+        this.appelRenfort = appelRenfort;
     }
 
     /**
@@ -35,6 +38,7 @@ public class Terroriste extends Personnage{
     public Terroriste(Terroriste t){
         super(t);
         this.routine = t.routine;
+        this.appelRenfort = t.appelRenfort;
     }
 
     /**
@@ -63,4 +67,6 @@ public class Terroriste extends Personnage{
     public boolean estTerroriste(){
         return true;
     }
+
+    public AppelRenfort getAppelRenfort() {return this.appelRenfort;}
 }
