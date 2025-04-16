@@ -14,20 +14,9 @@ import java.util.Map;
 public class RTDP {
     public static Pair<Coup, Direction> RTDP(MDP mdp, Etat s){
         Map<Etat, Double> J = new HashMap<>();
-        Pair<Coup, Direction> coupPredit = null;
-        /*
-       long startTime =  System.currentTimeMillis();
-       long currentTime =  System.currentTimeMillis();
-        System.out.println(startTime);
-       while(currentTime - startTime < 10000){  //10 secondes
-           coupPredit = ESSAI_RTDP(mdp,s,J);
-           currentTime =  System.currentTimeMillis();
-       }
-        System.out.println(currentTime - startTime);
-         */
         int nbIterration = 0;
-        while(nbIterration < 10000){  //10 secondes
-            coupPredit = ESSAI_RTDP(mdp,s,J);
+        while(nbIterration < 1000){  //10 secondes
+            ESSAI_RTDP(mdp,s,J);
             nbIterration++;
         }
 

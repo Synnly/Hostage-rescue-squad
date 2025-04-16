@@ -77,7 +77,7 @@ public class Environnement extends Observable{
         mdp = new HostageRescueSquad(this);
         System.out.println("L'ia se prépare ...");
         //IterationValeur.iterationValeur(mdp);
-        coupPredit = RTDP.predict(mdp,new EtatNormal(this));
+        //coupPredit = RTDP.predict(mdp,new EtatNormal(this));
         System.out.println("L'ia a fini");
         printPrediction();
     }
