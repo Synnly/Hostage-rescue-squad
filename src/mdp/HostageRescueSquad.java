@@ -461,14 +461,8 @@ public class HostageRescueSquad implements MDP{
         return distributionEnnemis;
     }
 
-    /*À partir d'ici, toute les fonctions rajoutées pour RTDP*/
+    /*ATTENTION : À partir d'ici, toute les fonctions rajoutées pour RTDP */
 
-    /**
-     * Simule le coup donné pour obtenir l'état d'arrivé depuis l'état de départ
-     * @param s État de départ
-     * @param c Pair (Coup, Direction)
-     * @return Etat d'arrivé
-     */
     @Override
     public Etat etatSuivant(Etat s,Pair<Coup, Direction> c) {
         Etat restoreState = creerEtat(envCopy);
@@ -532,11 +526,7 @@ public class HostageRescueSquad implements MDP{
     }
 
 
-    /**
-     * Génère tout les coups possibles à partir d'un état donné en paramètre
-     * @param e Etat de départ
-     * @return l'ensemble des Paires (Coup, Direction) possibles depuis l'état de départ
-     */
+    @Override
     public List<Pair<Coup, Direction>> getCoupsEtat(Etat e) {
 
         Operateur op = env.getOperateurActif();

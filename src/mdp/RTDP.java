@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/* Real-Time Dynamic Programming
-
+/**
+ * RTDP : Real-Time Dynamic Programming
  */
 public class RTDP {
     public static Pair<Coup, Direction> RTDP(MDP mdp, Etat s){
@@ -37,10 +37,24 @@ public class RTDP {
          return c;
     }
 
+    /**
+     * Effectue un Coup vers une direction depuis un Etat de départ
+     * @param mdp Hostage Rescue Squad
+     * @param s Etat de départ
+     * @param c Paire (Coup, Direction)
+     * @return Etat d'arrivé
+     */
     public static Etat choisirEtatSuivant(MDP mdp, Etat s, Pair<Coup, Direction> c) {
         return mdp.etatSuivant(s,c);
     }
 
+    /**
+     * Choisi la meilleure Paire (Coup, Direction) depuis un Etat de départ
+     * @param mdp Hostage Rescue Squad
+     * @param s Etat de départ
+     * @param J Coût  estimé depuis l'état de départ s jusqu’au but
+     * @return Paire (Coup, Direction) par choix Glouton (dont l'utilitéé est max)
+     */
     public static Pair<Coup, Direction> getActionGloutonne(MDP mdp, Etat s, Map<Etat, Double> J){
         ArrayList<Pair<Coup, Direction>> actions = (ArrayList<Pair<Coup, Direction>>) mdp.getCoupsEtat(s);
         double util = 0;
@@ -80,6 +94,12 @@ public class RTDP {
         return util;
     }
 
+    /**
+     * Lance l'algo RTDP
+     * @param mdp Hostage Rescue Squad
+     * @param s Etat de départ
+     * @return
+     */
     public static Pair<Coup, Direction> predict(MDP mdp, Etat s){
         Pair<Coup, Direction> coupPredit = RTDP(mdp,s);
         return coupPredit;
