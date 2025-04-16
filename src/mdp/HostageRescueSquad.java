@@ -462,6 +462,13 @@ public class HostageRescueSquad implements MDP{
     }
 
     /*À partir d'ici, toute les fonctions rajoutées pour RTDP*/
+
+    /**
+     * Simule le coup donné pour obtenir l'état d'arrivé depuis l'état de départ
+     * @param s État de départ
+     * @param c Pair (Coup, Direction)
+     * @return Etat d'arrivé
+     */
     @Override
     public Etat etatSuivant(Etat s,Pair<Coup, Direction> c) {
         Etat restoreState = creerEtat(envCopy);
@@ -473,26 +480,14 @@ public class HostageRescueSquad implements MDP{
             envCopy.getOperateurActif().resetPointsAction();
             suivant = creerEtat(envCopy);
         }
-        /*
-        while(suivant.estTerminal() && !suivant.estReussite()){ // est echec
-            suivant = simulerAction(c,s);
-            if(suivant.nbPAOperateurs[0] == 0){
-                suivant = tourEnnemi();
-                envCopy.setEtat(suivant);
-                envCopy.getOperateurActif().resetPointsAction();
-                suivant = creerEtat(envCopy);
-                System.out.println("sortir d'ici : "+suivant);
-            }
-
-        }
-         */
-
-
-        //System.out.println(c+" : "+s+" et "+suivant);
         envCopy.setEtat(restoreState);
         return suivant;
     }
 
+    /**
+     * Fonction Effectue le tour ennemi pour récupérer l'état d'arrivé après leurs actions
+     * @return Etat d'arrivé
+     */
     public Etat tourEnnemi(){
         Etat restoreState = creerEtat(envCopy);
         List<Double> nombres = envCopy.getNombresAleatoires(envCopy.getMenace());
@@ -509,23 +504,20 @@ public class HostageRescueSquad implements MDP{
                 }
             }
         }
-
         envCopy.getOperateurActif().setActionActive(envCopy.getOperateurActif().getDeplacement());
-
         if(!envCopy.isMissionFinie()) {
             envCopy.getOperateurActif().resetPointsAction();
         }
         Etat etatArrive = creerEtat(envCopy);
         envCopy.setEtat(restoreState);
         return etatArrive;
-
     }
 
     /**
-     * Retourne l'état d'arrivé à partir d'une action et d'un état de départ en simulant l'action
+     * Retourne l'état d'arrivé à partir d'une Pair (Coup, Direction) et d'un état de départ en simulant l'action
      * @param coup Pair (Coup,Direction)
-     * @param etatDepart
-     * @return
+     * @param etatDepart Etat de départ
+     * @return Etat d'arrivée
      */
     public Etat simulerAction(Pair<Coup, Direction> coup,Etat etatDepart){
         Etat restoreState = creerEtat(envCopy);
@@ -542,16 +534,14 @@ public class HostageRescueSquad implements MDP{
 
     /**
      * Génère tout les coups possibles à partir d'un état donné en paramètre
-     *
      * @param e Etat de départ
-     * @return suite de Pair(Coup, Direction)
+     * @return l'ensemble des Paires (Coup, Direction) possibles depuis l'état de départ
      */
     public List<Pair<Coup, Direction>> getCoupsEtat(Etat e) {
 
         Operateur op = env.getOperateurActif();
         Coup[] listeCoups = {op.getDeplacement(), op.getTir(), op.getEliminationSilencieuse()};
         List<Pair<Coup, Direction>> coups = new ArrayList<>();
-
 
         Etat restoreState = new EtatNormal(envCopy);
 
@@ -578,7 +568,6 @@ public class HostageRescueSquad implements MDP{
                 }
             }
         }
-
 
         envCopy.setEtat(restoreState);
 

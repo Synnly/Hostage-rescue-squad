@@ -24,35 +24,17 @@ public class RTDP {
     }
 
 
-    public static Pair<Coup, Direction> ESSAI_RTDP(MDP mdp, Etat s, Map<Etat, Double> J){
+    public static Pair<Coup, Direction> ESSAI_RTDP(MDP mdp, Etat e, Map<Etat, Double> J){
         Pair<Coup, Direction> c = null;
-        Etat e = s;
          while(! e.estTerminal()){
              c = getActionGloutonne(mdp,e,J);
              if (!J.containsKey(e)) {
                  J.put(e, 0.);
-                 //System.out.println("L'état n'est pas présent dans la Map.");
              }
              J.put(e, qValeur(mdp,e,c,J));
              e = choisirEtatSuivant(mdp,e,c);
-             //System.out.println("nouveau etat = "+s);
          }
-         //System.out.println("l'action choisi est "+c);
          return c;
-
-
-       /*
-        System.out.println("cECI EST BINE LE PRINT DE TST QUE NOUS VOULONS");
-        Action a = mdp.getActionGloutonne(s);
-        if (!J.containsKey(s)) {
-            J.put(s, 0.0);
-            //System.out.println("L'état n'est pas présent dans la Map.");
-        }
-        J.put(s, qValeur(mdp,s,a,J));
-        //if (J.containsKey(s)) {System.out.println("L'état est présent dans la Map.");}
-        s = choisirEtatSuivant(mdp,s,a);
-        System.out.println("L'état suivant est = "+s);
-        */
     }
 
     public static Etat choisirEtatSuivant(MDP mdp, Etat s, Pair<Coup, Direction> c) {
@@ -73,9 +55,6 @@ public class RTDP {
                         J.put(sPrime, 0.);
                     }
                     util += distribution.get(sPrime) * (mdp.recompense(s, a.getValue0(), sPrime) +  (0.005)*J.get(sPrime));
-                    double test = J.get(sPrime);
-                    //System.out.println("test = "+util);
-                    //util += mdp.recompense(s, a.getValue0(), sPrime) +test ;
                 }
                 if(util > maxUtil){
                     maxUtil = util;
@@ -103,8 +82,6 @@ public class RTDP {
 
     public static Pair<Coup, Direction> predict(MDP mdp, Etat s){
         Pair<Coup, Direction> coupPredit = RTDP(mdp,s);
-        System.out.println("r  tdp terminé");
-        //return mdp.getActionGloutonne(s);
         return coupPredit;
     }
 
