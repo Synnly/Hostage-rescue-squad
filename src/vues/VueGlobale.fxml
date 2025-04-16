@@ -1,39 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox fx:id="vueGlobaleVbox" fillWidth="false">
-          <fx:include fx:id="vueMenu" source="VueMenu.fxml" />
           <fx:include fx:id="vuePlateau" source="VuePlateau.fxml" />
-         <BorderPane.margin>
-            <Insets bottom="-20.0" />
-         </BorderPane.margin>
+         <padding>
+            <Insets bottom="20.0" left="20.0" top="20.0" />
+         </padding>
       </VBox>
    </center>
    <bottom>
-      <VBox spacing="10.0" BorderPane.alignment="TOP_CENTER">
-         <children>
-            <fx:include source="VueActionRecommandee.fxml" />
-            <HBox spacing="30.0" BorderPane.alignment="TOP_CENTER">
-               <children>
-                   <fx:include fx:id="vueActions" source="VueActions.fxml" />
-                  <VBox spacing="10.0">
-                     <children>
-                        <fx:include source="VuePA.fxml" />
-                        <fx:include source="VueMenace.fxml" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-         </children>
-      </VBox>
+      <VBox spacing="10.0" BorderPane.alignment="TOP_CENTER" />
    </bottom>
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" />
-   </padding>
+   <top>
+       <fx:include fx:id="vueMenu" source="VueMenu.fxml" />
+   </top>
+   <right>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <VBox spacing="10.0">
+               <children>
+                  <fx:include source="VuePA.fxml" />
+                  <fx:include source="VueMenace.fxml" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="30.0" />
+               </VBox.margin>
+            </VBox>
+            <fx:include source="VueActionRecommandee.fxml" />
+             <fx:include fx:id="vueActions" source="VueActions.fxml" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </right>
 </BorderPane>

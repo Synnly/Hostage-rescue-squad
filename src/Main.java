@@ -44,6 +44,7 @@ public class Main extends Application {
         });
 
         Parent root = loader.load();
+        primaryStage.setResizable(false);
         primaryStage.setTitle("Hostage Rescue Squad");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

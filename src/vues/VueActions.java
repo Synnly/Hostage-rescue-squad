@@ -54,10 +54,10 @@ public class VueActions extends Observer{
      */
     @FXML
     public void initialize(){
-        probaTir.setText(env.getOperateurActif().getTir().probaSucces * 100 + " %");
-        probaDepl.setText(env.getOperateurActif().getDeplacement().probaSucces * 100 + " %");
-        probaElimSil.setText(env.getOperateurActif().getEliminationSilencieuse().probaSucces * 100 + " %");
-        probaCalm.setText(env.getOperateurActif().getCalmer().probaSucces * 100 + " %");
+        probaTir.setText((int) (env.getOperateurActif().getTir().probaSucces * 100) + " %");
+        probaDepl.setText((int) (env.getOperateurActif().getDeplacement().probaSucces * 100) + " %");
+        probaElimSil.setText((int) (env.getOperateurActif().getEliminationSilencieuse().probaSucces * 100) + " %");
+        probaCalm.setText((int) (env.getOperateurActif().getCalmer().probaSucces * 100) + " %");
 
         coutTir.setText(env.getOperateurActif().getTir().cout + " PA");
         coutDepl.setText(env.getOperateurActif().getDeplacement().cout + " PA");

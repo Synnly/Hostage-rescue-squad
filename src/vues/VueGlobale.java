@@ -10,16 +10,6 @@ import observable.Observable;
  */
 public class VueGlobale extends Observer{
 
-    /*
-    TODO :
-        Couches :
-            - Otages
-            - Personnages
-            - Murs
-            - Surbrillance (coups alliés/ennemis)
-            - Plateau
-     */
-
     /**
      * Le conteneur des autres vues
      */

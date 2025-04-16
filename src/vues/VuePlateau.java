@@ -5,7 +5,8 @@ import carte.separation.Separation;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import observable.Environnement;
 import personnages.Operateur;
 import personnages.Terroriste;
@@ -20,11 +21,14 @@ public class VuePlateau extends Observer {
      * Le conteneur du plateau
      */
     @FXML
-    public GridPane gridPane;
+    public StackPane stackPane;
+
+    public GridPane gridPaneBoutons, gridPaneOtages, gridPanePersonnages, gridPaneSurbrillance, gridPaneMurs, gridPaneSprites;
     /**
      * La liste des boutons représentant chacun une case du plateau
      */
     private Button[][] boutons;
+    private Pane[][] sprites, surbrillance, personnages, murs, otages;
     /**
      * L'environnement observé
      */
@@ -51,10 +55,13 @@ public class VuePlateau extends Observer {
      */
     @FXML
     public void initialize(){
-        gridPane.setMinWidth(env.getLargeur() * tailleCase);
-        gridPane.setMinHeight(env.getHauteur() * tailleCase);
-        gridPane.setPrefWidth(env.getLargeur() * tailleCase);
-        gridPane.setPrefHeight(env.getHauteur() * tailleCase);
+        stackPane.setMinWidth(env.getLargeur() * tailleCase + 8);
+        stackPane.setMinHeight(env.getHauteur() * tailleCase + 8);
+        stackPane.setPrefWidth(env.getLargeur() * tailleCase + 8);
+        stackPane.setPrefHeight(env.getHauteur() * tailleCase + 8);
+        stackPane.setMaxWidth(env.getLargeur() * tailleCase + 8);
+        stackPane.setMaxHeight(env.getHauteur() * tailleCase + 8);
+        stackPane.setStyle("-fx-background-color: #4f6228");
     }
 
     /**
@@ -64,18 +71,126 @@ public class VuePlateau extends Observer {
      * @param hauteur Le nombre de cases en hauteur
      */
     public void initPlateau(int largeur, int hauteur){
+        // Boutons
         boutons = new Button[largeur][hauteur];
         for(int x = 0; x < largeur; x++){
             for(int y = 0; y < hauteur; y++) {
                 Button button = new Button();
                 button.setId("case" + x + "-" + y);
-                button.setMinWidth(gridPane.getWidth()/largeur);
-                button.setMinHeight((gridPane.getHeight() - 40)/hauteur);
-                button.setStyle("-fx-background-color: #ffffff; -fx-border-color: gray");
+                button.setMinWidth(gridPaneBoutons.getWidth()/largeur);
+                button.setMinHeight((gridPaneBoutons.getHeight())/hauteur);
                 button.setText(y * env.getLargeur() + x + "");
+                button.setStyle("-fx-opacity: 0;");
                 button.setOnAction(this);
-                gridPane.add(button, x, y);
+                gridPaneBoutons.add(button, x, y);
                 boutons[x][y] = button;
+            }
+        }
+
+        // Sprites, surbrillance, personnages, murs
+        sprites = new Pane[largeur][hauteur];
+        surbrillance = new Pane[largeur][hauteur];
+        personnages = new Pane[largeur][hauteur];
+        otages = new Pane[largeur][hauteur];
+        murs = new Pane[largeur][hauteur];
+        for(int x = 0; x < largeur; x++) {
+            for (int y = 0; y < hauteur; y++) {
+                // Sprites
+                Pane p = new Pane();
+                p.setMinWidth(gridPaneBoutons.getWidth() / largeur);
+                p.setMinHeight((gridPaneBoutons.getHeight()) / hauteur);
+
+                if (!env.getCase(x, y).peutVoir){    // Couverture
+                    p.setStyle("-fx-background-color: #9b9b9b; -fx-background-insets: 1px; -fx-background-radius: 4px");
+                } else{                                     // Case normale
+                    p.setStyle("-fx-background-color: #d7e4bd; -fx-background-insets: 1px; -fx-background-radius: 4px");
+                }
+
+                gridPaneSprites.add(p, x, y);
+                sprites[x][y] = p;
+
+                // Surbrillance
+                p = new Pane();
+                p.setMinWidth(gridPaneBoutons.getWidth() / largeur);
+                p.setMinHeight((gridPaneBoutons.getHeight()) / hauteur);
+                p.setStyle("-fx-opacity: 0");
+                gridPaneSurbrillance.add(p, x, y);
+                surbrillance[x][y] = p;
+
+                // Personnages
+                p = new Pane();
+                p.setMinWidth(gridPaneBoutons.getWidth() / largeur);
+                p.setMinHeight((gridPaneBoutons.getHeight()) / hauteur);
+                p.setStyle("-fx-opacity: 0");
+                gridPanePersonnages.add(p, x, y);
+                personnages[x][y] = p;
+
+                // Otages
+                p = new Pane();
+                p.setMinWidth(gridPaneBoutons.getWidth() / largeur);
+                p.setMinHeight((gridPaneBoutons.getHeight()) / hauteur);
+                p.setStyle("-fx-opacity: 0");
+                gridPaneOtages.add(p, x, y);
+                otages[x][y] = p;
+
+                // Murs
+                p = new Pane();
+                p.setMinWidth(gridPaneBoutons.getWidth() / largeur);
+                p.setMinHeight((gridPaneBoutons.getHeight()) / hauteur);
+
+                String leftBdColor = "#ffffff00"; String rightBdColor = "#ffffff00"; String botBdColor = "#ffffff00"; String topBdColor = "#ffffff00";
+                String leftBdWidth = "1px"; String rightBdWidth = "1px"; String botBdWidth = "1px"; String topBdWidth = "1px";
+                // Separations
+                for(Separation sep : env.getSeparations()){
+                    if(sep.getCase1() == env.getCase(x, y)){
+                        if(sep.getCase1().x == sep.getCase2().x){   // Separation horizontale
+                            if(sep.getCase1().y > sep.getCase2().y) {
+                                topBdColor = "#963C00";
+                                topBdWidth = "5px";
+                            }
+                            else {
+                                botBdColor = "#963C00";
+                                botBdWidth = "5px";
+                            }
+                        }
+                        else{   // Separation verticale
+                            if(sep.getCase1().x > sep.getCase2().x) {
+                                leftBdColor = "#963C00";
+                                leftBdWidth = "5px";
+                            }
+                            else {
+                                rightBdColor = "#963C00";
+                                rightBdWidth = "5px";
+                            }
+                        }
+                    } else if (sep.getCase2() == env.getCase(x, y)) {
+                        if(sep.getCase1().x == sep.getCase2().x){   // Separation horizontale
+                            if(sep.getCase1().y < sep.getCase2().y) {
+                                topBdColor = "#963C00";
+                                topBdWidth = "5px";
+                            }
+                            else {
+                                botBdColor = "#963C00";
+                                botBdWidth = "5px";
+                            }
+                        }
+                        else{   // Separation verticale
+                            if(sep.getCase1().x < sep.getCase2().x) {
+                                leftBdColor = "#963C00";
+                                leftBdWidth = "5px";
+                            }
+                            else {
+                                rightBdColor = "#963C00";
+                                rightBdWidth = "5px";
+                            }
+                        }
+                    }
+                }
+
+                String style = String.format("-fx-background-color: %s; -fx-border-color: %s %s %s %s; -fx-border-width: %s %s %s %s; -fx-text-fill: %s", "#ffffff00", topBdColor, rightBdColor, botBdColor, leftBdColor, topBdWidth, rightBdWidth, botBdWidth, leftBdWidth, "black");
+                p.setStyle(style);
+                gridPaneMurs.add(p, x, y);
+                murs[x][y] = p;
             }
         }
     }
@@ -111,93 +226,34 @@ public class VuePlateau extends Observer {
 
         for (int x = 0; x < env.getLargeur(); x++) {
             for (int y = 0; y < env.getHauteur(); y++) {
-                String bgColor = "white";
-                String leftBdColor = "gray"; String rightBdColor = "gray"; String botBdColor = "gray"; String topBdColor = "gray";
-                String leftBdWidth = "1px"; String rightBdWidth = "1px"; String botBdWidth = "1px"; String topBdWidth = "1px";
-                String textColor = "black";
-
-                if(!env.getCase(x, y).peutVoir){    // Couverture
-                    bgColor = "lightgray";
-                }
+                surbrillance[x][y].setStyle("-fx-opacity: 0");
+                personnages[x][y].setStyle("-fx-opacity: 0");
+                otages[x][y].setStyle("-fx-opacity: 0");
 
                 for(Terroriste ennemi : env.getEnnemis()){      // Terroristes
                     if (ennemi.getX() == x && ennemi.getY() == y) {
-                        bgColor = "red";
+                        personnages[x][y].setStyle("-fx-opacity: 1; -fx-background-position: center; -fx-background-size: 75%; -fx-background-repeat: no-repeat; -fx-background-image: url('tero.png')");
                         break;
                     }
                 }
 
-                if(env.getCase(x, y).estObjectif){      // Objectif
-                    bgColor = "green";
+                if(perso.getX() == x && perso.getY() == y){     // Operateur
+                    personnages[x][y].setStyle("-fx-opacity: 1; -fx-background-position: center; -fx-background-size: 75%; -fx-background-repeat: no-repeat; -fx-background-image: url('op.png')");
+                    if(perso.possedeObjectif()) {
+                        otages[x][y].setStyle("-fx-opacity: 1; -fx-background-position: 40px 40px; -fx-background-size: 30px; -fx-background-repeat: no-repeat; -fx-background-image: url('otage.png')");
+                    }
                 }
 
-                if(perso.getX() == x && perso.getY() == y){     // Operateur
-                    if(perso.possedeObjectif()){
-                        bgColor = "cyan";
-                    }
-                    else{
-                        bgColor = "blue";
-                        textColor = "white";
-                    }
+                // Otages
+                if(env.getCase(x, y).estObjectif() && !perso.possedeObjectif()){
+                    otages[x][y].setStyle("-fx-opacity: 1; -fx-background-position: center; -fx-background-size: 75%; -fx-background-repeat: no-repeat; -fx-background-image: url('otage.png')");
                 }
 
                 // Cases valides
                 if(casesValides.contains(env.getCase(x, y))){
-                    leftBdColor = "#ffff00ff";
-                    rightBdColor = "#ffff00ff";
-                    botBdColor = "#ffff00ff";
-                    topBdColor = "#ffff00ff";
+                    surbrillance[x][y].setStyle("-fx-opacity: 0.5; -fx-background-color: rgba(255,255,0,0.5); -fx-border-color: #ffff00ff");
                 }
 
-                // Separations
-                for(Separation sep : env.getSeparations()){
-                    if(sep.getCase1() == env.getCase(x, y)){
-                        if(sep.getCase1().x == sep.getCase2().x){   // Separation horizontale
-                            if(sep.getCase1().y > sep.getCase2().y) {
-                                topBdColor = "black";
-                                topBdWidth = "2px";
-                            }
-                            else {
-                                botBdColor = "black";
-                                botBdWidth = "2px";
-                            }
-                        }
-                        else{   // Separation verticale
-                            if(sep.getCase1().x > sep.getCase2().x) {
-                                leftBdColor = "black";
-                                leftBdWidth = "2px";
-                            }
-                            else {
-                                rightBdColor = "black";
-                                rightBdWidth = "2px";
-                            }
-                        }
-                    } else if (sep.getCase2() == env.getCase(x, y)) {
-                        if(sep.getCase1().x == sep.getCase2().x){   // Separation horizontale
-                            if(sep.getCase1().y < sep.getCase2().y) {
-                                topBdColor = "black";
-                                topBdWidth = "2px";
-                            }
-                            else {
-                                botBdColor = "black";
-                                botBdWidth = "2px";
-                            }
-                        }
-                        else{   // Separation verticale
-                            if(sep.getCase1().x < sep.getCase2().x) {
-                                leftBdColor = "black";
-                                leftBdWidth = "2px";
-                            }
-                            else {
-                                rightBdColor = "black";
-                                rightBdWidth = "2px";
-                            }
-                        }
-                    }
-                }
-                String style = String.format("-fx-background-color: %s; -fx-border-color: %s %s %s %s; -fx-border-width: %s %s %s %s; -fx-text-fill: %s", bgColor, topBdColor, rightBdColor, botBdColor, leftBdColor, topBdWidth, rightBdWidth, botBdWidth, leftBdWidth, textColor);
-                boutons[x][y].setStyle(style);
-                boutons[x][y].setText(y * env.getLargeur() + x + "");
             }
         }
     }

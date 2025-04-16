@@ -3,104 +3,162 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
 
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VueActions">
+<GridPane alignment="CENTER" hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="280.0" vgap="10.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VueActions">
    <children>
-      <VBox alignment="BOTTOM_RIGHT" spacing="5.0">
-         <children>
-            <Button fx:id="boutonFinTour" mnemonicParsing="false" onAction="#handle">
-               <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/fast-forward.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <padding>
-                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-               </padding>
-            </Button>
-            <Label fx:id="probaTir1" text="Chance de succes" textAlignment="RIGHT" />
-            <Label fx:id="coutTir1" alignment="CENTER_RIGHT" text="Cout" textAlignment="RIGHT" />
-         </children>
-      </VBox>
-      <VBox alignment="TOP_CENTER" spacing="5.0">
-         <children>
-            <Button fx:id="boutonTir" mnemonicParsing="false" onAction="#handle">
-               <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/aim.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <padding>
-                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-               </padding></Button>
-            <Label fx:id="probaTir" text="Label" />
-            <Label fx:id="coutTir" text="Label" />
-         </children>
-      </VBox>
-      <VBox alignment="TOP_CENTER" spacing="5.0">
-         <children>
-            <Button fx:id="boutonDepl" mnemonicParsing="false" onAction="#handle">
-               <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/expand-arrows.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-               </padding></Button>
-            <Label fx:id="probaDepl" text="Label" />
-            <Label fx:id="coutDepl" layoutX="10.0" layoutY="34.0" text="Label" />
-         </children>
-      </VBox>
-      <VBox alignment="TOP_CENTER" spacing="5.0">
-         <children>
-            <Button fx:id="boutonElimSil" mnemonicParsing="false" onAction="#handle">
-               <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/knife.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-               </padding></Button>
-            <Label fx:id="probaElimSil" text="Label" />
-            <Label fx:id="coutElimSil" layoutX="10.0" layoutY="34.0" text="Label" />
-         </children>
-      </VBox>
-      <VBox alignment="TOP_CENTER" spacing="5.0">
-         <children>
-            <Button fx:id="boutonCalm" mnemonicParsing="false" onAction="#handle">
-               <graphic>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@images/calm.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <padding>
-                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-               </padding></Button>
-            <Label fx:id="probaCalm" text="Label" />
-            <Label fx:id="coutCalm" text="Label" />
-         </children>
-      </VBox>
+      <Button fx:id="boutonFinTour" mnemonicParsing="false" onAction="#handle" prefHeight="56.0" prefWidth="225.0" GridPane.columnSpan="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5">
+         <graphic>
+            <ImageView fitHeight="50.0" fitWidth="196.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@ressources/fast-forward.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+         <tooltip>
+            <Tooltip text="Passer votre tour">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Tooltip>
+         </tooltip>
+      </Button>
+      <Label fx:id="probaTir1" alignment="BOTTOM_CENTER" contentDisplay="CENTER" prefHeight="45.0" prefWidth="80.0" text="Succes" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" GridPane.columnIndex="1">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label fx:id="coutTir1" alignment="BOTTOM_CENTER" prefHeight="45.0" prefWidth="80.0" text="Cout" textAlignment="CENTER" GridPane.columnIndex="2">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Button fx:id="boutonTir" mnemonicParsing="false" onAction="#handle" GridPane.rowIndex="1">
+         <graphic>
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@ressources/aim.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+         <tooltip>
+            <Tooltip prefWidth="300.0" text="Tirer sur un terroriste. Ne fonctionne que si un terroriste en en ligne de mire strictement verticale ou horizontale et si ce terroriste n'est pas à couvert. Augmente la menace de 1." wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Tooltip>
+         </tooltip></Button>
+      <Label fx:id="probaTir" alignment="CENTER" contentDisplay="CENTER" prefWidth="80.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label fx:id="coutTir" alignment="CENTER" contentDisplay="CENTER" prefWidth="80.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Button fx:id="boutonDepl" mnemonicParsing="false" onAction="#handle" GridPane.rowIndex="2">
+         <graphic>
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@ressources/expand-arrows.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+         <tooltip>
+            <Tooltip prefWidth="300.0" text="Déplacer l'opérateur. Ne peut se déplacer sur un terroriste." wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Tooltip>
+         </tooltip></Button>
+      <Label fx:id="probaDepl" alignment="CENTER" contentDisplay="CENTER" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="80.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label fx:id="coutDepl" alignment="CENTER" prefWidth="80.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Button fx:id="boutonElimSil" mnemonicParsing="false" onAction="#handle" GridPane.rowIndex="3">
+         <graphic>
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@ressources/knife.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+         <tooltip>
+            <Tooltip prefWidth="300.0" text="Eliminer un terroriste silencieusement. Ne fonctionne que si le terroriste est dans une case directement adjacente (diagonales exclues) et si ce terroriste n'est pas à couvert. N'augmente pas la menace." wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Tooltip>
+         </tooltip></Button>
+      <Label fx:id="probaElimSil" alignment="CENTER" contentDisplay="CENTER" prefWidth="80.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label fx:id="coutElimSil" alignment="CENTER" prefWidth="80.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Button fx:id="boutonCalm" mnemonicParsing="false" onAction="#handle" GridPane.rowIndex="4">
+         <graphic>
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@ressources/calm.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+         <tooltip>
+            <Tooltip maxWidth="300.0" text="Se calmer. Diminue la menace de 1." wrapText="true">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Tooltip>
+         </tooltip></Button>
+      <Label fx:id="probaCalm" alignment="CENTER" contentDisplay="CENTER" prefWidth="80.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Label fx:id="coutCalm" alignment="CENTER" prefWidth="80.0" text="Label" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
    </children>
-</HBox>
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <padding>
+      <Insets top="10.0" />
+   </padding>
+</GridPane>

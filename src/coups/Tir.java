@@ -166,7 +166,7 @@ public class Tir extends Coup {
                 int max = Math.max(caseDepart.x, c.x);
                 peutVoir = true;
                 for (int x = min; x <= max; x++) {
-                    if (!env.getCase(x, caseDepart.y).peutVoir) {
+                    if (!env.getCase(x, caseDepart.y).peutVoir && x != caseDepart.x) {
                         peutVoir = false;
                         break;
                     }
@@ -185,7 +185,7 @@ public class Tir extends Coup {
                 int max = Math.max(caseDepart.y, c.y);
                 peutVoir = true;
                 for (int y = min; y <= max; y++) {
-                    if (!env.getCase(caseDepart.x, y).peutVoir) {
+                    if (!env.getCase(caseDepart.x, y).peutVoir && y != caseDepart.y) {
                         peutVoir = false;
                         break;
                     }

@@ -1,26 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VuePA">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="280.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VuePA">
    <top>
-      <Label text="PA restants" BorderPane.alignment="CENTER" />
+      <Label text="Points d'action restants" BorderPane.alignment="CENTER">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
    </top>
    <center>
-      <ProgressBar fx:id="progressbarPA" prefWidth="130.0" progress="0.96" BorderPane.alignment="CENTER">
+      <ProgressBar fx:id="progressbarPA" prefWidth="250.0" progress="0.96" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets left="10.0" right="10.0" top="10.0" />
          </BorderPane.margin>
       </ProgressBar>
    </center>
    <right>
-      <Label fx:id="labelMaxPA" text="Label" BorderPane.alignment="BOTTOM_LEFT" />
+      <Label fx:id="labelMaxPA" text="Label" BorderPane.alignment="BOTTOM_LEFT">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
    </right>
    <left>
-      <Label fx:id="labelMinPA" text="Label" BorderPane.alignment="BOTTOM_RIGHT" />
+      <Label fx:id="labelMinPA" text="Label" BorderPane.alignment="BOTTOM_RIGHT">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
    </left>
+   <padding>
+      <Insets bottom="10.0" />
+   </padding>
 </BorderPane>
