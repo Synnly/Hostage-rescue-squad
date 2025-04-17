@@ -4,6 +4,7 @@ import coups.Coup;
 import mdp.etat.Etat;
 import org.javatuples.Pair;
 
+import java.util.List;
 import java.util.Map;
 
 public interface MDP {
@@ -47,4 +48,19 @@ public interface MDP {
      * @return La récompense
      */
     double recompense(Etat s, Coup c, Etat sPrime);
+
+    /**
+     * Simule le coup donné pour obtenir l'état d'arrivé depuis l'état de départ
+     * @param s État de départ
+     * @param c Pair (Coup, Direction)
+     * @return Etat d'arrivé
+     */
+    Etat etatSuivant(Etat s, Pair<Coup, Direction> c);
+
+    /**
+     * Génère tout les coups possibles à partir d'un état donné en paramètre
+     * @param e Etat de départ
+     * @return l'ensemble des Paires (Coup, Direction) possibles depuis l'état de départ
+     */
+    List<Pair<Coup, Direction>> getCoupsEtat(Etat e);
 }
