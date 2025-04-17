@@ -529,6 +529,7 @@ public class HostageRescueSquad implements MDP{
         envCopy.setEtat(e);
         Operateur opCopy = envCopy.getOperateurActif();
         coups.add(new Pair<>(op.getFinTour(), Direction.AUCUN));
+
         if(e.nbPAOperateurs[0] >= op.getCalmer().cout && e.menace > envCopy.getMinMenace()){
             coups.add(new Pair<>(op.getCalmer(), Direction.AUCUN));
         }

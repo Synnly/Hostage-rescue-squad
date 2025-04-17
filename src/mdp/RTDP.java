@@ -26,13 +26,15 @@ public class RTDP {
 
     public static Pair<Coup, Direction> ESSAI_RTDP(MDP mdp, Etat e, Map<Etat, Double> J){
         Pair<Coup, Direction> c = null;
-         while(! e.estTerminal()){
+        int cpt = 1000;
+         while(! e.estTerminal() && cpt > 0){
              c = getActionGloutonne(mdp,e,J);
              if (!J.containsKey(e)) {
                  J.put(e, 0.);
              }
              J.put(e, qValeur(mdp,e,c,J));
              e = choisirEtatSuivant(mdp,e,c);
+             cpt--;
          }
          return c;
     }

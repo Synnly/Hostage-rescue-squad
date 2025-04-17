@@ -33,9 +33,9 @@ public class Environnement extends Observable{
 
     private boolean echec = false;
     private boolean missionFinie = false;
-    private final double probaTirEnnemi = 0.3;
-    private final double probaDeplacementEnnemi = 0.6;
-    private final double probaAppelRenfortEnnemi = 0.1;
+    public final double probaTirEnnemi = 0.3;
+    public final double probaDeplacementEnnemi = 0.6;
+    public final double probaAppelRenfortEnnemi = 0.1;
     private final double probaSuccesDeplacement;
     private final double probaSuccesTir;
     private final double probaElimSil;
