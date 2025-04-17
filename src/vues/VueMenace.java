@@ -26,12 +26,12 @@ public class VueMenace extends Observer{
     public void initialize(){
         labelMinMenace.setText(env.getMinMenace()+"");
         labelMaxMenace.setText(env.getMaxMenace()+"");
-        progressbarMenace.setProgress((double) (env.getMenace()-env.getMinMenace()) / env.getMaxMenace());
+        progressbarMenace.setProgress((double) (env.getMenace()-env.getMinMenace()) / (env.getMaxMenace()-env.getMinMenace()));
     }
 
     @Override
     public void update() {
-        progressbarMenace.setProgress((double) (env.getMenace()-env.getMinMenace()) / env.getMaxMenace());
+        progressbarMenace.setProgress((double) (env.getMenace()-env.getMinMenace()) / (env.getMaxMenace()-env.getMinMenace()));
     }
 
     @Override

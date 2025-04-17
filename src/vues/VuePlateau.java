@@ -34,7 +34,7 @@ public class VuePlateau extends Observer {
     /**
      * La taille en largeur et hauteur de chaque case
      */
-    private final int tailleCase = 75;
+    private final int tailleCase = 60;
 
     /**
      * Constructeur de la vue du plateau

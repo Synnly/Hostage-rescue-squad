@@ -77,9 +77,9 @@ public class Environnement extends Observable{
 
         mdp = new HostageRescueSquad(this);
         System.out.println("L'ia se prépare ...");
-        IterationValeur.iterationValeur(mdp);
+        //IterationValeur.iterationValeur(mdp);
         System.out.println("L'ia a fini");
-        printPrediction();
+        //printPrediction();
     }
 
     public Environnement(Environnement env){
@@ -140,17 +140,17 @@ public class Environnement extends Observable{
         ennemi2.setRoutine(routine);
         ennemis.add(ennemi);
         ennemis.add(ennemi2);
-        /*
+
         for(int i = 0; i<3; i++){
             Terroriste terr = new Terroriste(this, -1, -1, 0, deplacementTer, tirTer,renfort);
             terr.setRoutine(routine);
             ennemis.add(terr);
 
-        }*/
+        }
 
         missionFinie = false;
         menace = minMenace;
-        if(mdp != null) coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+        //if(mdp != null) coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
         System.out.println("NOUVELLE PARTIE");
     }
 
@@ -323,8 +323,10 @@ public class Environnement extends Observable{
      * Effectue le tour des ennemis.&nbsp;Remet l'action choisie par les opérateurs au déplacement
      */
     public void tourEnnemi(){
+        System.out.println(menace);
+        int menaceCopy = menace; // Menace réévaluée pendant la boucle
         List<Double> nombres = getNombresAleatoires(menace);
-        for(int i = 0; i < menace; i++) {
+        for(int i = 0; i < menaceCopy; i++) {
             if(nombres.get(i) < probaTirEnnemi){   // Tir
                 for (Terroriste ennemi : ennemis) {
                     ennemi.getTir().effectuer(this, ennemi, getCase(operateur.getX(), operateur.getY()));
@@ -511,9 +513,9 @@ public class Environnement extends Observable{
      * Affiche dans le terminal la meilleure action prédite par l'IA
      */
     public void printPrediction(){
-        coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
+        //coupPredit = IterationValeur.predict(mdp, new EtatNormal(this));
 
-        System.out.println(coupPreditToString());
+        //System.out.println(coupPreditToString());
     }
 
     /**
