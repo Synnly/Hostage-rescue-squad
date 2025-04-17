@@ -57,9 +57,8 @@ public class EliminationSilencieuse extends Coup{
                     if (env.tousTerrsMorts()) {
                         env.resetMenace();
                     }
-                    perso.removePointsAction(cout);
                 }
-
+                perso.removePointsAction(cout);
             }
         }
     }

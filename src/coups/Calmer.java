@@ -32,8 +32,9 @@ public class Calmer extends Coup{
                 //System.out.println("L'action a échoué");
             }else{
                 env.diminuerMenace();
-                perso.removePointsAction(cout);
+
             }
+            perso.removePointsAction(cout);
         }
     }
 
