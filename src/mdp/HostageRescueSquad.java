@@ -476,11 +476,15 @@ public class HostageRescueSquad implements MDP{
     public Etat tourEnnemi(){
         Etat restoreState = creerEtat(envCopy);
         List<Double> nombres = envCopy.getNombresAleatoires(envCopy.getMenace());
-        for(int i = 0; i < envCopy.getMenace(); i++) {
+        int menaceCopy = envCopy.getMenace();
+        for(int i = 0; i < menaceCopy; i++) {
             if(nombres.get(i) < envCopy.probaTirEnnemi){   // Tir
                 for (Terroriste ennemi : envCopy.getEnnemis()) {
                     ennemi.getTir().effectuer(envCopy, ennemi, envCopy.getCase(envCopy.getOperateurActif().getX(), envCopy.getOperateurActif().getY()));
                 }
+            }
+            else if(nombres.get(i) < envCopy.probaAppelRenfortEnnemi + envCopy.probaTirEnnemi){     // Renfort ennemis
+                envCopy.getEnnemis().getFirst().getAppelRenfort().effectuer(envCopy, envCopy.getEnnemis().getFirst(), AucuneCase.instance);
             }
             else {
                 for (Terroriste ennemi : envCopy.getEnnemis()) {     // Deplacement
@@ -488,6 +492,7 @@ public class HostageRescueSquad implements MDP{
                     ennemi.getDeplacement().effectuer(envCopy, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
                 }
             }
+
         }
         envCopy.getOperateurActif().setActionActive(envCopy.getOperateurActif().getDeplacement());
         if(!envCopy.isMissionFinie()) {

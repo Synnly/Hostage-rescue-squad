@@ -15,7 +15,7 @@ public class RTDP {
     public static Pair<Coup, Direction> RTDP(MDP mdp, Etat s){
         Map<Etat, Double> J = new HashMap<>();
         int nbIterration = 0;
-        while(nbIterration < 1000){  //10 secondes
+        while(nbIterration < 100){  //10 secondes
             ESSAI_RTDP(mdp,s,J);
             nbIterration++;
         }

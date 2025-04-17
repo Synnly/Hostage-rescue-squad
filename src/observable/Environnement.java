@@ -325,22 +325,25 @@ public class Environnement extends Observable{
      * Effectue le tour des ennemis.&nbsp;Remet l'action choisie par les opérateurs au déplacement
      */
     public void tourEnnemi(){
-        System.out.println(menace);
         int menaceCopy = menace; // Menace réévaluée pendant la boucle
         List<Double> nombres = getNombresAleatoires(menace);
         for(int i = 0; i < menaceCopy; i++) {
             if(nombres.get(i) < probaTirEnnemi){   // Tir
                 for (Terroriste ennemi : ennemis) {
-                    ennemi.getTir().effectuer(this, ennemi, getCase(operateur.getX(), operateur.getY()));
+                    if(ennemi.getX() !=-1){
+                        ennemi.getTir().effectuer(this, ennemi, getCase(operateur.getX(), operateur.getY()));
+                    }
                 }
             }
             else if(nombres.get(i) < probaAppelRenfortEnnemi + probaTirEnnemi){     // Renfort ennemis
-                ennemis.getFirst().getAppelRenfort().effectuer(this, ennemis.getFirst(), AucuneCase.instance);
+                    ennemis.getFirst().getAppelRenfort().effectuer(this, ennemis.getFirst(), AucuneCase.instance);
             }
             else {
                 for (Terroriste ennemi : ennemis) {     // Deplacement
                     Case posEnnemi = getCase(ennemi.getX(), ennemi.getY());
-                    ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+                    if(ennemi.getX() !=-1){
+                        ennemi.getDeplacement().effectuer(this, ennemi, ennemi.getRoutine().prochaineCase(posEnnemi));
+                    }
                 }
             }
         }
