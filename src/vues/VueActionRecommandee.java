@@ -24,7 +24,16 @@ public class VueActionRecommandee extends Observer{
 
     @Override
     public void update() {
-        conseilIA.setText(environnement.coupPreditToString());
+        if(environnement.conseilsSontAffiches()){
+            conseilIA.setText(environnement.coupPreditToString());
+            conseilIA.setDisable(false);
+            executerAction.setDisable(false);
+        }
+        else {
+            conseilIA.setText("");
+            conseilIA.setDisable(true);
+            executerAction.setDisable(true);
+        }
     }
 
     @Override
