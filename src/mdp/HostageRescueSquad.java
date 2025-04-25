@@ -93,7 +93,7 @@ public class HostageRescueSquad implements MDP{
 
         Set<Etat> listeEtats = new HashSet<>();
         int nbOps = 1;                                              // A changer quand plusieurs operateurs
-        Routine routine = env.getEnnemis().getFirst().getRoutine();     // A changer quand plusieurs routines
+        Routine routine = env.getEnnemis().get(0).getRoutine();     // A changer quand plusieurs routines
         int[] indCasesOp = new int[nbOps];
         int nbCases = env.getLargeur() * env.getHauteur();
         int nbTerr = env.getEnnemis().size();
@@ -484,7 +484,7 @@ public class HostageRescueSquad implements MDP{
                 }
             }
             else if(nombres.get(i) < envCopy.probaAppelRenfortEnnemi + envCopy.probaTirEnnemi){     // Renfort ennemis
-                envCopy.getEnnemis().getFirst().getAppelRenfort().effectuer(envCopy, envCopy.getEnnemis().getFirst(), AucuneCase.instance);
+                envCopy.getEnnemis().get(0).getAppelRenfort().effectuer(envCopy, envCopy.getEnnemis().get(0), AucuneCase.instance);
             }
             else {
                 for (Terroriste ennemi : envCopy.getEnnemis()) {     // Deplacement

@@ -336,7 +336,7 @@ public class Environnement extends Observable{
                 }
             }
             else if(nombres.get(i) < probaAppelRenfortEnnemi + probaTirEnnemi){     // Renfort ennemis
-                    ennemis.getFirst().getAppelRenfort().effectuer(this, ennemis.getFirst(), AucuneCase.instance);
+                    ennemis.get(0).getAppelRenfort().effectuer(this, ennemis.get(0), AucuneCase.instance);
             }
             else {
                 for (Terroriste ennemi : ennemis) {     // Deplacement

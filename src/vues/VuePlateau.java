@@ -117,7 +117,7 @@ public class VuePlateau extends Observer {
                 String leftBdWidth = "1px"; String rightBdWidth = "1px"; String botBdWidth = "1px"; String topBdWidth = "1px";
                 String textColor = "black";
 
-                for (CaseReapparitionEnnemis c : env.getEnnemis().getFirst().getRoutine().getReapparitionEnnemis()){        // Point de reapparition
+                for (CaseReapparitionEnnemis c : env.getEnnemis().get(0).getRoutine().getReapparitionEnnemis()){        // Point de reapparition
                     if (c.x == x && c.y == y) {
                         bgColor = "orange";
                         break;
