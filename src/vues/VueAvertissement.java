@@ -14,7 +14,6 @@ import vues.Observer;
 import java.util.Map;
 
 public class VueAvertissement extends Observer {
-    private final Environnement env;
 
     @FXML
     private TextArea textAvertissement;
@@ -26,12 +25,12 @@ public class VueAvertissement extends Observer {
      */
     public VueAvertissement(Environnement sujet) {
         super(sujet);
-        this.env = sujet;
         sujet.ajouterObserver(this);
     }
 
     @Override
     public void update() {
+        Environnement env = (Environnement) sujet;
         Map<Pair<Coup, Direction>, Double> danger = env.predireDanger();
         textAvertissement.setText("");
 

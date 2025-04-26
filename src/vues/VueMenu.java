@@ -6,7 +6,6 @@ import javafx.scene.control.MenuItem;
 import observable.Environnement;
 
 public class VueMenu extends Observer{
-    private final Environnement env;
     @FXML
     public MenuItem nouvellePartie, menuItemConseils;
 
@@ -14,7 +13,6 @@ public class VueMenu extends Observer{
 
     public VueMenu(Environnement env) {
         super(env);
-        this.env = env;
         env.ajouterObserver(this);
     }
 
@@ -29,11 +27,13 @@ public class VueMenu extends Observer{
      *  Réinitialise la partie
      */
     private void nouvellePartie(){
-        this.env.finDePartie();
+        Environnement env = (Environnement) sujet;
+        env.finDePartie();
     }
 
     @Override
     public void update(){
+        Environnement env = (Environnement) sujet;
         if(!env.conseilsSontAffiches()){
             menuItemConseils.setText("Afficher les conseils");
         }
@@ -43,6 +43,7 @@ public class VueMenu extends Observer{
     }
 
     public void alternerAfficherConseils(){
+        Environnement env = (Environnement) sujet;
         env.alternerAfficherConseils();
     }
 

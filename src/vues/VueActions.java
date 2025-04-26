@@ -11,7 +11,6 @@ import personnages.Operateur;
  * La vue des actions.&nbsp;Cette vue contient les boutons de changement d'action active.
  */
 public class VueActions extends Observer{
-    private final Environnement env;
     /**
      * Le bouton de changement d'action active au déplacement
      */
@@ -46,7 +45,6 @@ public class VueActions extends Observer{
      */
     public VueActions(Environnement sujet) {
         super(sujet);
-        this.env = sujet;
     }
 
     /**
@@ -54,6 +52,7 @@ public class VueActions extends Observer{
      */
     @FXML
     public void initialize(){
+        Environnement env = (Environnement) sujet;
         probaTir.setText((int) (env.getOperateurActif().getTir().probaSucces * 100) + " %");
         probaDepl.setText((int) (env.getOperateurActif().getDeplacement().probaSucces * 100) + " %");
         probaElimSil.setText((int) (env.getOperateurActif().getEliminationSilencieuse().probaSucces * 100) + " %");
@@ -73,6 +72,7 @@ public class VueActions extends Observer{
 
     @Override
     public void handle(ActionEvent ae) {
+        Environnement env = (Environnement) sujet;
         Button button = (Button) ae.getSource();
         Operateur opActif = env.getOperateurActif();
 

@@ -10,7 +10,6 @@ import observable.Environnement;
  * Cette Vue permet d'afficher et exécuter les conseilles de l'IA
  */
 public class VueActionRecommandee extends Observer{
-    private final Environnement environnement;
     @FXML
     public Button executerAction;
     @FXML
@@ -18,12 +17,12 @@ public class VueActionRecommandee extends Observer{
 
     public VueActionRecommandee(Environnement sujet) {
         super(sujet);
-        this.environnement = sujet;
-        environnement.ajouterObserver(this);
+        sujet.ajouterObserver(this);
     }
 
     @Override
     public void update() {
+        Environnement environnement = (Environnement) sujet;
         if(environnement.conseilsSontAffiches()){
             conseilIA.setText(environnement.coupPreditToString());
             conseilIA.setDisable(false);
@@ -38,6 +37,7 @@ public class VueActionRecommandee extends Observer{
 
     @Override
     public void handle(ActionEvent actionEvent) {
+        Environnement environnement = (Environnement) sujet;
         environnement.executerActionRecommandee();
     }
 }
