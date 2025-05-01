@@ -10,8 +10,6 @@ import observable.Observable;
 
 public class VuePA extends Observer{
 
-    private Environnement env;
-
     @FXML
     public Label labelMinPA, labelMaxPA;
 
@@ -21,11 +19,11 @@ public class VuePA extends Observer{
     public VuePA(Environnement env) {
         super(env);
         env.ajouterObserver(this);
-        this.env = env;
     }
 
     @FXML
     public void initialize(){
+        Environnement env = (Environnement) sujet;
         labelMinPA.setText("0");
         labelMaxPA.setText(env.getOperateurActif().getMaxPointsAction() + "");
         progressbarPA.setProgress(1);
@@ -33,6 +31,7 @@ public class VuePA extends Observer{
 
     @Override
     public void update() {
+        Environnement env = (Environnement) sujet;
         progressbarPA.setProgress((double) env.getOperateurActif().getPointsAction() / env.getOperateurActif().getMaxPointsAction());
     }
 

@@ -8,8 +8,6 @@ import observable.Environnement;
 
 public class VueMenace extends Observer{
 
-    private Environnement env;
-
     @FXML
     public Label labelMinMenace, labelMaxMenace;
 
@@ -19,11 +17,11 @@ public class VueMenace extends Observer{
     public VueMenace(Environnement env) {
         super(env);
         env.ajouterObserver(this);
-        this.env = env;
     }
 
     @FXML
     public void initialize(){
+        Environnement env = (Environnement) sujet;
         labelMinMenace.setText(env.getMinMenace()+"");
         labelMaxMenace.setText(env.getMaxMenace()+"");
         progressbarMenace.setProgress((double) (env.getMenace()-env.getMinMenace()) / env.getMaxMenace());
@@ -31,6 +29,7 @@ public class VueMenace extends Observer{
 
     @Override
     public void update() {
+        Environnement env = (Environnement) sujet;
         progressbarMenace.setProgress((double) (env.getMenace()-env.getMinMenace()) / env.getMaxMenace());
     }
 

@@ -45,6 +45,8 @@ public class Environnement extends Observable{
     // Proba d'échec à partir de laquelle on considère qu'un coup est dangereuse
     private double seuilAvertissement = 0.6;
 
+    private boolean conseilsAffiches = false;
+
 
     /**
      * Constructeur de l'environnement. Initialise le plateau de taille <code>largeur</code> x <code>hauteur</code>,
@@ -746,5 +748,14 @@ public class Environnement extends Observable{
             }
         }
         return danger;
+    }
+
+    public void alternerAfficherConseils() {
+        conseilsAffiches = !conseilsAffiches;
+        notifyObservers();
+    }
+
+    public boolean conseilsSontAffiches() {
+        return conseilsAffiches;
     }
 }

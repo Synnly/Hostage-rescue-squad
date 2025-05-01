@@ -29,10 +29,6 @@ public class VuePlateau extends Observer {
      */
     private Button[][] boutons;
     private Pane[][] sprites, surbrillance, personnages, murs, otages;
-    /**
-     * L'environnement observé
-     */
-    private final Environnement env;
 
     /**
      * La taille en largeur et hauteur de chaque case
@@ -47,7 +43,6 @@ public class VuePlateau extends Observer {
     public VuePlateau(Environnement env){
         super(env);
         env.ajouterObserver(this);
-        this.env = env;
     }
 
     /**
@@ -55,6 +50,7 @@ public class VuePlateau extends Observer {
      */
     @FXML
     public void initialize(){
+        Environnement env = (Environnement) sujet;
         stackPane.setMinWidth(env.getLargeur() * tailleCase + 8);
         stackPane.setMinHeight(env.getHauteur() * tailleCase + 8);
         stackPane.setPrefWidth(env.getLargeur() * tailleCase + 8);
@@ -71,6 +67,7 @@ public class VuePlateau extends Observer {
      * @param hauteur Le nombre de cases en hauteur
      */
     public void initPlateau(int largeur, int hauteur){
+        Environnement env = (Environnement) sujet;
         // Boutons
         boutons = new Button[largeur][hauteur];
         for(int x = 0; x < largeur; x++){
@@ -197,6 +194,7 @@ public class VuePlateau extends Observer {
 
     @Override
     public void handle(ActionEvent ae) {
+        Environnement env = (Environnement) sujet;
         // Recuperation de la source
         Button button = (Button) ae.getSource();
         String[] coords = button.getId().split("case");
@@ -221,6 +219,8 @@ public class VuePlateau extends Observer {
 
     @Override
     public void update() {
+
+        Environnement env = (Environnement) sujet;
         Operateur perso = env.getOperateurActif();
         List<Case> casesValides = perso.getActionActive().getCasesValides(env, perso);
 

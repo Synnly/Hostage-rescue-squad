@@ -3,6 +3,7 @@ package vues;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import observable.Environnement;
 import observable.Observable;
 
 /**
@@ -21,7 +22,7 @@ public class VueGlobale extends Observer{
      *
      * @param sujet Le sujet
      */
-    public VueGlobale(Observable sujet) {
+    public VueGlobale(Environnement sujet) {
         super(sujet);
     }
 
