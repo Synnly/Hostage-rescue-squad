@@ -146,6 +146,7 @@ public class HostageRescueSquad implements MDP{
                                 for(int idNbPa = 0; idNbPa < Math.pow(maxPA+1, nbOps); idNbPa ++){
 
                                     int[] listePaOps = new int[nbOps];
+
                                     for (int j = 0; j < nbOps; j++) {
                                         listePaOps[j] = ((int) (idNbPa / Math.pow(maxPA, j)));
                                     }
@@ -193,14 +194,12 @@ public class HostageRescueSquad implements MDP{
         }
 
         envCopy.setEtat(restoreState);
+        if(distribution.values().stream().mapToDouble(Double::doubleValue).sum() < 0.99999){
+            System.out.println("sdqs");
+        }
 
         // Transition des ennemis
-        if(etatDepart.indCaseOperateurs[0] == 31 && etatDepart.nbPAOperateurs[0] == 2 && etatDepart.indCaseTerroristes[0] == 7 && etatDepart.menace == 2) {
-            distribution = transitionEnnemis(distribution);
-        }
-        else{
-            distribution = transitionEnnemis(distribution);
-        }
+        distribution = transitionEnnemis(distribution);
 
         // Sauvegarde
         if(transitions.get(etatDepart) == null){
@@ -274,6 +273,7 @@ public class HostageRescueSquad implements MDP{
 
         // Plusieurs objectifs récupérés
         // À changer si plusieurs objectifs
+        /*
         boolean aObj = false;
         for(boolean opAObjectif : e.aObjectif){
             if(opAObjectif && !aObj){
@@ -282,7 +282,7 @@ public class HostageRescueSquad implements MDP{
             else if(opAObjectif && aObj){
                 return false;
             }
-        }
+        }*/
 
         // Tous les ennemis morts et menace != minMenace
         int nbEnnemisMorts = env.getEnnemis().size();
@@ -302,7 +302,7 @@ public class HostageRescueSquad implements MDP{
         // A enlever quand respawn d'ennemis
         // Niveau de menace != minMenace + nbEnnemisMorts quand tous ennemis pas morts
 
-        if(e.menace > env.getMinMenace() + env.getEnnemis().size()){
+        if(e.menace > env.getMinMenace() + nbEnnemisMorts){
             if(e.estNormal()){
                 if ( e.equals(new EtatNormal(new int[]{11},new int[]{2},new boolean[]{false},new int[]{1, -1},5))) {
                     //System.out.println("oui");
@@ -322,6 +322,9 @@ public class HostageRescueSquad implements MDP{
                 }
                 opEnJeu = true;
             }
+        }
+        if(Arrays.stream(e.nbPAOperateurs).sum() == 0 && e.estNormal()){
+            return false;
         }
 
         return true;
@@ -424,16 +427,16 @@ public class HostageRescueSquad implements MDP{
      */
     private Map<Etat, Double> transitionEnnemis(Map<Etat, Double> distribution){
         Map<Etat, Double> distributionEnnemis = new HashMap<>();
-        int nbTerrs = env.getEnnemis().size();
-        Coup[] listeCoups = {env.getEnnemis().get(0).getDeplacement(), env.getEnnemis().get(0).getTir()};
+        Coup[] listeCoups = {env.getEnnemis().get(0).getDeplacement(), env.getEnnemis().get(0).getTir() };
 
         Etat restoreState = creerEtat(envCopy);
+
         for(Etat e : distribution.keySet()) {
-            if(e.estTerminal() || Arrays.stream(e.nbPAOperateurs).sum() != 0){    // Etat terminal ou pas le tour de l'ennemi donc rien à faire
+            if(e.estTerminal() || Arrays.stream(e.nbPAOperateurs).sum() != 0){    // Etat terminal ou pas le tour de l'ennemi donc rien Ã faire
                 distributionEnnemis.put(e, distribution.get(e));
                 continue;
             }
-            for (int idSuiteCoups = 0; idSuiteCoups < Math.pow(listeCoups.length, nbTerrs); idSuiteCoups++) {
+            for (int idSuiteCoups = 0; idSuiteCoups < Math.pow(listeCoups.length, e.menace); idSuiteCoups++) {
                 // Suite de coups
                 List<Coup> suiteCoup = new ArrayList<>(e.menace);
                 double proba = 1;
@@ -461,4 +464,5 @@ public class HostageRescueSquad implements MDP{
 
         return distributionEnnemis;
     }
+
 }

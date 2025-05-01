@@ -73,9 +73,12 @@ public class Environnement extends Observable{
         nouvellePartie();
 
         mdp = new HostageRescueSquad(this);
+        long startTime = System.currentTimeMillis();
         System.out.println("L'ia se prépare ...");
         IterationValeur.iterationValeur(mdp);
         System.out.println("L'ia a fini");
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        System.out.println("Temps de calcul des iterations = " + elapsedTime/1000 + " s");
         printPrediction();
     }
 
@@ -105,7 +108,7 @@ public class Environnement extends Observable{
 
 
     /**
-     * Réinitialise les paramètres de départ d'une nouc-velle partie
+     * Réinitialise les paramètres de départ d'une nouvelle partie
      */
     public void nouvellePartie(){
         cases = new ArrayList<>();
@@ -128,7 +131,7 @@ public class Environnement extends Observable{
         Tir tirTer = new Tir(0, 1);
         ennemis = new ArrayList<>(1);
 
-        Terroriste ennemi = new Terroriste(this, largeur/2+1, 0, 0, deplacementTer, tirTer);
+        Terroriste ennemi = new Terroriste(this, largeur/2+2, 0, 0, deplacementTer, tirTer);
         Terroriste ennemi2 = new Terroriste(this, largeur/2, 4, 0, deplacementTer, tirTer);
         ennemi.setRoutine(routine);
         ennemi2.setRoutine(routine);
