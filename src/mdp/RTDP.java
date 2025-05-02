@@ -15,7 +15,7 @@ public class RTDP {
     public static Pair<Coup, Direction> RTDP(MDP mdp, Etat s){
         Map<Etat, Double> J = new HashMap<>();
         int nbIterration = 0;
-        while(nbIterration < 100){  //10 secondes
+        while(nbIterration < 200){  //10 secondes
             ESSAI_RTDP(mdp,s,J);
             nbIterration++;
         }
@@ -59,21 +59,14 @@ public class RTDP {
      */
     public static Pair<Coup, Direction> getActionGloutonne(MDP mdp, Etat s, Map<Etat, Double> J){
         ArrayList<Pair<Coup, Direction>> actions = (ArrayList<Pair<Coup, Direction>>) mdp.getCoupsEtat(s);
-        double util = 0;
-        double maxUtil = Double.NEGATIVE_INFINITY;
         Pair<Coup, Direction> actionChoisie = null;
+        double max = Double.NEGATIVE_INFINITY;
+        double qvaleur;
         if(!s.estTerminal()) {
             for(Pair<Coup, Direction> a : actions){
-                util = 0;
-                Map<Etat, Double> distribution = mdp.transition(s, a.getValue0(),a.getValue1());
-                for (Etat sPrime : distribution.keySet()) {
-                    if (!J.containsKey(sPrime)) {
-                        J.put(sPrime, 0.);
-                    }
-                    util += distribution.get(sPrime) * (mdp.recompense(s, a.getValue0(), sPrime) +  (0.005)*J.get(sPrime));
-                }
-                if(util > maxUtil){
-                    maxUtil = util;
+                qvaleur = qValeur(mdp,s,a,J);
+                if(qvaleur > max){
+                    max = qvaleur;
                     actionChoisie = a;
                 }
             }
