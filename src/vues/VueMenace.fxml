@@ -9,26 +9,26 @@
     <top>
         <Label text="Menace" BorderPane.alignment="CENTER">
          <font>
-            <Font size="18.0" />
+            <Font size="14.0" />
          </font></Label>
     </top>
     <center>
         <ProgressBar fx:id="progressbarMenace" prefWidth="250.0" progress="0.96" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-                <Insets left="10.0" right="10.0" top="10.0" />
+                <Insets left="10.0" right="10.0" top="5.0" />
             </BorderPane.margin>
         </ProgressBar>
     </center>
     <right>
         <Label fx:id="labelMaxMenace" text="Label" BorderPane.alignment="BOTTOM_LEFT">
          <font>
-            <Font size="18.0" />
+            <Font size="14.0" />
          </font></Label>
     </right>
     <left>
         <Label fx:id="labelMinMenace" text="Label" BorderPane.alignment="BOTTOM_RIGHT">
          <font>
-            <Font size="18.0" />
+            <Font size="14.0" />
          </font></Label>
     </left>
 </BorderPane>

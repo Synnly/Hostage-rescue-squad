@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VueAvertissement">
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VueAvertissement">
    <center>
-      <TextArea fx:id="textAvertissement" prefHeight="100.0" prefWidth="280.0" wrapText="true" BorderPane.alignment="CENTER" />
+      <VBox spacing="5.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Danger de la politique optimale" />
+            <TextArea fx:id="textAvertissementOpti" prefHeight="100.0" prefWidth="280.0" wrapText="true" />
+         </children>
+      </VBox>
    </center>
    <padding>
       <Insets bottom="20.0" top="20.0" />
    </padding>
+   <bottom>
+      <VBox spacing="5.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets top="20.0" />
+         </BorderPane.margin>
+         <children>
+            <Label text="Danger de la politique aleatoire" />
+            <TextArea fx:id="textAvertissementRandom" prefHeight="100.0" prefWidth="280.0" />
+         </children>
+      </VBox>
+   </bottom>
 </BorderPane>

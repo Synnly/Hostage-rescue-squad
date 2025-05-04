@@ -39,11 +39,11 @@ public class Environnement extends Observable{
     private HostageRescueSquad mdp;
     private Pair<Coup, Direction> coupPredit = null;
     // Nombre de coups max calculés pour l'agent d'avertissement
-    private final int nbCoupsMax = 10;
+    private final int nbCoupsMax = 5;
     // Nombre d'itérations max effectuées par l'agent d'avertissement
     private final int nbIters = 1000;
     // Proba d'échec à partir de laquelle on considère qu'un coup est dangereuse
-    private double seuilAvertissement = 0.6;
+    private double seuilAvertissement = 0.;
 
     private boolean conseilsAffiches = false;
 
@@ -727,7 +727,7 @@ public class Environnement extends Observable{
         choisirCase(-1,-1);
     }
 
-    public Map<Pair<Coup, Direction>, Double> predireDanger(){
+    public Map<Pair<Coup, Direction>, Double> predireDanger(boolean random){
         Operateur op = operateur;
         Coup[] listeCoups = new Coup[]{op.getDeplacement(), op.getTir(), op.getFinTour(), op.getEliminationSilencieuse()};
         Map<Pair<Coup, Direction>, Double> danger = new HashMap<>();
@@ -741,7 +741,7 @@ public class Environnement extends Observable{
                 else if(caseValide.y > op.getY()) dir = Direction.BAS;
                 else dir = Direction.HAUT;
 
-                double probaEchec = ExplorationProba.probaEchec(this, mdp, new EtatNormal(this), coup, dir, nbCoupsMax, nbIters, listeCoups);
+                double probaEchec = ExplorationProba.probaEchec(this, mdp, new EtatNormal(this), coup, dir, nbCoupsMax, nbIters, listeCoups, random);
                 if(probaEchec >= seuilAvertissement) {
                     danger.put(new Pair<>(coup, dir), probaEchec);
                 }

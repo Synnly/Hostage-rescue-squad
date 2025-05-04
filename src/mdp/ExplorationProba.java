@@ -5,6 +5,7 @@ import coups.Coup;
 import mdp.etat.Etat;
 import mdp.etat.EtatNormal;
 import observable.Environnement;
+import org.javatuples.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,15 +14,15 @@ import java.util.Random;
 
 public class ExplorationProba {
 
-    private static int nbThreads = 1;
+    private static int nbThreads = 3;
 
-    public static double probaEchec(Environnement env, MDP mdp, Etat etatDepart, Coup coup, Direction dir, int nbCoupsMax, int nbIters, Coup[] listeCoups){
+    public static double probaEchec(Environnement env, MDP mdp, Etat etatDepart, Coup coup, Direction dir, int nbCoupsMax, int nbIters, Coup[] listeCoups, boolean random){
         ExplorationThread[] threads = new ExplorationThread[nbThreads];
         double sommeEchecs = 0;
         double sommeIters = 0;
 
         for (int i = 0; i < nbThreads; i++) {
-            threads[i] = new ExplorationThread(env, mdp, etatDepart, coup, dir, nbCoupsMax, nbIters, listeCoups);
+            threads[i] = new ExplorationThread(env, mdp, etatDepart, coup, dir, nbCoupsMax, nbIters, listeCoups, random);
             threads[i].run();
         }
 
@@ -41,7 +42,7 @@ public class ExplorationProba {
         Etat[] keys = distribution.keySet().toArray(new Etat[0]);
         
         for(Etat e : keys){
-            if(distribution.get(e) + acc < nb){
+            if(distribution.get(e) > nb - acc){
                 return e;
             }
             acc += distribution.get(e);
@@ -80,8 +81,9 @@ public class ExplorationProba {
         private final int nbCoupsMax;
         private final Coup[] listeCoups;
         private final Coup coup;
+        private final boolean random;
 
-        public ExplorationThread(Environnement env, MDP mdp, Etat etatDepart, Coup coup, Direction dir, int nbCoupsMax, int nbIters, Coup[] listeCoups){
+        public ExplorationThread(Environnement env, MDP mdp, Etat etatDepart, Coup coup, Direction dir, int nbCoupsMax, int nbIters, Coup[] listeCoups, boolean random){
             this.nbIters = nbIters;
             this.env = new Environnement(env);
             this.mdp = mdp;
@@ -91,6 +93,7 @@ public class ExplorationProba {
             this.listeCoups = listeCoups;
             this.coup = coup;
             this.nbEchecs = 0;
+            this.random = random;
         }
 
         public void run(){
@@ -110,20 +113,26 @@ public class ExplorationProba {
 
                     envCopy.setEtat(etat);
 
-                    ArrayList<Coup> coupsValides = new ArrayList<>(List.of(listeCoups));
-
-                    // Tirage d'un coup ayant des cases valides
-                    Coup coupAFaire = tirerCoup(coupsValides);
-                    while(coupAFaire.getCasesValides(envCopy, envCopy.getOperateurActif()).isEmpty()){
-                        coupsValides.remove(coupAFaire);
-                        coupAFaire = tirerCoup(coupsValides);
+                    if(random){
+                        Pair<Coup, Direction> coupPredit = IterationValeur.predict(mdp, etat);
+                        etat = tirerEtat(mdp.transition(etat, coupPredit.getValue0(), coupPredit.getValue1()));
                     }
+                    else{
+                        ArrayList<Coup> coupsValides = new ArrayList<>(List.of(listeCoups));
 
-                    // Tirage de la direction
-                    direction = tirerDirection(env, etat, coupAFaire);
+                        // Tirage d'un coup ayant des cases valides
+                        Coup coupAFaire = tirerCoup(coupsValides);
+                        while(coupAFaire.getCasesValides(envCopy, envCopy.getOperateurActif()).isEmpty()){
+                            coupsValides.remove(coupAFaire);
+                            coupAFaire = tirerCoup(coupsValides);
+                        }
 
-                    // Tirage de l'etat
-                    etat = tirerEtat(mdp.transition(etat, coupAFaire, direction));
+                        // Tirage de la direction
+                        direction = tirerDirection(env, etat, coupAFaire);
+
+                        // Tirage de l'etat
+                        etat = tirerEtat(mdp.transition(etat, coupAFaire, direction));
+                    }
 
                     nbCoups ++;
                 }
