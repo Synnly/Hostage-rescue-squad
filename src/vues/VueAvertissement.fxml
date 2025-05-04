@@ -5,26 +5,30 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vues.VueAvertissement">
-   <center>
-      <VBox spacing="5.0" BorderPane.alignment="CENTER">
-         <children>
-            <Label text="Danger de la politique optimale" />
-            <TextArea fx:id="textAvertissementOpti" prefHeight="100.0" prefWidth="280.0" wrapText="true" />
-         </children>
-      </VBox>
-   </center>
    <padding>
       <Insets bottom="20.0" top="20.0" />
    </padding>
-   <bottom>
+   <right>
       <VBox spacing="5.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
-            <Insets top="20.0" />
+            <Insets />
          </BorderPane.margin>
          <children>
             <Label text="Danger de la politique aleatoire" />
-            <TextArea fx:id="textAvertissementRandom" prefHeight="100.0" prefWidth="280.0" />
+            <TextArea fx:id="textAvertissementRandom" prefHeight="100.0" prefWidth="200.0" />
          </children>
       </VBox>
-   </bottom>
+   </right>
+   <left>
+      <VBox spacing="5.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="Danger de la politique optimale" />
+            <TextArea fx:id="textAvertissementOpti" prefHeight="100.0" prefWidth="200.0" wrapText="true">
+               <VBox.margin>
+                  <Insets right="20.0" />
+               </VBox.margin>
+            </TextArea>
+         </children>
+      </VBox>
+   </left>
 </BorderPane>
