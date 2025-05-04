@@ -12,6 +12,7 @@ import java.util.Map;
  * RTDP : Real-Time Dynamic Programming
  */
 public class RTDP {
+    private static double gamma = 0.9935;;
     public static Pair<Coup, Direction> RTDP(MDP mdp, Etat s){
         Map<Etat, Double> J = new HashMap<>();
         int nbIterration = 0;
@@ -19,24 +20,39 @@ public class RTDP {
             ESSAI_RTDP(mdp,s,J);
             nbIterration++;
         }
-
         return getActionGloutonne(mdp,s, J);
     }
 
 
     public static Pair<Coup, Direction> ESSAI_RTDP(MDP mdp, Etat e, Map<Etat, Double> J){
         Pair<Coup, Direction> c = null;
-        int cpt = 1000;
-         while(! e.estTerminal() && cpt > 0){
+        int cpt = 50;
+        ArrayList<Pair<Etat, Pair<Coup,Direction>>> chemin = new ArrayList<>();
+        while(! e.estTerminal() && cpt > 0){
              c = getActionGloutonne(mdp,e,J);
              if (!J.containsKey(e)) {
-                 J.put(e, 0.);
+                 J.put(e,0.);
+                 //J.put(e,MDP.valeurReussite*(1+gamma) + MDP.valeurObjectif + MDP.valeurTuerEnnemi*(1-gamma));
              }
              J.put(e, qValeur(mdp,e,c,J));
              e = choisirEtatSuivant(mdp,e,c);
+             c = getActionGloutonne(mdp,e,J);
+             chemin.add(new Pair(e,c));
              cpt--;
          }
+        retropropagation(chemin, J,mdp);
          return c;
+    }
+
+    private static void retropropagation(ArrayList<Pair<Etat, Pair<Coup, Direction>>> chemin, Map<Etat, Double> J,MDP mdp) {
+        int index = chemin.size()-1;
+        Pair<Etat, Pair<Coup, Direction>> pairOne = chemin.get(index);
+        System.out.println(pairOne.getValue0());
+
+        while(!chemin.isEmpty()){
+            Pair<Etat, Pair<Coup, Direction>> pair = chemin.remove(chemin.size()-1);
+            J.put(pair.getValue0(), qValeur(mdp, pair.getValue0(), pair.getValue1(), J));
+        }
     }
 
     /**
@@ -81,9 +97,10 @@ public class RTDP {
             Map<Etat, Double> distribution = mdp.transition(s, a.getValue0(),a.getValue1());
             for (Etat sPrime : distribution.keySet()) {
                 if (!J.containsKey(sPrime)) {
-                    J.put(sPrime, 0.);
+                    J.put(sPrime, 0.); // Remplacer par une valeur optimiste
+                    //J.put(sPrime,MDP.valeurReussite*(1+gamma) + MDP.valeurObjectif + MDP.valeurTuerEnnemi*(1-gamma));
                 }
-                util += distribution.get(sPrime) * (mdp.recompense(s, a.getValue0(), sPrime) +  J.get(sPrime));
+                util += distribution.get(sPrime) * (mdp.recompense(s, a.getValue0(), sPrime) +  gamma*J.get(sPrime));
             }
         }
         return util;
