@@ -113,7 +113,7 @@ public class ExplorationProba {
 
                     envCopy.setEtat(etat);
 
-                    if(random){
+                    if(!random){
                         Pair<Coup, Direction> coupPredit = IterationValeur.predict(mdp, etat);
                         etat = tirerEtat(mdp.transition(etat, coupPredit.getValue0(), coupPredit.getValue1()));
                     }
